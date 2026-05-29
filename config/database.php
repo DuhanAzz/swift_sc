@@ -1,9 +1,9 @@
 <?php
 // config/database.php
-$host = "localhost";
-$user = "root"; // Default XAMPP
-$pass = "";     // Default XAMPP (kosong)
-$db   = "Swift_SC"; // Nama database sesuai yang kita buat
+$host = "sql307.infinityfree.com";
+$user = "if0_42047561"; 
+$pass = "hK1S1bFoVBoE";     
+$db   = "if0_42047561_swift_sc"; 
 
 $koneksi = mysqli_connect($host, $user, $pass, $db);
 
