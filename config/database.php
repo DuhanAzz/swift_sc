@@ -1,14 +1,21 @@
 <?php
 // config/database.php
-$host = "sql307.infinityfree.com";
-$user = "if0_42047561"; 
-$pass = "hK1S1bFoVBoE";     
-$db   = "if0_42047561_swift_sc"; 
+$host = "localhost";
+$user = "root"; 
+$pass = "";     
+$db   = "Swift_SC"; // Sesuai dengan nama database lokal Anda
 
-$koneksi = mysqli_connect($host, $user, $pass, $db);
-
-if (!$koneksi) {
-    die("Koneksi Database Gagal: " . mysqli_connect_error());
+try {
+    // Mematikan warning bawaan agar kita bisa menangkapnya sebagai exception
+    mysqli_report(MYSQLI_REPORT_STRICT | MYSQLI_REPORT_ERROR);
+    
+    $koneksi = mysqli_connect($host, $user, $pass, $db);
+} catch (mysqli_sql_exception $e) {
+    die("<div style='font-family: sans-serif; background: #fee2e2; color: #991b1b; padding: 20px; border-radius: 8px; max-width: 600px; margin: 40px auto; text-align: center; border: 1px solid #f87171;'>
+            <h2 style='margin-top:0;'>⚠️ Gagal Terhubung ke Database</h2>
+            <p>Pastikan layanan <b>MySQL di XAMPP</b> Anda sudah di-start dan nama database (<b>Swift_SC</b>) sudah sesuai di phpMyAdmin.</p>
+            <p style='font-size: 14px; color: #7f1d1d;'><b>Detail Error:</b> " . htmlspecialchars($e->getMessage()) . "</p>
+         </div>");
 }
 
 // Set zona waktu agar data absensi/pendaftaran akurat
