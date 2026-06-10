@@ -2,55 +2,53 @@
 // Mulai sesi
 session_start();
 
-// Panggil file koneksi Firebase
+// Panggil file koneksi database
 require_once 'includes/koneksi.php';
 
-use Kreait\Firebase\Exception\Auth\InvalidPassword;
-use Kreait\Firebase\Exception\Auth\UserNotFound;
-
 if (isset($_POST['login'])) {
-    $email = $_POST['email'];
+    $email = bersihkan_input($_POST['email']);
     $password = $_POST['password'];
 
     try {
-        // 1. Authenticate with Firebase Auth
-        $signInResult = $auth->signInWithEmailAndPassword($email, $password);
-        
-        // 2. Fetch User Data from Firestore using UID
-        $uid = $signInResult->firebaseUserId();
-        $userData = $database->getDocument('users', $uid);
+        // Query database
+        $query = "SELECT * FROM users WHERE email = '$email'";
+        $result = mysqli_query($koneksi, $query);
 
-        if ($userData) {
-            // 3. Set Session
-            $_SESSION['email'] = $userData['email'];
-            $_SESSION['name'] = isset($userData['name']) ? $userData['name'] : 'User';
-            $_SESSION['role'] = $userData['role']; 
-            $_SESSION['cabang'] = isset($userData['cabang']) ? $userData['cabang'] : ''; 
-            $_SESSION['pool_id'] = isset($userData['pool_id']) ? $userData['pool_id'] : ''; 
-            $_SESSION['status'] = "sudah_login";
+        if ($result && mysqli_num_rows($result) > 0) {
+            $userData = mysqli_fetch_assoc($result);
 
-            // 4. Role-based Routing
-            $role = strtolower($userData['role']);
-            if ($role === 'ceo') {
-                header("location: ceo/ceo_dashboard.php");
-            } else if ($role === 'coach' || $role === 'pelatih') {
-                header("location: pelatih/pelatih_dashboard.php");
+            // Verifikasi password
+            if (password_verify($password, $userData['password'])) {
+                // Set Session
+                $_SESSION['email'] = $userData['email'];
+                $_SESSION['name'] = isset($userData['username']) ? $userData['username'] : 'User';
+                $_SESSION['role'] = strtolower($userData['role']);
+                $_SESSION['cabang'] = isset($userData['cabang_id']) ? $userData['cabang_id'] : '';
+                $_SESSION['pool_id'] = isset($userData['cabang_id']) ? $userData['cabang_id'] : '';
+                $_SESSION['status'] = "sudah_login";
+
+                // Role-based Routing
+                $role = $_SESSION['role'];
+                if ($role === 'ceo') {
+                    header("location: ceo/ceo_dashboard.php");
+                } else if ($role === 'coach' || $role === 'pelatih') {
+                    header("location: pelatih/pelatih_dashboard.php");
+                } else {
+                    // Default fallback to Admin
+                    header("location: admin/admin_dashboard.php");
+                }
+                exit;
             } else {
-                // Default fallback to Admin
-                header("location: admin/admin_dashboard.php");
+                // Password salah
+                header("location: login.php?pesan=gagal");
+                exit;
             }
-            exit;
-            
         } else {
-            // Auth success tapi data tidak ada di Firestore 'users' collection
-            header("location: login.php?pesan=gagal_data_tidak_ditemukan");
+            // User tidak ditemukan
+            header("location: login.php?pesan=gagal");
             exit;
         }
 
-    } catch (InvalidPassword | UserNotFound $e) {
-        // Jika login gagal (password salah atau user tidak ada)
-        header("location: login.php?pesan=gagal");
-        exit;
     } catch (\Exception $e) {
         // Error lainnya
         header("location: login.php?pesan=error&msg=" . urlencode($e->getMessage()));

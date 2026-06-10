@@ -1,8 +1,4 @@
 {
-    "require": {
-        "kreait/firebase-php": "^7.0",
-        "google/cloud-firestore": "^1.47"
-    },
     "config": {
         "platform-check": false
     }

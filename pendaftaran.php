@@ -6,31 +6,32 @@ $pesan = "";
 // 1. Ambil data cabang/kolam untuk pilihan di form
 $kolamList = [];
 try {
-    $kolamList = $database->getDocuments('pools');
+    $q = mysqli_query($koneksi, "SELECT * FROM cabang ORDER BY nama_cabang ASC");
+    if($q) {
+        while($row = mysqli_fetch_assoc($q)) {
+            $kolamList[] = $row;
+        }
+    }
 } catch (\Exception $e) {}
 
 // 2. Logika memproses form saat tombol daftar diklik
 if (isset($_POST['daftar'])) {
-    $nama          = $_POST['nama'];
-    $jenis_kelamin = $_POST['jenis_kelamin'];
-    $no_hp         = $_POST['no_hp'];
-    $tanggal_lahir = $_POST['tanggal_lahir'];
-    $id_kolam      = $_POST['id_kolam'];
+    $nama          = bersihkan_input($_POST['nama']);
+    $jenis_kelamin = bersihkan_input($_POST['jenis_kelamin']);
+    $no_hp         = bersihkan_input($_POST['no_hp']);
+    $tanggal_lahir = bersihkan_input($_POST['tanggal_lahir']);
+    $id_kolam      = bersihkan_input($_POST['id_kolam']);
     $tgl_gabung    = date('Y-m-d');
 
     try {
-        $database->newDocument('pending_members', [
-            'pool_id' => $id_kolam,
-            'nama' => $nama,
-            'jenis_kelamin' => $jenis_kelamin,
-            'no_hp' => $no_hp,
-            'tanggal_lahir' => $tanggal_lahir,
-            'tanggal_gabung' => $tgl_gabung,
-            'payment_status' => 'Unpaid',
-            'status_akun' => 'Pending',
-            'created_at' => date('Y-m-d H:i:s')
-        ]);
-        $pesan = "sukses";
+        $query = "INSERT INTO calon_member (nama, jenis_kelamin, no_hp, tanggal_lahir, cabang_id, tanggal_daftar, payment_status, status_approval) 
+                  VALUES ('$nama', '$jenis_kelamin', '$no_hp', '$tanggal_lahir', '$id_kolam', '$tgl_gabung', 'Unpaid', 'Pending')";
+        
+        if (mysqli_query($koneksi, $query)) {
+            $pesan = "sukses";
+        } else {
+            $pesan = "gagal";
+        }
     } catch (\Exception $e) {
         $pesan = "gagal";
     }
@@ -113,7 +114,7 @@ if (isset($_POST['daftar'])) {
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition bg-white">
                         <option value="">-- Pilih Cabang Terdekat --</option>
                         <?php foreach($kolamList as $row): ?>
-                            <option value="<?= htmlspecialchars($row['id'] ?? ''); ?>"><?= htmlspecialchars($row['name'] ?? ''); ?> - <?= htmlspecialchars($row['location'] ?? ''); ?></option>
+                            <option value="<?= htmlspecialchars($row['id'] ?? ''); ?>"><?= htmlspecialchars($row['nama_cabang'] ?? ''); ?> - <?= htmlspecialchars($row['lokasi'] ?? ''); ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>

@@ -63,10 +63,11 @@ $admin_pool_id = $_SESSION['pool_id'] ?? '';
                             <?php
                             $pendingMembers = [];
                             try {
-                                $docs = $database->getDocuments('pending_members');
-                                foreach ($docs as $d) {
-                                    if (($d['pool_id'] ?? '') == $admin_pool_id) {
-                                        $pendingMembers[] = $d;
+                                $query_pending = "SELECT * FROM calon_member WHERE status_approval = 'Pending' AND cabang_id = '$admin_pool_id' ORDER BY created_at DESC";
+                                $res_pending = mysqli_query($koneksi, $query_pending);
+                                if ($res_pending) {
+                                    while ($row = mysqli_fetch_assoc($res_pending)) {
+                                        $pendingMembers[] = $row;
                                     }
                                 }
                             } catch (\Exception $e) {}
@@ -121,10 +122,11 @@ $admin_pool_id = $_SESSION['pool_id'] ?? '';
                             <?php
                             $activeMembers = [];
                             try {
-                                $docs = $database->getDocuments('atlet');
-                                foreach ($docs as $d) {
-                                    if (($d['pool_id'] ?? '') == $admin_pool_id) {
-                                        $activeMembers[] = $d;
+                                $query_active = "SELECT * FROM member WHERE cabang_id = '$admin_pool_id' ORDER BY nama ASC";
+                                $res_active = mysqli_query($koneksi, $query_active);
+                                if ($res_active) {
+                                    while ($row = mysqli_fetch_assoc($res_active)) {
+                                        $activeMembers[] = $row;
                                     }
                                 }
                             } catch (\Exception $e) {}
