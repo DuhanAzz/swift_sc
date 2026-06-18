@@ -76,7 +76,9 @@ if (isset($_GET['invoice_id'])) {
                             <?php
                             $pendingMembers = [];
                             try {
-                                $query_pending = "SELECT * FROM calon_member WHERE status_approval = 'Pending' AND cabang_id = '$admin_pool_id' ORDER BY created_at DESC";
+                                $query_pending = "SELECT * FROM calon_member WHERE status_approval = 'Pending'";
+                                if(!empty($admin_pool_id)) $query_pending .= " AND cabang_id = '$admin_pool_id'";
+                                $query_pending .= " ORDER BY created_at DESC";
                                 $res_pending = mysqli_query($koneksi, $query_pending);
                                 if ($res_pending) {
                                     while ($row = mysqli_fetch_assoc($res_pending)) {
@@ -135,7 +137,9 @@ if (isset($_GET['invoice_id'])) {
                             <?php
                             $activeMembers = [];
                             try {
-                                $query_active = "SELECT * FROM member WHERE cabang_id = '$admin_pool_id' ORDER BY nama ASC";
+                                $query_active = "SELECT * FROM member WHERE 1=1";
+                                if(!empty($admin_pool_id)) $query_active .= " AND cabang_id = '$admin_pool_id'";
+                                $query_active .= " ORDER BY nama ASC";
                                 $res_active = mysqli_query($koneksi, $query_active);
                                 if ($res_active) {
                                     while ($row = mysqli_fetch_assoc($res_active)) {
