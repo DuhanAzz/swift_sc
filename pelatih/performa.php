@@ -46,48 +46,32 @@ include '../includes/koneksi.php';
                 </thead>
                 <tbody>
                     <?php
+                    $coach_cabang_id = $_SESSION['cabang_id'] ?? '';
                     $performaArray = [];
-                    try {
-                        $documents = $database->getDocuments('performances');
-                        foreach ($documents as $data) {
-                            $data['nama_atlet'] = '-';
-                            if (!empty($data['member_id'])) {
-                                try {
-                                    $atletDoc = $database->getDocument('atlet', $data['member_id']);
-                                    if ($atletDoc) {
-                                        $data['nama_atlet'] = $atletDoc['nama'];
-                                    }
-                                } catch (\Exception $e) {}
-                            }
-                            $performaArray[] = $data;
+                    $q_perf = mysqli_query($koneksi, "SELECT p.*, m.nama as nama_atlet FROM performa p LEFT JOIN member m ON p.member_id = m.id WHERE p.cabang_id='$coach_cabang_id' ORDER BY p.tanggal_rekor DESC, p.id DESC");
+                    if($q_perf) {
+                        while($row = mysqli_fetch_assoc($q_perf)) {
+                            $performaArray[] = $row;
                         }
-                    } catch (\Exception $e) {}
-
-                    usort($performaArray, function($a, $b) {
-                        $dateDiff = strcmp($b['record_date'] ?? '', $a['record_date'] ?? '');
-                        if ($dateDiff === 0) {
-                            return strcmp($b['id'], $a['id']);
-                        }
-                        return $dateDiff;
-                    });
+                    }
 
                     if(count($performaArray) > 0) {
                         foreach($performaArray as $data) {
                     ?>
                     <tr class="bg-white border-b hover:bg-slate-50 transition-colors">
-                        <td class="px-6 py-4 font-medium text-gray-900"><?= date('d M Y', strtotime($data['record_date'])); ?></td>
+                        <td class="px-6 py-4 font-medium text-gray-900"><?= date('d M Y', strtotime($data['tanggal_rekor'])); ?></td>
                         <td class="px-6 py-4 font-bold text-gray-800"><?= htmlspecialchars($data['nama_atlet']); ?></td>
                         <td class="px-6 py-4">
-                            <span class="font-semibold text-blue-600"><?= htmlspecialchars($data['swim_style']); ?></span>
-                            <span class="text-gray-500 ml-1"><?= htmlspecialchars($data['distance']); ?>m</span>
+                            <span class="font-semibold text-blue-600"><?= htmlspecialchars($data['gaya_renang']); ?></span>
+                            <span class="text-gray-500 ml-1"><?= htmlspecialchars($data['jarak']); ?>m</span>
                         </td>
                         <td class="px-6 py-4 text-center">
-                            <span class="text-xs font-medium px-2.5 py-0.5 rounded border bg-gray-100 text-gray-800 border-gray-300"><?= htmlspecialchars($data['pool_length']); ?></span>
+                            <span class="text-xs font-medium px-2.5 py-0.5 rounded border bg-gray-100 text-gray-800 border-gray-300"><?= htmlspecialchars($data['tipe_kolam']); ?></span>
                         </td>
                         <td class="px-6 py-4 text-center font-bold text-lg text-slate-800 tracking-wider">
                             <?= htmlspecialchars($data['time_formatted']); ?>
                         </td>
-                        <td class="px-6 py-4 text-xs text-gray-500 truncate max-w-xs"><?= htmlspecialchars($data['notes']); ?></td>
+                        <td class="px-6 py-4 text-xs text-gray-500 truncate max-w-xs"><?= htmlspecialchars($data['catatan'] ?? ''); ?></td>
                         <td class="px-6 py-4 text-center space-x-3">
                             <button data-modal-target="modalEditPerforma<?= $data['id']; ?>" data-modal-toggle="modalEditPerforma<?= $data['id']; ?>" class="font-medium text-blue-600 hover:underline">Edit</button>
                             <a href="hapus_performa.php?id=<?= $data['id']; ?>" onclick="return confirm('Yakin hapus rekor ini?')" class="font-medium text-red-600 hover:underline">Hapus</a>
@@ -118,14 +102,14 @@ include '../includes/koneksi.php';
                                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Atlet</label>
                                         <select name="member_id" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
                                             <?php
-                                            try {
-                                                $q_atlet_edit = $database->getDocuments('atlet');
-                                                foreach($q_atlet_edit as $a_data) {
+                                            $q_atlet_edit = mysqli_query($koneksi, "SELECT * FROM member WHERE role='Atlet' AND cabang_id='$coach_cabang_id' ORDER BY nama ASC");
+                                            if($q_atlet_edit) {
+                                                while($a_data = mysqli_fetch_assoc($q_atlet_edit)) {
                                                     $a_id = $a_data['id'];
                                                     $selected = ($a_id == $data['member_id']) ? 'selected' : '';
                                                     echo "<option value='".$a_id."' $selected>".htmlspecialchars($a_data['nama'])."</option>";
                                                 }
-                                            } catch (\Exception $e) {}
+                                            }
                                             ?>
                                         </select>
                                     </div>
@@ -133,13 +117,13 @@ include '../includes/koneksi.php';
                                     <div class="grid grid-cols-2 gap-4 mb-4">
                                         <div>
                                             <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Tanggal Tes</label>
-                                            <input type="date" name="record_date" value="<?= $data['record_date']; ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                                            <input type="date" name="record_date" value="<?= $data['tanggal_rekor']; ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
                                         </div>
                                         <div>
                                             <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Tipe Kolam</label>
                                             <select name="pool_length" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
-                                                <option value="25m" <?= ($data['pool_length'] == '25m') ? 'selected' : ''; ?>>Short Course (25m)</option>
-                                                <option value="50m" <?= ($data['pool_length'] == '50m') ? 'selected' : ''; ?>>Long Course (50m)</option>
+                                                <option value="25m" <?= ($data['tipe_kolam'] == '25m') ? 'selected' : ''; ?>>Short Course (25m)</option>
+                                                <option value="50m" <?= ($data['tipe_kolam'] == '50m') ? 'selected' : ''; ?>>Long Course (50m)</option>
                                             </select>
                                         </div>
                                     </div>
@@ -148,16 +132,16 @@ include '../includes/koneksi.php';
                                         <div>
                                             <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Gaya Renang</label>
                                             <select name="swim_style" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
-                                                <option value="Bebas" <?= ($data['swim_style'] == 'Bebas') ? 'selected' : ''; ?>>Gaya Bebas</option>
-                                                <option value="Dada" <?= ($data['swim_style'] == 'Dada') ? 'selected' : ''; ?>>Gaya Dada</option>
-                                                <option value="Punggung" <?= ($data['swim_style'] == 'Punggung') ? 'selected' : ''; ?>>Gaya Punggung</option>
-                                                <option value="Kupu-kupu" <?= ($data['swim_style'] == 'Kupu-kupu') ? 'selected' : ''; ?>>Gaya Kupu-kupu</option>
-                                                <option value="Ganti" <?= ($data['swim_style'] == 'Ganti') ? 'selected' : ''; ?>>Gaya Ganti (IM)</option>
+                                                <option value="Bebas" <?= ($data['gaya_renang'] == 'Bebas') ? 'selected' : ''; ?>>Gaya Bebas</option>
+                                                <option value="Dada" <?= ($data['gaya_renang'] == 'Dada') ? 'selected' : ''; ?>>Gaya Dada</option>
+                                                <option value="Punggung" <?= ($data['gaya_renang'] == 'Punggung') ? 'selected' : ''; ?>>Gaya Punggung</option>
+                                                <option value="Kupu-kupu" <?= ($data['gaya_renang'] == 'Kupu-kupu') ? 'selected' : ''; ?>>Gaya Kupu-kupu</option>
+                                                <option value="Ganti" <?= ($data['gaya_renang'] == 'Ganti') ? 'selected' : ''; ?>>Gaya Ganti (IM)</option>
                                             </select>
                                         </div>
                                         <div>
                                             <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Jarak (Meter)</label>
-                                            <input type="number" name="distance" value="<?= $data['distance']; ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                                            <input type="number" name="distance" value="<?= $data['jarak']; ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
                                         </div>
                                     </div>
 
@@ -181,7 +165,7 @@ include '../includes/koneksi.php';
 
                                     <div class="mb-6">
                                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Catatan Pelatih</label>
-                                        <textarea name="notes" rows="2" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3"><?= htmlspecialchars($data['notes']); ?></textarea>
+                                        <textarea name="notes" rows="2" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3"><?= htmlspecialchars($data['catatan'] ?? ''); ?></textarea>
                                     </div>
                                     <button type="submit" name="edit" class="w-full text-white bg-blue-700 hover:bg-blue-800 font-bold rounded-xl text-sm px-5 py-3 shadow-lg">Update Rekor</button>
                                 </form>
@@ -213,13 +197,13 @@ include '../includes/koneksi.php';
                     <select name="member_id" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
                         <option value="">-- Pilih Atlet --</option>
                         <?php
-                        try {
-                            $q_atlet = $database->getDocuments('atlet');
-                            foreach($q_atlet as $a_data) {
+                        $q_atlet_add = mysqli_query($koneksi, "SELECT * FROM member WHERE role='Atlet' AND cabang_id='$coach_cabang_id' ORDER BY nama ASC");
+                        if($q_atlet_add) {
+                            while($a_data = mysqli_fetch_assoc($q_atlet_add)) {
                                 $a_id = $a_data['id'];
                                 echo "<option value='".$a_id."'>".htmlspecialchars($a_data['nama'])."</option>";
                             }
-                        } catch (\Exception $e) {}
+                        }
                         ?>
                     </select>
                 </div>

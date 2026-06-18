@@ -8,19 +8,17 @@ include '../includes/header.php';
 include '../includes/sidebar.php';
 include '../includes/koneksi.php';
 
-$coach_pool_id = $_SESSION['pool_id'] ?? '';
+$coach_cabang_id = $_SESSION['cabang_id'] ?? '';
 $tanggal_hari_ini = date('Y-m-d');
 
-// Ambil semua atlet di pool ini
+// Ambil semua atlet di cabang ini
 $atlet_list = [];
-try {
-    $docs = $database->getDocuments('atlet');
-    foreach ($docs as $d) {
-        if (($d['pool_id'] ?? '') == $coach_pool_id) {
-            $atlet_list[] = $d;
-        }
+$q_atlet = mysqli_query($koneksi, "SELECT * FROM member WHERE role='Atlet' AND cabang_id='$coach_cabang_id' ORDER BY nama ASC");
+if($q_atlet) {
+    while($row = mysqli_fetch_assoc($q_atlet)) {
+        $atlet_list[] = $row;
     }
-} catch (\Exception $e) {}
+}
 ?>
 
 <div class="p-4 sm:ml-64">
@@ -63,7 +61,7 @@ try {
                     <select name="member_id" class="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-3" required>
                         <option value="">-- Sentuh untuk memilih atlet --</option>
                         <?php foreach($atlet_list as $a): ?>
-                            <option value="<?= $a['id'] ?>"><?= htmlspecialchars($a['nama']) ?> (<?= htmlspecialchars($a['nia'] ?? 'NEW') ?>)</option>
+                            <option value="<?= $a['id'] ?>"><?= htmlspecialchars($a['nama']) ?> (<?= htmlspecialchars($a['nisn'] ?? 'NEW') ?>)</option>
                         <?php endforeach; ?>
                     </select>
                 </div>

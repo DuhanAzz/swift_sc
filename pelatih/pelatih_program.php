@@ -8,7 +8,8 @@ include '../includes/header.php';
 include '../includes/sidebar.php';
 include '../includes/koneksi.php';
 
-$coach_pool_id = $_SESSION['pool_id'] ?? '';
+$coach_cabang_id = $_SESSION['cabang_id'] ?? '';
+$coach_id = $_SESSION['id'] ?? 0;
 $coach_name = $_SESSION['name'] ?? 'Pelatih';
 ?>
 
@@ -41,17 +42,12 @@ $coach_name = $_SESSION['name'] ?? 'Pelatih';
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <?php
             $programs = [];
-            try {
-                $pDocs = $database->getDocuments('training_programs');
-                foreach ($pDocs as $p) {
-                    if (($p['pool_id'] ?? '') == $coach_pool_id && ($p['coach_email'] ?? '') == $_SESSION['email']) {
-                        $programs[] = $p;
-                    }
+            $q_prog = mysqli_query($koneksi, "SELECT * FROM program_latihan WHERE pelatih_id='$coach_id' AND cabang_id='$coach_cabang_id' ORDER BY tanggal DESC");
+            if($q_prog) {
+                while($row = mysqli_fetch_assoc($q_prog)) {
+                    $programs[] = $row;
                 }
-                usort($programs, function($a, $b) {
-                    return strcmp($b['tanggal'] ?? '', $a['tanggal'] ?? ''); 
-                });
-            } catch (\Exception $e) {}
+            }
 
             if(count($programs) > 0) {
                 foreach($programs as $p) {
@@ -75,7 +71,7 @@ $coach_name = $_SESSION['name'] ?? 'Pelatih';
                     <?= nl2br(htmlspecialchars($p['deskripsi'] ?? '')) ?>
                 </div>
                 
-                <p class="text-[10px] text-gray-400 mt-auto pt-4 border-t border-gray-50 uppercase tracking-wider">Oleh: <?= htmlspecialchars($p['coach_name'] ?? 'Pelatih') ?></p>
+                <p class="text-[10px] text-gray-400 mt-auto pt-4 border-t border-gray-50 uppercase tracking-wider">Oleh: <?= htmlspecialchars($coach_name) ?></p>
             </div>
             <?php } } else { ?>
                 <div class="col-span-full bg-white p-12 rounded-2xl border border-gray-100 text-center text-gray-500">

@@ -46,18 +46,27 @@ $tanggal_absensi = isset($_GET['tanggal']) ? $_GET['tanggal'] : date('Y-m-d');
                         </thead>
                         <tbody>
                             <?php
+                            $coach_cabang_id = $_SESSION['cabang_id'] ?? '';
+                            
                             $q_atlet = [];
-                            try {
-                                $docs = $database->getDocuments('atlet');
-                                foreach($docs as $data) {
-                                    $q_atlet[] = $data;
+                            $res_atlet = mysqli_query($koneksi, "SELECT * FROM member WHERE role='Atlet' AND cabang_id='$coach_cabang_id' ORDER BY nama ASC");
+                            if($res_atlet) {
+                                while($row = mysqli_fetch_assoc($res_atlet)) {
+                                    $q_atlet[] = $row;
                                 }
-                            } catch (\Exception $e) {}
+                            }
 
-                            // Sorting secara manual di PHP karena nama ada di dalam dokumen
-                            usort($q_atlet, function($a, $b) {
-                                return strcmp($a['nama'] ?? '', $b['nama'] ?? '');
-                            });
+                            // Ambil data presensi yang sudah ada hari ini
+                            $presensi_hari_ini = [];
+                            $res_presensi = mysqli_query($koneksi, "SELECT * FROM absensi WHERE tanggal='$tanggal_absensi' AND cabang_id='$coach_cabang_id'");
+                            if($res_presensi) {
+                                while($row = mysqli_fetch_assoc($res_presensi)) {
+                                    $presensi_hari_ini[$row['member_id']] = [
+                                        'status' => $row['status'],
+                                        'keterangan' => $row['keterangan']
+                                    ];
+                                }
+                            }
 
                             $no = 1;
                             foreach($q_atlet as $a){
@@ -65,13 +74,10 @@ $tanggal_absensi = isset($_GET['tanggal']) ? $_GET['tanggal'] : date('Y-m-d');
                                 
                                 $status_skrg = 'Hadir';
                                 $ket_skrg = '';
-                                try {
-                                    $pDoc = $database->getDocument('presensi', $atlet_id . '_' . $tanggal_absensi);
-                                    if ($pDoc) {
-                                        $status_skrg = $pDoc['status'] ?? 'Hadir';
-                                        $ket_skrg = $pDoc['keterangan'] ?? '';
-                                    }
-                                } catch (\Exception $e) {}
+                                if(isset($presensi_hari_ini[$atlet_id])) {
+                                    $status_skrg = $presensi_hari_ini[$atlet_id]['status'] ?? 'Hadir';
+                                    $ket_skrg = $presensi_hari_ini[$atlet_id]['keterangan'] ?? '';
+                                }
                             ?>
                             <tr class="hover:bg-blue-50 transition-colors">
                                 <td class="border border-gray-300 px-3 py-1 text-center bg-gray-50 text-gray-500 font-medium"><?= $no++; ?></td>

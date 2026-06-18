@@ -34,6 +34,7 @@ CREATE TABLE `absensi` (
   `status` enum('Hadir','Izin','Sakit','Alpa') NOT NULL,
   `cabang_id` int(11) NOT NULL,
   `recorded_by` int(11) NOT NULL,
+  `keterangan` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -298,13 +299,14 @@ CREATE TABLE `performa` (
   `cabang_id` int(11) NOT NULL,
   `gaya_renang` varchar(100) NOT NULL,
   `jarak` varchar(20) NOT NULL,
+  `tipe_kolam` varchar(50) DEFAULT NULL,
   `waktu_formatted` varchar(15) NOT NULL,
   `waktu_ms` int(11) NOT NULL,
   `tanggal_rekor` date NOT NULL,
   `catatan` text DEFAULT NULL,
   `recorded_by` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -397,8 +399,11 @@ CREATE TABLE `program_latihan` (
   `id` int(11) NOT NULL,
   `pelatih_id` int(11) NOT NULL,
   `tanggal` date NOT NULL,
+  `target_grup` varchar(50) DEFAULT NULL,
+  `judul` varchar(255) DEFAULT NULL,
   `tipe_program` enum('Harian','Mingguan','Bulanan') NOT NULL,
-  `catatan` text NOT NULL,
+  `deskripsi` text NOT NULL,
+  `cabang_id` int(11) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 

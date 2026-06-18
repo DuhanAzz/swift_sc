@@ -3,38 +3,29 @@ session_start();
 include '../includes/koneksi.php';
 
 if(isset($_POST['simpan'])){
-    $tanggal     = $_POST['tanggal'];
-    $target_grup = $_POST['target_grup'];
-    $judul       = $_POST['judul'];
-    $deskripsi   = $_POST['deskripsi'];
+    $tanggal     = mysqli_real_escape_string($koneksi, $_POST['tanggal']);
+    $target_grup = mysqli_real_escape_string($koneksi, $_POST['target_grup']);
+    $judul       = mysqli_real_escape_string($koneksi, $_POST['judul']);
+    $deskripsi   = mysqli_real_escape_string($koneksi, $_POST['deskripsi']);
+    $tipe_program = 'Harian';
     
-    $coach_pool_id = $_SESSION['pool_id'] ?? '';
-    $coach_name    = $_SESSION['name'] ?? 'Pelatih';
-    $coach_email   = $_SESSION['email'] ?? '';
+    $coach_cabang_id = $_SESSION['cabang_id'] ?? '';
+    $pelatih_id = $_SESSION['id'] ?? 0;
 
-    try {
-        $database->newDocument('training_programs', [
-            'tanggal' => $tanggal,
-            'target_grup' => $target_grup,
-            'judul' => $judul,
-            'deskripsi' => $deskripsi,
-            'pool_id' => $coach_pool_id,
-            'coach_name' => $coach_name,
-            'coach_email' => $coach_email,
-            'created_at' => date('Y-m-d H:i:s')
-        ]);
+    $q_insert = mysqli_query($koneksi, "INSERT INTO program_latihan (pelatih_id, tanggal, target_grup, judul, tipe_program, deskripsi, cabang_id) VALUES ('$pelatih_id', '$tanggal', '$target_grup', '$judul', '$tipe_program', '$deskripsi', '$coach_cabang_id')");
+    if($q_insert) {
         header("location:pelatih_program.php?pesan=sukses");
-    } catch (\Exception $e) { 
+    } else {
         header("location:pelatih_program.php?pesan=gagal"); 
     }
 }
 
 if(isset($_GET['hapus'])){
-    $id = $_GET['hapus'];
-    try {
-        $database->deleteDocument('training_programs', $id);
+    $id = mysqli_real_escape_string($koneksi, $_GET['hapus']);
+    $q_delete = mysqli_query($koneksi, "DELETE FROM program_latihan WHERE id='$id'");
+    if($q_delete) {
         header("location:pelatih_program.php?pesan=hapus");
-    } catch (\Exception $e) { 
+    } else {
         header("location:pelatih_program.php?pesan=gagal"); 
     }
 }
