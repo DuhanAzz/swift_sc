@@ -66,7 +66,7 @@ if (isset($_POST['simpan_cms'])) {
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div class="lg:col-span-2">
-                <form action="" method="POST" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <form action="" method="POST" class="card p-6">
                     
                     <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2">Bagian Hero Banner</h3>
                     <div class="mb-4">
@@ -99,7 +99,7 @@ if (isset($_POST['simpan_cms'])) {
                     <a href="../index.php" target="_blank" class="block text-center w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg text-sm transition-all shadow-md">Lihat Halaman Publik</a>
                 </div>
 
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <div class="card p-6">
                     <h3 class="font-bold text-slate-800 mb-2">Ubah Background Gambar?</h3>
                     <p class="text-sm text-gray-500 mb-4">Untuk mengganti gambar Hero Banner, Anda dapat mengakses fitur ini melalui menu CMS Halaman Web di halaman Admin.</p>
                     <a href="../admin/manage_hero.php" class="text-indigo-600 font-semibold hover:underline text-sm">Buka Upload Gambar Banner &rarr;</a>

@@ -53,7 +53,7 @@ include '../includes/koneksi.php';
                     <button data-modal-target="modalTambahAdmin" data-modal-toggle="modalTambahAdmin" class="bg-algolia-blue hover:bg-algolia-darkblue text-white font-bold py-2 px-4 rounded-lg text-sm transition-all">+ Tambah Admin</button>
                 </div>
                 <div class="card overflow-hidden">
-                    <table class="w-full text-sm text-left text-gray-500">
+                    <table class="table-algolia">
                         <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
                             <tr>
                                 <th class="px-6 py-4">Nama</th>
@@ -137,7 +137,7 @@ include '../includes/koneksi.php';
                     <button data-modal-target="modalTambahPelatih" data-modal-toggle="modalTambahPelatih" class="bg-algolia-blue hover:bg-algolia-darkblue text-white font-bold py-2 px-4 rounded-lg text-sm transition-all">+ Tambah Pelatih</button>
                 </div>
                 <div class="card overflow-hidden">
-                    <table class="w-full text-sm text-left text-gray-500">
+                    <table class="table-algolia">
                         <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
                             <tr>
                                 <th class="px-6 py-4">Nama Pelatih</th>

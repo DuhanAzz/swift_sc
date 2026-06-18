@@ -39,7 +39,7 @@ include '../includes/koneksi.php';
         </div>
 
         <div class="card overflow-hidden">
-            <table class="w-full text-sm text-left text-gray-500">
+            <table class="table-algolia">
                 <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
                     <tr>
                         <th class="px-6 py-4">No</th>
@@ -70,7 +70,7 @@ include '../includes/koneksi.php';
                         <td class="px-6 py-4 font-bold text-gray-800"><?= htmlspecialchars($data['nama']); ?></td>
                         <td class="px-6 py-4"><?= htmlspecialchars($data['jenis_kelamin']); ?></td>
                         <td class="px-6 py-4"><?= htmlspecialchars($data['no_hp']); ?></td>
-                        <td class="px-6 py-4 font-semibold text-primary-700"><?= htmlspecialchars($data['nama_kolam']); ?></td>
+                        <td class="px-6 py-4 font-semibold text-algolia-blue"><?= htmlspecialchars($data['nama_kolam']); ?></td>
                         <td class="px-6 py-4 text-center space-x-3">
                             <button data-modal-target="modalEditAtlet<?= $data['id']; ?>" data-modal-toggle="modalEditAtlet<?= $data['id']; ?>" class="font-medium text-blue-600 hover:underline">Edit</button>
                             <a href="hapus_atlet.php?id=<?= $data['id']; ?>" onclick="return confirm('Hapus atlet <?= $data['nama']; ?>?')" class="font-medium text-red-600 hover:underline">Hapus</a>
@@ -123,7 +123,7 @@ include '../includes/koneksi.php';
                                         </select>
                                     </div>
                                     
-                                    <button type="submit" name="edit" class="w-full text-white bg-blue-600 hover:bg-blue-700 font-bold rounded-xl text-sm px-5 py-3 shadow-md hover:shadow-lg transition-all">Update Data Atlet</button>
+                                    <button type="submit" name="edit" class="w-full text-white bg-algolia-blue hover:bg-algolia-darkblue font-bold rounded-xl text-sm px-5 py-3 shadow-md hover:shadow-lg transition-all">Update Data Atlet</button>
                                 </form>
                             </div>
                         </div>

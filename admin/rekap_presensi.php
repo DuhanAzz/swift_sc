@@ -45,7 +45,7 @@ $nama_bulan = [
                         ?>
                     </select>
                 </div>
-                <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 font-bold rounded-lg text-sm px-5 py-2.5">
+                <button type="submit" class="text-white bg-algolia-blue hover:bg-algolia-darkblue font-bold rounded-lg text-sm px-5 py-2.5">
                     Tampilkan Rekap
                 </button>
             </form>
@@ -57,7 +57,7 @@ $nama_bulan = [
                     LAPORAN KEHADIRAN: <?= strtoupper($nama_bulan[$filter_bulan]); ?> <?= $filter_tahun; ?>
                 </h2>
             </div>
-            <table class="w-full text-sm text-left text-gray-500">
+            <table class="table-algolia">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-100">
                     <tr>
                         <th class="px-4 py-4 text-center border-r">No</th>

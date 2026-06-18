@@ -55,7 +55,7 @@ include '../includes/koneksi.php';
                 foreach($beritaArray as $data) {
                     $foto = (!empty($data['gambar']) && file_exists("../admin/" . $data['gambar'])) ? "../admin/" . $data['gambar'] : "https://images.unsplash.com/photo-1572334057861-6d72dbb688d2?auto=format&fit=crop&w=800&q=80";
             ?>
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+            <div class="card overflow-hidden flex flex-col">
                 <div class="h-48 bg-cover bg-center" style="background-image: url('<?= $foto ?>');"></div>
                 <div class="p-5 flex-1 flex flex-col">
                     <div class="flex justify-between items-center mb-2">

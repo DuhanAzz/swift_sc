@@ -105,7 +105,7 @@ $admin_pool_id = $_SESSION['pool_id'] ?? '';
                 </table>
                 
                 <div class="p-4 bg-gray-50 border-t border-gray-200 flex justify-end">
-                    <button type="submit" name="simpan_bayar" class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2.5 px-8 rounded-lg shadow-md transition-all">
+                    <button type="submit" name="simpan_bayar" class="bg-algolia-blue hover:bg-algolia-darkblue text-white font-bold py-2.5 px-8 rounded-lg shadow-md transition-all">
                         Simpan Perubahan Pembayaran
                     </button>
                 </div>

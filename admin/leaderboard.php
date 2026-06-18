@@ -43,7 +43,7 @@ $filter_pool = isset($_GET['pool']) ? $_GET['pool'] : '50m';
                     </select>
                 </div>
                 <div class="w-full md:w-auto">
-                    <button type="submit" class="w-full text-white bg-blue-700 hover:bg-blue-800 font-bold rounded-xl text-sm px-6 py-2.5 shadow-md transition-colors">
+                    <button type="submit" class="w-full text-white bg-algolia-blue hover:bg-algolia-darkblue font-bold rounded-xl text-sm px-6 py-2.5 shadow-md transition-colors">
                         Tampilkan
                     </button>
                 </div>
@@ -56,7 +56,7 @@ $filter_pool = isset($_GET['pool']) ? $_GET['pool'] : '50m';
                     👑 TOP RECORD: <?= strtoupper($filter_style); ?> <?= $filter_distance; ?>M (<?= strtoupper($filter_pool); ?>)
                 </h2>
             </div>
-            <table class="w-full text-sm text-left text-gray-500">
+            <table class="table-algolia">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                     <tr>
                         <th class="px-6 py-4 text-center w-24">Peringkat</th>

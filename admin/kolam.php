@@ -38,7 +38,7 @@ include '../includes/koneksi.php';
         </div>
 
         <div class="card overflow-hidden">
-            <table class="w-full text-sm text-left text-gray-500">
+            <table class="table-algolia">
                 <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
                     <tr>
                         <th class="px-6 py-4">No</th>
@@ -62,7 +62,7 @@ include '../includes/koneksi.php';
                     ?>
                     <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
                         <td class="px-6 py-4 font-medium text-gray-900"><?= $no++; ?></td>
-                        <td class="px-6 py-4 font-bold text-primary-700"><?= htmlspecialchars($data['nama_cabang']); ?></td>
+                        <td class="px-6 py-4 font-bold text-algolia-blue"><?= htmlspecialchars($data['nama_cabang']); ?></td>
                         <td class="px-6 py-4 italic"><?= htmlspecialchars($data['lokasi']); ?></td>
                         <td class="px-6 py-4 text-center space-x-2">
                             <button data-modal-target="modalEdit<?= $data['id']; ?>" data-modal-toggle="modalEdit<?= $data['id']; ?>" class="font-medium text-blue-600 hover:underline">Edit</button>
@@ -72,7 +72,7 @@ include '../includes/koneksi.php';
 
                     <div id="modalEdit<?= $data['id']; ?>" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
                         <div class="relative p-4 w-full max-w-md max-h-full">
-                            <div class="relative bg-white rounded-2xl shadow">
+                            <div class="relative bg-white rounded-xl shadow-lg border border-panel-border">
                                 <div class="flex items-center justify-between p-4 border-b">
                                     <h3 class="text-lg font-semibold text-gray-900">Edit Data Kolam</h3>
                                     <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-toggle="modalEdit<?= $data['id']; ?>">
@@ -89,7 +89,7 @@ include '../includes/koneksi.php';
                                         <label class="block mb-2 text-sm font-medium text-gray-900">Alamat</label>
                                         <textarea name="address" rows="3" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-algolia-blue focus:border-algolia-blue block w-full p-2.5" required><?= htmlspecialchars($data['lokasi']); ?></textarea>
                                     </div>
-                                    <button type="submit" name="edit" class="w-full text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5">Simpan Perubahan</button>
+                                    <button type="submit" name="edit" class="w-full text-white bg-algolia-blue hover:bg-algolia-darkblue font-medium rounded-lg text-sm px-5 py-2.5">Simpan Perubahan</button>
                                 </form>
                             </div>
                         </div>
@@ -103,7 +103,7 @@ include '../includes/koneksi.php';
 
 <div id="modalTambah" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
     <div class="relative p-4 w-full max-w-md max-h-full">
-        <div class="relative bg-white rounded-2xl shadow">
+        <div class="relative bg-white rounded-xl shadow-lg border border-panel-border">
             <div class="flex items-center justify-between p-4 border-b">
                 <h3 class="text-lg font-semibold text-gray-900">Tambah Cabang Baru</h3>
                 <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-toggle="modalTambah">

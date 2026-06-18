@@ -76,13 +76,13 @@ while($r = mysqli_fetch_assoc($q_recent)) {
             </div>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100">
+        <div class="card">
             <div class="p-5 border-b border-gray-100 flex justify-between items-center">
                 <h2 class="text-lg font-bold text-gray-800">5 Pencatatan Waktu Terakhir</h2>
                 <a href="performa.php" class="text-sm font-semibold text-blue-600 hover:underline">Lihat Semua &rarr;</a>
             </div>
             <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left text-gray-500">
+                <table class="table-algolia">
                     <thead class="text-xs text-gray-400 uppercase bg-gray-50">
                         <tr>
                             <th class="px-6 py-3">Atlet</th>

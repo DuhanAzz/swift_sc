@@ -37,7 +37,7 @@ $admin_pool_id = $_SESSION['pool_id'] ?? '';
                     foreach($coaches as $c) {
                         $foto_pelatih = (!empty($c['foto']) && file_exists("../admin/" . $c['foto'])) ? "../admin/" . $c['foto'] : "https://ui-avatars.com/api/?name=" . urlencode($c['nama_pelatih']) . "&background=0f172a&color=fff";
                 ?>
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center gap-4 hover:shadow-md transition-shadow">
+                <div class="card p-4 flex items-center gap-4 hover:shadow-md transition-shadow">
                     <img src="<?= $foto_pelatih ?>" alt="Pelatih" class="w-12 h-12 rounded-full object-cover">
                     <div>
                         <h3 class="font-bold text-gray-800"><?= htmlspecialchars($c['nama']) ?></h3>
@@ -50,12 +50,12 @@ $admin_pool_id = $_SESSION['pool_id'] ?? '';
 
             <!-- Kolom Kanan: Log Performa -->
             <div class="lg:col-span-2">
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100">
+                <div class="card">
                     <div class="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">
                         <h2 class="text-lg font-bold text-gray-800">Catatan Performa Terbaru</h2>
                     </div>
                     <div class="overflow-x-auto p-4">
-                        <table class="w-full text-sm text-left text-gray-500">
+                        <table class="table-algolia">
                             <thead class="text-xs text-gray-400 uppercase bg-gray-50 rounded-lg">
                                 <tr>
                                     <th class="px-4 py-3">Tanggal</th>

@@ -26,13 +26,13 @@ include '../includes/koneksi.php';
                 <h1 class="text-xl font-bold text-algolia-navy">Performa & Rekor Atlet</h1>
                 <p class="text-sm text-gray-500">Pencatatan rekor waktu renang untuk monitoring perkembangan</p>
             </div>
-            <button data-modal-target="modalTambahPerforma" data-modal-toggle="modalTambahPerforma" class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 transition-all shadow-md">
+            <button data-modal-target="modalTambahPerforma" data-modal-toggle="modalTambahPerforma" class="text-white bg-algolia-blue hover:bg-algolia-darkblue font-medium rounded-lg text-sm px-5 py-2.5 transition-all shadow-md">
                 + Catat Waktu Baru
             </button>
         </div>
 
         <div class="card overflow-hidden">
-            <table class="w-full text-sm text-left text-gray-500">
+            <table class="table-algolia">
                 <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
                     <tr>
                         <th class="px-6 py-4">Tanggal</th>
@@ -167,7 +167,7 @@ include '../includes/koneksi.php';
                                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Catatan Pelatih</label>
                                         <textarea name="notes" rows="2" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3"><?= htmlspecialchars($data['catatan'] ?? ''); ?></textarea>
                                     </div>
-                                    <button type="submit" name="edit" class="w-full text-white bg-blue-700 hover:bg-blue-800 font-bold rounded-xl text-sm px-5 py-3 shadow-lg">Update Rekor</button>
+                                    <button type="submit" name="edit" class="w-full text-white bg-algolia-blue hover:bg-algolia-darkblue font-bold rounded-xl text-sm px-5 py-3 shadow-lg">Update Rekor</button>
                                 </form>
                             </div>
                         </div>
@@ -261,7 +261,7 @@ include '../includes/koneksi.php';
                     <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Catatan Pelatih</label>
                     <textarea name="notes" rows="2" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" placeholder="Kondisi atlet, cuaca, atau evaluasi teknik..."></textarea>
                 </div>
-                <button type="submit" name="tambah" class="w-full text-white bg-blue-700 hover:bg-blue-800 font-bold rounded-xl text-sm px-5 py-3 shadow-lg">Simpan Rekor</button>
+                <button type="submit" name="tambah" class="w-full text-white bg-algolia-blue hover:bg-algolia-darkblue font-bold rounded-xl text-sm px-5 py-3 shadow-lg">Simpan Rekor</button>
             </form>
         </div>
     </div>

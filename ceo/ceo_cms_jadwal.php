@@ -40,7 +40,7 @@ include '../includes/koneksi.php';
         </div>
 
         <div class="card overflow-hidden">
-            <table class="w-full text-sm text-left text-gray-500">
+            <table class="table-algolia">
                 <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
                     <tr>
                         <th class="px-6 py-4">Lokasi Kolam Renang</th>

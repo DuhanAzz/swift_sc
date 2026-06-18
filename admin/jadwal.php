@@ -54,7 +54,7 @@ include '../includes/koneksi.php';
                             <label class="block text-xs font-bold text-gray-500 mb-2">Fokus Program (Opsional)</label>
                             <textarea name="program" rows="3" placeholder="Misal: Sprint 50m Gaya Bebas" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5"></textarea>
                         </div>
-                        <button type="submit" name="tambah_jadwal" class="w-full text-white bg-blue-700 hover:bg-blue-800 font-bold rounded-lg text-sm px-5 py-2.5">
+                        <button type="submit" name="tambah_jadwal" class="w-full text-white bg-algolia-blue hover:bg-algolia-darkblue font-bold rounded-lg text-sm px-5 py-2.5">
                             Simpan Jadwal
                         </button>
                     </form>
@@ -62,8 +62,8 @@ include '../includes/koneksi.php';
             </div>
 
             <div class="md:col-span-2">
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <table class="w-full text-sm text-left text-gray-500">
+                <div class="card overflow-hidden">
+                    <table class="table-algolia">
                         <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
                             <tr>
                                 <th class="px-6 py-4">Hari & Waktu</th>

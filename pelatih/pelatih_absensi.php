@@ -67,7 +67,7 @@ if($q_presensi) {
                         $mId = $atlet['id'];
                         $current_status = $presensi_hari_ini[$mId] ?? 'Hadir'; // Default Hadir
                 ?>
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
+                <div class="card p-4">
                     <div class="flex items-center gap-3 mb-3">
                         <div class="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 font-bold uppercase">
                             <?= substr($atlet['nama'], 0, 1) ?>

@@ -109,7 +109,7 @@ $tanggal_absensi = isset($_GET['tanggal']) ? $_GET['tanggal'] : date('Y-m-d');
 
                 <div class="mt-4 flex justify-between items-center bg-gray-100 p-3 border border-gray-300 rounded-md">
                     <p class="text-xs text-gray-600 font-medium">Tips: Gunakan tombol <kbd class="px-1 py-0.5 bg-white border border-gray-300 rounded text-gray-800">Tab</kbd> pada keyboard untuk berpindah sel dengan cepat.</p>
-                    <button type="submit" name="simpan_presensi" class="text-white bg-blue-700 hover:bg-blue-800 font-bold rounded text-sm px-8 py-2.5 shadow-sm transition-transform active:scale-95 flex items-center gap-2">
+                    <button type="submit" name="simpan_presensi" class="text-white bg-algolia-blue hover:bg-algolia-darkblue font-bold rounded text-sm px-8 py-2.5 shadow-sm transition-transform active:scale-95 flex items-center gap-2">
                         <svg class="w-4 h-4 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
                         </svg>

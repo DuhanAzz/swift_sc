@@ -48,7 +48,7 @@ $admin_pool_id = $_SESSION['pool_id'] ?? '';
             <!-- TAB 1: Pendaftar Baru (Pending Members) -->
             <div class="p-4 rounded-lg bg-gray-50" id="pending" role="tabpanel" aria-labelledby="pending-tab">
                 <div class="card overflow-hidden">
-                    <table class="w-full text-sm text-left text-gray-500">
+                    <table class="table-algolia">
                         <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
                             <tr>
                                 <th class="px-6 py-4">Tanggal Daftar</th>
@@ -95,7 +95,7 @@ $admin_pool_id = $_SESSION['pool_id'] ?? '';
                                 <td class="px-6 py-4 text-center">
                                     <form action="admin_member_proses.php" method="POST" class="inline">
                                         <input type="hidden" name="id" value="<?= $d['id']; ?>">
-                                        <button type="submit" name="approve" onclick="return confirm('Setujui pendaftar ini menjadi atlet resmi?')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow text-xs uppercase tracking-wider">Approve</button>
+                                        <button type="submit" name="approve" onclick="return confirm('Setujui pendaftar ini menjadi atlet resmi?')" class="bg-algolia-blue hover:bg-algolia-darkblue text-white font-bold py-2 px-4 rounded shadow text-xs uppercase tracking-wider">Approve</button>
                                     </form>
                                 </td>
                             </tr>
@@ -108,7 +108,7 @@ $admin_pool_id = $_SESSION['pool_id'] ?? '';
             <!-- TAB 2: Data Member Aktif (Atlet) -->
             <div class="hidden p-4 rounded-lg bg-gray-50" id="active" role="tabpanel" aria-labelledby="active-tab">
                 <div class="card overflow-hidden">
-                    <table class="w-full text-sm text-left text-gray-500">
+                    <table class="table-algolia">
                         <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
                             <tr>
                                 <th class="px-6 py-4">NIA / ID</th>

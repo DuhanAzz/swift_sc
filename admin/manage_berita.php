@@ -111,7 +111,7 @@ if (isset($_GET['hapus'])) {
                 </div>
 
                 <div class="lg:col-span-2">
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="card overflow-hidden">
                         <table class="w-full text-left border-collapse">
                             <thead class="bg-slate-800 text-white text-sm uppercase">
                                 <tr>

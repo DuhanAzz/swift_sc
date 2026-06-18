@@ -58,14 +58,14 @@ if (isset($_POST['upload_hero'])) {
                     <h1 class="text-3xl font-black text-slate-800 uppercase">Banner Utama</h1>
                     <p class="text-slate-500 mt-1">Ganti gambar latar belakang "Jump in. let's swim!" di halaman utama.</p>
                 </div>
-                <a href="../index.php" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-all shadow-md">Lihat Halaman Utama</a>
+                <a href="../index.php" target="_blank" class="bg-algolia-blue hover:bg-algolia-darkblue text-white font-bold py-2 px-4 rounded-lg text-sm transition-all shadow-md">Lihat Halaman Utama</a>
             </div>
 
             <?= $pesan; ?>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <!-- Preview -->
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="card overflow-hidden">
                     <div class="p-4 border-b">
                         <h3 class="font-bold text-slate-800">Preview Aktif</h3>
                     </div>
@@ -86,7 +86,7 @@ if (isset($_POST['upload_hero'])) {
                 </div>
 
                 <!-- Form Upload -->
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="card overflow-hidden">
                     <div class="p-4 border-b">
                         <h3 class="font-bold text-slate-800">Unggah Banner Baru</h3>
                     </div>

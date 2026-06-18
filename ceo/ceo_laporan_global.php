@@ -48,7 +48,7 @@ if($q_perf) {
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center justify-between">
+            <div class="card p-6 flex items-center justify-between">
                 <div>
                     <p class="text-xs font-bold text-gray-500 uppercase">Total Pemasukan (Global)</p>
                     <h3 class="text-2xl font-black text-green-600">Rp <?= number_format($total_masuk, 0, ',', '.'); ?></h3>
@@ -57,7 +57,7 @@ if($q_perf) {
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                 </div>
             </div>
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center justify-between">
+            <div class="card p-6 flex items-center justify-between">
                 <div>
                     <p class="text-xs font-bold text-gray-500 uppercase">Total Pengeluaran (Global)</p>
                     <h3 class="text-2xl font-black text-red-600">Rp <?= number_format($total_keluar, 0, ',', '.'); ?></h3>
@@ -83,7 +83,7 @@ if($q_perf) {
             <!-- TAB CASHFLOW -->
             <div class="hidden p-4 rounded-lg bg-gray-50" id="cashflow" role="tabpanel" aria-labelledby="cashflow-tab">
                 <div class="card overflow-hidden">
-                    <table class="w-full text-sm text-left text-gray-500">
+                    <table class="table-algolia">
                         <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
                             <tr>
                                 <th class="px-6 py-4">Tanggal</th>
@@ -113,7 +113,7 @@ if($q_perf) {
             <!-- TAB LEADERBOARD -->
             <div class="hidden p-4 rounded-lg bg-gray-50" id="leaderboard" role="tabpanel" aria-labelledby="leaderboard-tab">
                 <div class="card overflow-hidden">
-                    <table class="w-full text-sm text-left text-gray-500">
+                    <table class="table-algolia">
                         <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
                             <tr>
                                 <th class="px-6 py-4">Rank</th>
