@@ -58,6 +58,26 @@ include '../includes/sidebar.php';
                 </div>
             </a>
 
+            <a href="ceo_cms_tentang.php" class="bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-2xl p-6 shadow-lg text-white hover:scale-105 transition-transform duration-300 relative overflow-hidden group">
+                <div class="absolute -right-4 -bottom-4 opacity-20 group-hover:opacity-40 transition-opacity">
+                    <svg class="w-24 h-24" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                </div>
+                <div class="relative z-10">
+                    <h3 class="text-xl font-bold mb-2">Visi, Misi & Profil</h3>
+                    <p class="text-emerald-100 text-sm">Edit visi, misi, dan deskripsi klub yang tampil di halaman depan.</p>
+                </div>
+            </a>
+
+            <a href="ceo_cms_slider.php" class="bg-gradient-to-br from-amber-500 to-amber-700 rounded-2xl p-6 shadow-lg text-white hover:scale-105 transition-transform duration-300 relative overflow-hidden group">
+                <div class="absolute -right-4 -bottom-4 opacity-20 group-hover:opacity-40 transition-opacity">
+                    <svg class="w-24 h-24" fill="currentColor" viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+                </div>
+                <div class="relative z-10">
+                    <h3 class="text-xl font-bold mb-2">Slider & Banner</h3>
+                    <p class="text-amber-100 text-sm">Kelola gambar slider dan banner promo di halaman depan.</p>
+                </div>
+            </a>
+
         </div>
 
     </div>
