@@ -7,7 +7,7 @@ include '../includes/koneksi.php';
 
 // 1. Mengambil Total Atlet
 $total_atlet = 0;
-$q_atlet = mysqli_query($koneksi, "SELECT COUNT(id) as total FROM member WHERE role='Atlet'");
+$q_atlet = mysqli_query($koneksi, "SELECT COUNT(id) as total FROM member WHERE 1=1");
 if($q_atlet) {
     $total_atlet = mysqli_fetch_assoc($q_atlet)['total'] ?? 0;
 }

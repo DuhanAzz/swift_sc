@@ -54,7 +54,7 @@ include '../includes/koneksi.php';
                     <?php
                     $no = 1;
                     $atletArray = [];
-                    $q_atlet = mysqli_query($koneksi, "SELECT m.*, c.nama_cabang as nama_kolam FROM member m LEFT JOIN cabang c ON m.cabang_id = c.id WHERE m.role='Atlet' ORDER BY m.id DESC");
+                    $q_atlet = mysqli_query($koneksi, "SELECT m.*, c.nama_cabang as nama_kolam FROM member m LEFT JOIN cabang c ON m.cabang_id = c.id WHERE 1=1 ORDER BY m.id DESC");
                     if($q_atlet) {
                         while($row = mysqli_fetch_assoc($q_atlet)) {
                             $atletArray[] = $row;

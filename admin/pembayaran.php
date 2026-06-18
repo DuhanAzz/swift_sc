@@ -56,7 +56,7 @@ $admin_pool_id = $_SESSION['pool_id'] ?? '';
                     <tbody>
                         <?php
                         $q_atlet = [];
-                        $q_str = "SELECT * FROM member WHERE role='Atlet'";
+                        $q_str = "SELECT * FROM member WHERE 1=1";
                         if(!empty($admin_pool_id)) {
                             $q_str .= " AND cabang_id='$admin_pool_id'";
                         }

@@ -24,7 +24,7 @@ if (isset($_POST['edit'])) {
     $no_hp = mysqli_real_escape_string($koneksi, $_POST['no_hp']);
     $id_kolam = mysqli_real_escape_string($koneksi, $_POST['id_kolam']);
 
-    $q = mysqli_query($koneksi, "UPDATE member SET nama='$nama', jenis_kelamin='$jenis_kelamin', no_hp='$no_hp', cabang_id='$id_kolam' WHERE id='$id' AND role='Atlet'");
+    $q = mysqli_query($koneksi, "UPDATE member SET nama='$nama', jenis_kelamin='$jenis_kelamin', no_hp='$no_hp', cabang_id='$id_kolam' WHERE id='$id' ");
     if($q) {
         header("location:atlet.php?pesan=sukses_edit");
     } else {

@@ -13,7 +13,7 @@ $admin_cabang = $_SESSION['cabang'] ?? 'Semua Cabang';
 
 // 1. Mengambil Total Atlet untuk Cabang Ini
 $total_atlet = 0;
-$q_atlet = mysqli_query($koneksi, "SELECT COUNT(id) as total FROM member WHERE role='Atlet' AND cabang_id='$admin_pool_id'");
+$q_atlet = mysqli_query($koneksi, "SELECT COUNT(id) as total FROM member WHERE  cabang_id='$admin_pool_id'");
 if($q_atlet) {
     $total_atlet = mysqli_fetch_assoc($q_atlet)['total'] ?? 0;
 }
