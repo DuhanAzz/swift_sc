@@ -6,7 +6,7 @@ if (isset($_POST['tambah'])) {
     $name = mysqli_real_escape_string($koneksi, $_POST['name']);
     $address = mysqli_real_escape_string($koneksi, $_POST['address']);
 
-    $q = mysqli_query($koneksi, "INSERT INTO cabang (nama_cabang, alamat_cabang) VALUES ('$name', '$address')");
+    $q = mysqli_query($koneksi, "INSERT INTO cabang (nama_cabang, lokasi) VALUES ('$name', '$address')");
     
     if($q) {
         header("location:kolam.php?pesan=sukses_tambah");
@@ -21,7 +21,7 @@ if (isset($_POST['edit'])) {
     $name = mysqli_real_escape_string($koneksi, $_POST['name']);
     $address = mysqli_real_escape_string($koneksi, $_POST['address']);
 
-    $q = mysqli_query($koneksi, "UPDATE cabang SET nama_cabang='$name', alamat_cabang='$address' WHERE id='$id'");
+    $q = mysqli_query($koneksi, "UPDATE cabang SET nama_cabang='$name', lokasi='$address' WHERE id='$id'");
     
     if($q) {
         header("location:kolam.php?pesan=sukses_edit");

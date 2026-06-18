@@ -63,7 +63,7 @@ include '../includes/koneksi.php';
                     <tr class="bg-white border-b hover:bg-blue-50 transition-colors">
                         <td class="px-6 py-4 font-medium text-gray-900"><?= $no++; ?></td>
                         <td class="px-6 py-4 font-bold text-primary-700"><?= htmlspecialchars($data['nama_cabang']); ?></td>
-                        <td class="px-6 py-4 italic"><?= htmlspecialchars($data['alamat_cabang']); ?></td>
+                        <td class="px-6 py-4 italic"><?= htmlspecialchars($data['lokasi']); ?></td>
                         <td class="px-6 py-4 text-center space-x-2">
                             <button data-modal-target="modalEdit<?= $data['id']; ?>" data-modal-toggle="modalEdit<?= $data['id']; ?>" class="font-medium text-blue-600 hover:underline">Edit</button>
                             <a href="hapus_kolam.php?id=<?= $data['id']; ?>" onclick="return confirm('Yakin hapus?')" class="font-medium text-red-600 hover:underline">Hapus</a>
@@ -87,7 +87,7 @@ include '../includes/koneksi.php';
                                     </div>
                                     <div class="mb-4 text-left">
                                         <label class="block mb-2 text-sm font-medium text-gray-900">Alamat</label>
-                                        <textarea name="address" rows="3" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" required><?= htmlspecialchars($data['alamat_cabang']); ?></textarea>
+                                        <textarea name="address" rows="3" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" required><?= htmlspecialchars($data['lokasi']); ?></textarea>
                                     </div>
                                     <button type="submit" name="edit" class="w-full text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5">Simpan Perubahan</button>
                                 </form>
