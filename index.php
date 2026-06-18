@@ -188,6 +188,51 @@ try {
         </div>
     </header>
 
+    <!-- ===== SLIDER / BANNER SECTION (Dynamic from CMS) ===== -->
+    <?php if(count($sliders) > 0 || count($banners) > 0): ?>
+    <section class="bg-gray-50 py-10 lg:py-14">
+        <div class="max-w-6xl mx-auto px-4 lg:px-10">
+            <?php if(count($banners) > 0): ?>
+            <div class="grid grid-cols-1 md:grid-cols-<?= min(count($banners), 3) ?> gap-4 mb-6">
+                <?php foreach($banners as $bn): ?>
+                <a href="<?= htmlspecialchars($bn['link'] ?? '#') ?>" class="group block rounded-xl overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow">
+                    <div class="h-40 bg-cover bg-center" style="background-image: url('admin/uploads/<?= htmlspecialchars($bn['gambar']) ?>');"></div>
+                    <?php if(!empty($bn['judul'])): ?>
+                    <div class="p-4 bg-white">
+                        <h4 class="font-sora font-semibold text-sm text-gray-900"><?= htmlspecialchars($bn['judul']) ?></h4>
+                        <?php if(!empty($bn['subjudul'])): ?>
+                        <p class="text-xs text-gray-500 mt-1"><?= htmlspecialchars($bn['subjudul']) ?></p>
+                        <?php endif; ?>
+                    </div>
+                    <?php endif; ?>
+                </a>
+                <?php endforeach; ?>
+            </div>
+            <?php endif; ?>
+
+            <?php if(count($sliders) > 0): ?>
+            <div class="relative overflow-hidden rounded-xl" id="sliderContainer">
+                <div class="flex transition-transform duration-500" id="sliderTrack">
+                    <?php foreach($sliders as $sl): ?>
+                    <div class="w-full flex-shrink-0">
+                        <img src="admin/uploads/<?= htmlspecialchars($sl['gambar']) ?>" alt="Slider" class="w-full h-56 lg:h-80 object-cover rounded-xl">
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+                <?php if(count($sliders) > 1): ?>
+                <button onclick="moveSlider(-1)" class="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 hover:bg-white rounded-full shadow flex items-center justify-center">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <button onclick="moveSlider(1)" class="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 hover:bg-white rounded-full shadow flex items-center justify-center">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+                <?php endif; ?>
+            </div>
+            <?php endif; ?>
+        </div>
+    </section>
+    <?php endif; ?>
+
     <!-- ===== TENTANG SECTION ===== -->
     <section id="tentang" class="bg-white py-20 lg:py-28">
         <div class="max-w-6xl mx-auto px-4 lg:px-10">
