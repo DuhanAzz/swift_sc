@@ -17,8 +17,13 @@ if (isset($_POST['approve'])) {
         if ($res_calon && mysqli_num_rows($res_calon) > 0) {
             $pendingData = mysqli_fetch_assoc($res_calon);
             
-            // 2. Buat ID NIA (Nomor Induk Atlet) sederhana
-            $nia = 'SWF-' . date('Y') . '-' . rand(1000, 9999);
+            // 2. Buat ID NIA (Nomor Induk Atlet) — sequential
+            $q_last_nia = mysqli_query($koneksi, "SELECT id FROM member ORDER BY id DESC LIMIT 1");
+            $next_num = 1;
+            if($q_last_nia && $r_nia = mysqli_fetch_assoc($q_last_nia)) {
+                $next_num = $r_nia['id'] + 1;
+            }
+            $nia = 'SWF-' . date('Y') . '-' . str_pad($next_num, 4, '0', STR_PAD_LEFT);
 
             $calon_member_id = $pendingData['id'];
             $cabang_id = $pendingData['cabang_id'];
@@ -39,6 +44,13 @@ if (isset($_POST['approve'])) {
                 
                 // Get the newly inserted member ID for invoice
                 $new_member_id = mysqli_insert_id($koneksi);
+                // Fallback if insert_id returns 0
+                if($new_member_id == 0) {
+                    $q_find = mysqli_query($koneksi, "SELECT id FROM member WHERE calon_member_id='$calon_member_id' LIMIT 1");
+                    if($q_find && $r_find = mysqli_fetch_assoc($q_find)) {
+                        $new_member_id = $r_find['id'];
+                    }
+                }
                 
                 header("location:admin_member.php?pesan=sukses_approve&invoice_id=" . $new_member_id);
                 exit;
