@@ -12,7 +12,10 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
         </svg>
     </button>
-    <span class="font-bold text-base text-algolia-navy">SWIFT<span class="text-algolia-blue">_SC</span></span>
+    <div class="flex items-center gap-1.5">
+        <img src="../assets/logo.png" alt="Swift SC" class="h-7 w-7 object-contain rounded" onerror="this.style.display='none'">
+        <span class="font-bold text-sm text-algolia-navy">Swift<span class="text-algolia-blue">SC</span></span>
+    </div>
     <div class="w-8 h-8 rounded-full bg-algolia-blue flex items-center justify-center">
         <span class="text-white text-xs font-bold"><?= strtoupper(substr($nama, 0, 1)) ?></span>
     </div>
@@ -26,11 +29,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
     
     <!-- Logo -->
     <div class="px-4 pt-5 pb-3 flex items-center gap-2.5 border-b border-white/[0.06] mb-2">
-        <div class="w-7 h-7 rounded-lg bg-algolia-blue flex items-center justify-center flex-shrink-0">
-            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-        </div>
+        <img src="../assets/logo.png" alt="Swift SC" class="h-7 w-7 object-contain rounded flex-shrink-0" onerror="this.onerror=null; this.outerHTML='<div class=\'w-7 h-7 rounded-lg bg-algolia-blue flex items-center justify-center flex-shrink-0\'><svg class=\'w-4 h-4 text-white\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2.5\' d=\'M13 10V3L4 14h7v7l9-11h-7z\'></path></svg></div>';">
         <div>
-            <span class="font-bold text-[15px] text-white tracking-tight">SWIFT<span class="text-algolia-blue">_SC</span></span>
+            <span class="font-bold text-[15px] text-white tracking-tight">Swift<span class="text-algolia-blue">SC</span></span>
         </div>
     </div>
     

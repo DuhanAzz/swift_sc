@@ -37,9 +37,10 @@ if (isset($_SESSION['status']) && $_SESSION['status'] == "sudah_login") {
     <div class="w-full max-w-sm">
         <!-- Logo -->
         <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#5468FF] mb-4">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-            </div>
+            <a href="index.php" class="inline-flex items-center gap-2 mb-4">
+                <img src="assets/logo.png" alt="Swift SC" class="h-10 w-10 object-contain rounded-lg" onerror="this.onerror=null; this.outerHTML='<div class=\'w-10 h-10 rounded-lg bg-[#5468FF] flex items-center justify-center\'><svg class=\'w-5 h-5 text-white\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2.5\' d=\'M13 10V3L4 14h7v7l9-11h-7z\'></path></svg></div>';">
+                <span class="font-bold text-[15px] text-[#21243D]">Swift<span class="text-[#5468FF]">SC</span></span>
+            </a>
             <h1 class="text-xl font-bold text-[#21243D]">Log in to Swift SC</h1>
             <p class="text-sm text-gray-500 mt-1">Sistem Manajemen Swimming Club</p>
         </div>

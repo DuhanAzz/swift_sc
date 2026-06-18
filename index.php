@@ -22,16 +22,24 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Swift SC — Jump in. let's swim!</title>
+    <title>Swift SC — <?= htmlspecialchars($cmsData['hero_title']) ?></title>
     <meta name="description" content="Swift Swimming Club - Klub renang resmi dan tersertifikasi dengan pelatih berlisensi nasional & internasional.">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        algolia: { blue: '#5468FF', darkblue: '#3A4DC7', navy: '#21243D' },
+                        xenon: {
+                            50: '#f0f1ff', 100: '#e0e3ff', 200: '#c7cbff', 300: '#a3a8ff',
+                            400: '#5468FF', 500: '#3A4DC7', 600: '#003DFF', 700: '#002eb3',
+                            800: '#1a1c3a', 900: '#0d0f2b', 950: '#07081a'
+                        },
+                    },
+                    fontFamily: {
+                        sora: ['Sora', 'sans-serif'],
+                        inter: ['Inter', 'sans-serif'],
                     }
                 }
             }
@@ -39,136 +47,207 @@ try {
     </script>
     <style>
         body { font-family: 'Inter', system-ui, sans-serif; }
-        .hero-gradient {
-            background: linear-gradient(135deg, #21243D 0%, #2D3167 50%, #21243D 100%);
+        .blue-gradient { background: linear-gradient(135deg, #003DFF 0%, #5468FF 100%); }
+        .hero-bg { 
+            background: #0d0f2b;
+            background-image: 
+                radial-gradient(ellipse at 30% 50%, rgba(0,61,255,0.15) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 30%, rgba(84,104,255,0.1) 0%, transparent 50%);
         }
-        .section-fade { animation: sectionFade 0.5s ease-out; }
-        @keyframes sectionFade {
-            from { opacity: 0; transform: translateY(12px); }
+        .card-hover-gradient:hover .gradient-line {
+            width: 100%;
+        }
+        .gradient-line {
+            transition: width 0.4s ease;
+        }
+        .stat-glow { 
+            text-shadow: 0 0 40px rgba(84,104,255,0.3);
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        .fade-up { animation: fadeUp 0.6s ease-out forwards; }
+        .fade-up-delay-1 { animation-delay: 0.1s; opacity: 0; }
+        .fade-up-delay-2 { animation-delay: 0.2s; opacity: 0; }
+        .fade-up-delay-3 { animation-delay: 0.3s; opacity: 0; }
     </style>
 </head>
-<body class="bg-[#F5F5FA] text-[#21243D] antialiased">
+<body class="bg-white text-gray-900 antialiased font-inter">
     
-    <!-- Navbar -->
-    <nav class="bg-white border-b border-[#E8E8EF] sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto flex justify-between items-center px-4 h-14">
-            <a href="index.php" class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-lg bg-[#5468FF] flex items-center justify-center">
-                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                </div>
-                <span class="font-bold text-[15px] text-[#21243D]">SWIFT<span class="text-[#5468FF]">_SC</span></span>
+    <!-- ===== NAVBAR (Algolia Dark Style) ===== -->
+    <nav class="bg-xenon-900 sticky top-0 z-50 border-b border-white/5">
+        <div class="max-w-[1440px] mx-auto flex justify-between items-center px-4 lg:px-10 h-16">
+            <a href="index.php" class="flex items-center gap-3 group">
+                <img src="assets/logo.png" alt="Swift SC Logo" class="h-9 w-9 object-contain rounded-lg" onerror="this.onerror=null; this.outerHTML='<div class=\'h-9 w-9 rounded-lg bg-xenon-400 flex items-center justify-center\'><svg class=\'w-5 h-5 text-white\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2.5\' d=\'M13 10V3L4 14h7v7l9-11h-7z\'></path></svg></div>';">
+                <span class="font-sora font-bold text-white text-base tracking-tight">Swift<span class="text-xenon-400">SC</span></span>
             </a>
 
-            <div class="hidden md:flex items-center gap-6 text-sm font-medium">
-                <a href="#tentang" class="text-[#6B6F8D] hover:text-[#21243D] transition-colors">Profil</a>
-                <a href="#program" class="text-[#6B6F8D] hover:text-[#21243D] transition-colors">Program</a>
-                <a href="#jadwal" class="text-[#6B6F8D] hover:text-[#21243D] transition-colors">Jadwal</a>
-                <a href="#pelatih" class="text-[#6B6F8D] hover:text-[#21243D] transition-colors">Pelatih</a>
-                <a href="login.php" class="bg-[#5468FF] hover:bg-[#3A4DC7] text-white px-4 py-2 rounded-lg font-semibold text-xs transition-colors ml-2">Login Portal</a>
+            <div class="hidden md:flex items-center gap-1 text-sm">
+                <a href="#tentang" class="text-gray-400 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-white/5 font-medium">Profil</a>
+                <a href="#program" class="text-gray-400 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-white/5 font-medium">Program</a>
+                <a href="#jadwal" class="text-gray-400 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-white/5 font-medium">Jadwal</a>
+                <a href="#pelatih" class="text-gray-400 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-white/5 font-medium">Pelatih</a>
+                <a href="#berita" class="text-gray-400 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-white/5 font-medium">Berita</a>
+                <div class="w-px h-5 bg-white/10 mx-2"></div>
+                <a href="login.php" class="text-gray-300 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-white/5 font-medium">Login</a>
+                <a href="pendaftaran.php" class="blue-gradient text-white px-5 py-2 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity ml-1">Daftar Sekarang</a>
             </div>
 
-            <!-- Mobile menu button -->
-            <button id="mobileMenuBtn" class="md:hidden p-2 text-[#6B6F8D] hover:text-[#21243D]">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            <button id="mobileMenuBtn" class="md:hidden p-2 text-gray-400 hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             </button>
         </div>
-        <!-- Mobile menu -->
-        <div id="mobileMenu" class="hidden md:hidden border-t border-[#E8E8EF] bg-white px-4 pb-4 pt-2 space-y-2">
-            <a href="#tentang" class="block py-2 text-sm text-[#6B6F8D] font-medium">Profil</a>
-            <a href="#program" class="block py-2 text-sm text-[#6B6F8D] font-medium">Program</a>
-            <a href="#jadwal" class="block py-2 text-sm text-[#6B6F8D] font-medium">Jadwal & Biaya</a>
-            <a href="#pelatih" class="block py-2 text-sm text-[#6B6F8D] font-medium">Pelatih</a>
-            <a href="login.php" class="block py-2 text-sm text-[#5468FF] font-semibold">Login Portal →</a>
+        <div id="mobileMenu" class="hidden md:hidden bg-xenon-900 border-t border-white/5 px-4 pb-4 pt-2 space-y-1">
+            <a href="#tentang" class="block py-2.5 text-sm text-gray-400 hover:text-white font-medium">Profil</a>
+            <a href="#program" class="block py-2.5 text-sm text-gray-400 hover:text-white font-medium">Program</a>
+            <a href="#jadwal" class="block py-2.5 text-sm text-gray-400 hover:text-white font-medium">Jadwal & Biaya</a>
+            <a href="#pelatih" class="block py-2.5 text-sm text-gray-400 hover:text-white font-medium">Pelatih</a>
+            <a href="#berita" class="block py-2.5 text-sm text-gray-400 hover:text-white font-medium">Berita</a>
+            <div class="border-t border-white/5 pt-3 mt-2 flex flex-col gap-2">
+                <a href="login.php" class="text-sm text-gray-300 font-medium py-2">Login Portal</a>
+                <a href="pendaftaran.php" class="blue-gradient text-white px-5 py-2.5 rounded-lg font-semibold text-sm text-center">Daftar Sekarang</a>
+            </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <header class="hero-gradient relative overflow-hidden">
+    <!-- ===== HERO SECTION (Algolia Dark Hero) ===== -->
+    <header class="hero-bg relative overflow-hidden">
         <?php if (file_exists('admin/uploads/hero_bg.jpg')): ?>
-            <div class="absolute inset-0 bg-cover bg-center opacity-20" style="background-image: url('admin/uploads/hero_bg.jpg?v=<?= time() ?>');"></div>
+            <div class="absolute inset-0 bg-cover bg-center opacity-15" style="background-image: url('admin/uploads/hero_bg.jpg?v=<?= time() ?>');"></div>
         <?php endif; ?>
         
-        <!-- Subtle decorative circles (no blur = no lag) -->
-        <div class="absolute top-10 right-10 w-64 h-64 rounded-full bg-[#5468FF]/10"></div>
-        <div class="absolute bottom-10 left-10 w-48 h-48 rounded-full bg-[#5468FF]/5"></div>
-
-        <div class="relative max-w-4xl mx-auto text-center px-4 py-20 lg:py-28">
-            <p class="text-[#9CA0B8] text-sm font-semibold uppercase tracking-wider mb-4"><?= htmlspecialchars($cmsData['hero_subtitle']) ?></p>
-            <h1 class="text-4xl md:text-6xl font-extrabold text-white leading-tight mb-6"><?= htmlspecialchars($cmsData['hero_title']) ?></h1>
-            <p class="text-lg text-[#B8BBCF] max-w-2xl mx-auto mb-10"><?= htmlspecialchars($cmsData['hero_desc']) ?></p>
-            <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                <a href="pendaftaran.php" class="bg-[#5468FF] hover:bg-[#3A4DC7] text-white font-semibold px-8 py-3 rounded-lg text-sm transition-colors">Daftar Sekarang</a>
-                <a href="#tentang" class="bg-white/10 hover:bg-white/20 text-white font-medium px-8 py-3 rounded-lg text-sm transition-colors border border-white/20">Pelajari Lebih Lanjut</a>
+        <div class="relative max-w-[1440px] mx-auto flex flex-col lg:flex-row items-center">
+            <!-- Left: Text Content -->
+            <div class="w-full lg:w-1/2 px-6 lg:pl-20 py-16 lg:py-28 text-center lg:text-left">
+                <h1 class="font-sora font-bold text-white mb-6 text-[40px] sm:text-[56px] lg:text-[70px] leading-[105%] tracking-[-3px] fade-up">
+                    <?= htmlspecialchars($cmsData['hero_title']) ?>
+                </h1>
+                <p class="font-sora text-base sm:text-lg lg:text-[19px] font-normal leading-relaxed text-gray-300 mb-0 max-w-[430px] mx-auto lg:mx-0 fade-up fade-up-delay-1">
+                    <?= htmlspecialchars($cmsData['hero_desc']) ?>
+                </p>
+                
+                <div class="flex justify-center lg:justify-start gap-3 mt-9 fade-up fade-up-delay-2">
+                    <a href="pendaftaran.php" class="blue-gradient text-white px-6 lg:px-8 py-3.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity inline-flex items-center gap-2">
+                        Daftar Sekarang
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                    </a>
+                    <a href="#tentang" class="border border-white/20 text-white px-6 lg:px-8 py-3.5 rounded-lg font-medium text-sm hover:bg-white/5 transition-colors">
+                        Pelajari Lebih Lanjut
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Right: Stats / Key Numbers -->
+            <div class="w-full lg:w-1/2 px-6 lg:px-16 pb-16 lg:py-28">
+                <div class="grid grid-cols-2 gap-6 max-w-md mx-auto lg:mx-0 lg:ml-auto">
+                    <div class="text-center lg:text-left">
+                        <p class="font-sora text-4xl lg:text-5xl font-bold text-white stat-glow">4+</p>
+                        <p class="text-gray-400 text-sm mt-1 font-medium">Cabang Latihan</p>
+                    </div>
+                    <div class="text-center lg:text-left">
+                        <p class="font-sora text-4xl lg:text-5xl font-bold text-white stat-glow">50+</p>
+                        <p class="text-gray-400 text-sm mt-1 font-medium">Atlet Aktif</p>
+                    </div>
+                    <div class="text-center lg:text-left">
+                        <p class="font-sora text-4xl lg:text-5xl font-bold text-xenon-400 stat-glow">C</p>
+                        <p class="text-gray-400 text-sm mt-1 font-medium">Lisensi Nasional</p>
+                    </div>
+                    <div class="text-center lg:text-left">
+                        <p class="font-sora text-4xl lg:text-5xl font-bold text-white stat-glow">ASCA</p>
+                        <p class="text-gray-400 text-sm mt-1 font-medium">Lv. 1 & 2 Certified</p>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 py-16 space-y-20">
-        
-        <!-- PROFIL & PROGRAM -->
-        <section id="tentang" class="grid grid-cols-1 md:grid-cols-2 gap-10 items-start section-fade">
-            <div>
-                <p class="text-xs font-semibold text-[#5468FF] uppercase tracking-wider mb-2">Tentang Kami</p>
-                <h2 class="text-2xl font-bold text-[#21243D] mb-4">Swift Swimming Club</h2>
-                <p class="text-[#6B6F8D] leading-relaxed mb-6"><?= nl2br(htmlspecialchars($cmsData['about_text'])) ?></p>
+    <!-- ===== TENTANG SECTION ===== -->
+    <section id="tentang" class="bg-white py-20 lg:py-28">
+        <div class="max-w-6xl mx-auto px-4 lg:px-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+                <div>
+                    <span class="inline-block text-xenon-400 text-xs font-semibold uppercase tracking-widest mb-4 font-sora">Tentang Kami</span>
+                    <h2 class="font-sora font-bold text-gray-900 text-3xl lg:text-[2.625rem] lg:leading-[3.4rem] tracking-[-0.01em] mb-6"><?= htmlspecialchars($cmsData['hero_subtitle']) ?></h2>
+                    <p class="text-gray-600 leading-relaxed text-base lg:text-lg"><?= nl2br(htmlspecialchars($cmsData['about_text'])) ?></p>
+                </div>
                 
-                <p class="text-xs font-semibold text-[#6B6F8D] uppercase tracking-wider mb-3">Menerima Siswa-Siswi Baru:</p>
-                <div class="space-y-2">
-                    <div class="flex items-center gap-3 bg-white p-3 rounded-lg border border-[#E8E8EF]">
-                        <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
-                            <svg class="w-4 h-4 text-[#5468FF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <div class="space-y-3">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4 font-sora">Menerima Siswa-Siswi Baru</p>
+                    
+                    <div class="group flex items-center gap-4 p-5 bg-gray-50 rounded-xl border border-gray-100 hover:border-xenon-200 hover:bg-xenon-50/30 transition-all cursor-default relative overflow-hidden card-hover-gradient">
+                        <div class="w-10 h-10 rounded-lg blue-gradient flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                         </div>
-                        <div><span class="text-sm font-semibold text-[#21243D]">Grup</span> <span class="text-xs text-[#9CA0B8] ml-1">(Min. usia 4 tahun)</span></div>
-                    </div>
-                    <div class="flex items-center gap-3 bg-white p-3 rounded-lg border border-[#E8E8EF]">
-                        <div class="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0">
-                            <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        <div>
+                            <p class="font-sora font-semibold text-gray-900">Grup</p>
+                            <p class="text-sm text-gray-500">Min. usia 4 tahun</p>
                         </div>
-                        <div><span class="text-sm font-semibold text-[#21243D]">Privat</span> <span class="text-xs text-[#9CA0B8] ml-1">(Tidak ada Min. usia)</span></div>
+                        <div class="gradient-line absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-purple-600"></div>
                     </div>
-                    <div class="flex items-center gap-3 bg-white p-3 rounded-lg border border-[#E8E8EF]">
-                        <div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center flex-shrink-0">
-                            <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                        </div>
-                        <div><span class="text-sm font-semibold text-[#21243D]">Persiapan TNI/Polri</span></div>
-                    </div>
-                </div>
-            </div>
-            
-            <div id="program" class="bg-white rounded-xl border border-[#E8E8EF] p-6">
-                <div class="flex items-center gap-2 mb-5">
-                    <span class="inline-flex items-center gap-1 bg-[#EEF0FF] text-[#5468FF] text-[11px] font-semibold px-2.5 py-1 rounded">
-                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-                        Tersertifikasi
-                    </span>
-                </div>
-                <h3 class="text-lg font-bold text-[#21243D] mb-4">Badan Sertifikasi Resmi</h3>
-                <div class="grid grid-cols-2 gap-2">
-                    <div class="bg-[#F5F5FA] p-3 rounded-lg text-center"><span class="text-xs font-semibold text-[#5468FF]">Swim Clinic</span></div>
-                    <div class="bg-[#F5F5FA] p-3 rounded-lg text-center"><span class="text-xs font-semibold text-[#5468FF]">ASCA Lv. 1</span></div>
-                    <div class="bg-[#F5F5FA] p-3 rounded-lg text-center"><span class="text-xs font-semibold text-[#5468FF]">ASCA Lv. 2</span></div>
-                    <div class="bg-[#F5F5FA] p-3 rounded-lg text-center"><span class="text-xs font-semibold text-[#5468FF]">SK Club Swift</span></div>
-                    <div class="bg-[#EEF0FF] p-3 rounded-lg text-center col-span-2 border border-[#5468FF]/10"><span class="text-xs font-semibold text-[#5468FF]">Lisensi Kategori C Nasional</span></div>
-                </div>
-            </div>
-        </section>
 
-        <!-- JADWAL DAN BIAYA -->
-        <section id="jadwal" class="section-fade">
-            <div class="text-center mb-8">
-                <p class="text-xs font-semibold text-[#5468FF] uppercase tracking-wider mb-2">Jadwal & Biaya</p>
-                <h2 class="text-2xl font-bold text-[#21243D]">Lokasi dan Jadwal Latihan</h2>
+                    <div class="group flex items-center gap-4 p-5 bg-gray-50 rounded-xl border border-gray-100 hover:border-xenon-200 hover:bg-xenon-50/30 transition-all cursor-default relative overflow-hidden card-hover-gradient">
+                        <div class="w-10 h-10 rounded-lg blue-gradient flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        </div>
+                        <div>
+                            <p class="font-sora font-semibold text-gray-900">Privat</p>
+                            <p class="text-sm text-gray-500">Tidak ada batas usia</p>
+                        </div>
+                        <div class="gradient-line absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-purple-600"></div>
+                    </div>
+
+                    <div class="group flex items-center gap-4 p-5 bg-gray-50 rounded-xl border border-gray-100 hover:border-xenon-200 hover:bg-xenon-50/30 transition-all cursor-default relative overflow-hidden card-hover-gradient">
+                        <div class="w-10 h-10 rounded-lg blue-gradient flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                        </div>
+                        <div>
+                            <p class="font-sora font-semibold text-gray-900">Persiapan TNI/Polri</p>
+                            <p class="text-sm text-gray-500">Program khusus seleksi</p>
+                        </div>
+                        <div class="gradient-line absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-purple-600"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SERTIFIKASI SECTION (Dark) ===== -->
+    <section id="program" class="bg-xenon-900 py-20 lg:py-24">
+        <div class="max-w-6xl mx-auto px-4 lg:px-10 text-center">
+            <span class="inline-block text-xenon-400 text-xs font-semibold uppercase tracking-widest mb-4 font-sora">Tersertifikasi</span>
+            <h2 class="font-sora font-bold text-white text-3xl lg:text-[2.625rem] lg:leading-[3.4rem] tracking-[-0.01em] mb-12">Badan Sertifikasi Resmi</h2>
+            
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 max-w-4xl mx-auto">
+                <?php 
+                $certs = ['Swim Clinic', 'ASCA Level 1', 'ASCA Level 2', 'SK Club Swift Sleman', 'Lisensi Kat. C Nasional'];
+                foreach($certs as $i => $cert): 
+                    $isLast = ($i === count($certs) - 1);
+                ?>
+                <div class="<?= $isLast ? 'col-span-2 md:col-span-1' : '' ?> bg-white/5 border border-white/10 rounded-xl p-5 hover:bg-white/10 hover:border-xenon-400/30 transition-all">
+                    <p class="font-sora text-sm font-semibold text-white"><?= $cert ?></p>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== JADWAL & BIAYA ===== -->
+    <section id="jadwal" class="bg-white py-20 lg:py-28">
+        <div class="max-w-6xl mx-auto px-4 lg:px-10">
+            <div class="text-center mb-12">
+                <span class="inline-block text-xenon-400 text-xs font-semibold uppercase tracking-widest mb-4 font-sora">Jadwal & Biaya</span>
+                <h2 class="font-sora font-bold text-gray-900 text-3xl lg:text-[2.625rem] lg:leading-[3.4rem] tracking-[-0.01em]">Lokasi dan Jadwal Latihan</h2>
             </div>
             
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="lg:col-span-2 bg-white rounded-xl border border-[#E8E8EF] overflow-hidden">
+                <!-- Table -->
+                <div class="lg:col-span-2 rounded-xl border border-gray-200 overflow-hidden">
                     <table class="w-full text-left text-sm">
                         <thead>
-                            <tr class="text-[11px] text-[#6B6F8D] uppercase tracking-wider bg-[#FAFAFE]">
-                                <th class="px-5 py-3 font-semibold">Lokasi Kolam Renang</th>
-                                <th class="px-5 py-3 font-semibold">Jadwal Latihan</th>
+                            <tr class="bg-gray-50 text-[11px] text-gray-500 uppercase tracking-wider font-sora">
+                                <th class="px-6 py-4 font-semibold">Lokasi Kolam</th>
+                                <th class="px-6 py-4 font-semibold">Jadwal</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -176,68 +255,66 @@ try {
                             $schedules = [];
                             try {
                                 $q_jadwal = mysqli_query($koneksi, "SELECT * FROM jadwal ORDER BY id ASC");
-                                while($row = mysqli_fetch_assoc($q_jadwal)) {
-                                    $schedules[] = $row;
-                                }
+                                while($row = mysqli_fetch_assoc($q_jadwal)) { $schedules[] = $row; }
                             } catch (\Exception $e) {}
                             if(count($schedules) > 0) {
                                 foreach($schedules as $s) {
                             ?>
-                            <tr class="border-t border-[#F0F0F5] hover:bg-[#FAFAFE] transition-colors">
-                                <td class="px-5 py-3 font-medium text-[#21243D]"><?= htmlspecialchars($s['lokasi']) ?></td>
-                                <td class="px-5 py-3 text-[#4A4F6A]"><?= htmlspecialchars($s['hari']) ?> <span class="text-[#9CA0B8] text-xs">(<?= date('H:i', strtotime($s['jam_mulai'])) ?> - <?= date('H:i', strtotime($s['jam_selesai'])) ?> WIB)</span></td>
+                            <tr class="border-t border-gray-100 hover:bg-gray-50/50 transition-colors">
+                                <td class="px-6 py-4 font-medium text-gray-900"><?= htmlspecialchars($s['lokasi']) ?></td>
+                                <td class="px-6 py-4 text-gray-600"><?= htmlspecialchars($s['hari']) ?> <span class="text-gray-400 text-xs">(<?= date('H:i', strtotime($s['jam_mulai'])) ?>–<?= date('H:i', strtotime($s['jam_selesai'])) ?> WIB)</span></td>
                             </tr>
                             <?php } } else { ?>
-                            <tr><td colspan="2" class="px-5 py-8 text-center text-[#9CA0B8]">Jadwal latihan belum tersedia.</td></tr>
+                            <tr><td colspan="2" class="px-6 py-10 text-center text-gray-400">Jadwal belum tersedia.</td></tr>
                             <?php } ?>
                         </tbody>
                     </table>
                 </div>
                 
-                <!-- BIAYA -->
-                <div class="bg-white rounded-xl border border-[#E8E8EF] p-6">
-                    <h3 class="text-base font-bold text-[#21243D] mb-4">Biaya</h3>
+                <!-- Biaya Card -->
+                <div class="rounded-xl border border-gray-200 p-6 flex flex-col">
+                    <h3 class="font-sora font-bold text-gray-900 text-lg mb-5">Biaya</h3>
                     
-                    <div class="space-y-4">
-                        <div class="bg-[#F5F5FA] p-4 rounded-lg">
-                            <p class="text-[11px] font-semibold text-[#6B6F8D] uppercase mb-2">Paket Reguler</p>
-                            <div class="flex justify-between items-center border-b border-[#E8E8EF] pb-2 mb-2">
-                                <span class="text-sm text-[#4A4F6A]">Pendaftaran</span>
-                                <span class="text-sm font-bold text-[#5468FF]">Rp 100.000</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-sm text-[#4A4F6A]">SPP (8 Sesi)</span>
-                                <span class="text-sm font-bold text-[#5468FF]">Rp 225.000</span>
-                            </div>
+                    <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                        <p class="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-3 font-sora">Paket Reguler</p>
+                        <div class="flex justify-between border-b border-gray-200 pb-2.5 mb-2.5">
+                            <span class="text-sm text-gray-600">Pendaftaran</span>
+                            <span class="text-sm font-bold text-xenon-400">Rp 100.000</span>
                         </div>
-                        
-                        <div class="bg-[#EEF0FF] p-4 rounded-lg border border-[#5468FF]/10">
-                            <p class="text-[11px] font-semibold text-[#5468FF] uppercase mb-2">* Khusus Umbang Tirta</p>
-                            <div class="flex justify-between items-center border-b border-[#5468FF]/10 pb-2 mb-2">
-                                <span class="text-xs text-[#4A4F6A]">Pendaftaran</span>
-                                <span class="text-xs font-bold text-[#5468FF]">Rp 100.000</span>
-                            </div>
-                            <div class="flex justify-between items-center border-b border-[#5468FF]/10 pb-2 mb-2">
-                                <span class="text-xs text-[#4A4F6A]">4 Sesi/bulan</span>
-                                <span class="text-xs font-bold text-[#5468FF]">Rp 150.000</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-xs text-[#4A4F6A]">8 Sesi/bulan</span>
-                                <span class="text-xs font-bold text-[#5468FF]">Rp 200.000</span>
-                            </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">SPP (8 Sesi)</span>
+                            <span class="text-sm font-bold text-xenon-400">Rp 225.000</span>
                         </div>
                     </div>
                     
-                    <a href="pendaftaran.php" class="block w-full text-center bg-[#5468FF] hover:bg-[#3A4DC7] text-white font-semibold py-3 rounded-lg text-sm mt-5 transition-colors">Daftar Sekarang</a>
+                    <div class="bg-xenon-50 rounded-lg p-4 border border-xenon-100 mb-6">
+                        <p class="text-[11px] font-semibold text-xenon-400 uppercase tracking-wider mb-3 font-sora">Khusus Umbang Tirta</p>
+                        <div class="flex justify-between border-b border-xenon-100 pb-2 mb-2">
+                            <span class="text-xs text-gray-600">Pendaftaran</span>
+                            <span class="text-xs font-bold text-xenon-400">Rp 100.000</span>
+                        </div>
+                        <div class="flex justify-between border-b border-xenon-100 pb-2 mb-2">
+                            <span class="text-xs text-gray-600">4 Sesi/bulan</span>
+                            <span class="text-xs font-bold text-xenon-400">Rp 150.000</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-xs text-gray-600">8 Sesi/bulan</span>
+                            <span class="text-xs font-bold text-xenon-400">Rp 200.000</span>
+                        </div>
+                    </div>
+                    
+                    <a href="pendaftaran.php" class="blue-gradient text-white px-6 py-3 rounded-lg font-semibold text-sm text-center hover:opacity-90 transition-opacity mt-auto">Daftar Sekarang</a>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- TIM KEPELATIHAN -->
-        <section id="pelatih" class="section-fade">
-            <div class="text-center mb-8">
-                <p class="text-xs font-semibold text-[#5468FF] uppercase tracking-wider mb-2">Tim Kami</p>
-                <h2 class="text-2xl font-bold text-[#21243D]">Tim Kepelatihan</h2>
+    <!-- ===== PELATIH SECTION (Dark) ===== -->
+    <section id="pelatih" class="bg-xenon-900 py-20 lg:py-24">
+        <div class="max-w-6xl mx-auto px-4 lg:px-10">
+            <div class="text-center mb-12">
+                <span class="inline-block text-xenon-400 text-xs font-semibold uppercase tracking-widest mb-4 font-sora">Tim Kami</span>
+                <h2 class="font-sora font-bold text-white text-3xl lg:text-[2.625rem] lg:leading-[3.4rem] tracking-[-0.01em]">Tim Kepelatihan</h2>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <?php
@@ -247,122 +324,137 @@ try {
                     if(!$q_pelatih || mysqli_num_rows($q_pelatih) == 0) {
                         $q_pelatih = mysqli_query($koneksi, "SELECT * FROM pelatih LIMIT 3");
                     }
-                    while($row = mysqli_fetch_assoc($q_pelatih)) {
-                        $pelatihList[] = $row;
-                    }
+                    while($row = mysqli_fetch_assoc($q_pelatih)) { $pelatihList[] = $row; }
                 } catch (\Exception $e) {}
                 
                 if (count($pelatihList) > 0) :
                     foreach($pelatihList as $p) :
-                        $foto_pelatih = !empty($p['foto']) && file_exists("admin/" . $p['foto']) ? "admin/" . $p['foto'] : "https://ui-avatars.com/api/?name=" . urlencode($p['nama']) . "&background=5468FF&color=fff&size=256";
+                        $foto = !empty($p['foto']) && file_exists("admin/" . $p['foto']) ? "admin/" . $p['foto'] : "https://ui-avatars.com/api/?name=" . urlencode($p['nama']) . "&background=003DFF&color=fff&size=256";
                 ?>
-                <div class="bg-white rounded-xl border border-[#E8E8EF] overflow-hidden hover:shadow-md transition-shadow">
-                    <div class="h-48 bg-[#F5F5FA] bg-cover bg-center" style="background-image: url('<?= $foto_pelatih ?>');"></div>
-                    <div class="p-4 text-center">
-                        <h4 class="text-sm font-bold text-[#21243D]"><?= htmlspecialchars($p['nama']); ?></h4>
-                        <p class="text-xs text-[#5468FF] font-semibold"><?= htmlspecialchars($p['jabatan']); ?></p>
-                        <p class="text-[11px] text-[#9CA0B8] mt-1"><?= htmlspecialchars($p['sertifikasi']); ?></p>
+                <div class="group bg-white/5 border border-white/10 rounded-xl overflow-hidden hover:border-xenon-400/40 hover:bg-white/10 transition-all relative card-hover-gradient">
+                    <div class="h-52 bg-xenon-800 bg-cover bg-center" style="background-image: url('<?= $foto ?>');"></div>
+                    <div class="p-5">
+                        <h4 class="font-sora font-semibold text-white text-base"><?= htmlspecialchars($p['nama']); ?></h4>
+                        <p class="text-xenon-400 text-sm font-medium"><?= htmlspecialchars($p['jabatan']); ?></p>
+                        <p class="text-gray-500 text-xs mt-1"><?= htmlspecialchars($p['sertifikasi']); ?></p>
                     </div>
+                    <div class="gradient-line absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-purple-600"></div>
                 </div>
-                <?php 
-                    endforeach; 
-                else : 
-                ?>
-                    <p class="text-[#9CA0B8] col-span-3 text-center py-8 text-sm">Belum ada data pelatih di sistem.</p>
+                <?php endforeach; else : ?>
+                    <p class="text-gray-500 col-span-3 text-center py-10">Belum ada data pelatih di sistem.</p>
                 <?php endif; ?>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- BERITA -->
-        <section id="berita" class="section-fade">
-            <div class="text-center mb-8">
-                <p class="text-xs font-semibold text-[#5468FF] uppercase tracking-wider mb-2">Informasi</p>
-                <h2 class="text-2xl font-bold text-[#21243D]">Berita Terkini</h2>
+    <!-- ===== BERITA (Light) ===== -->
+    <section id="berita" class="bg-gray-50 py-20 lg:py-28">
+        <div class="max-w-6xl mx-auto px-4 lg:px-10">
+            <div class="flex justify-between items-end mb-10">
+                <div>
+                    <span class="inline-block text-xenon-400 text-xs font-semibold uppercase tracking-widest mb-4 font-sora">Informasi</span>
+                    <h2 class="font-sora font-bold text-gray-900 text-3xl lg:text-[2.625rem] lg:leading-[3.4rem] tracking-[-0.01em]">Berita Terkini</h2>
+                </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <?php
                 $beritaList = [];
                 try {
                     $q_berita = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY id DESC LIMIT 3");
-                    while($row = mysqli_fetch_assoc($q_berita)) {
-                        $beritaList[] = $row;
-                    }
+                    while($row = mysqli_fetch_assoc($q_berita)) { $beritaList[] = $row; }
                 } catch (\Exception $e) {}
                 
                 if (count($beritaList) > 0) :
                     foreach($beritaList as $b) :
                         $foto_berita = (!empty($b['gambar']) && file_exists("admin/" . $b['gambar'])) ? "admin/" . $b['gambar'] : "https://images.unsplash.com/photo-1572334057861-6d72dbb688d2?auto=format&fit=crop&w=800&q=80";
                 ?>
-                <div class="bg-white rounded-xl border border-[#E8E8EF] overflow-hidden hover:shadow-md transition-shadow group">
-                    <div class="h-44 bg-cover bg-center bg-[#F5F5FA]" style="background-image: url('<?= $foto_berita ?>');"></div>
-                    <div class="p-4">
-                        <span class="inline-block bg-[#EEF0FF] text-[#5468FF] text-[10px] font-semibold px-2 py-0.5 rounded mb-2"><?= htmlspecialchars($b['cabang'] ?? 'Umum') ?></span>
-                        <h4 class="text-sm font-bold text-[#21243D] mb-1 leading-snug"><?= htmlspecialchars($b['judul']) ?></h4>
-                        <p class="text-xs text-[#9CA0B8] line-clamp-2"><?= strip_tags($b['isi'] ?? '') ?></p>
+                <div class="group bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg hover:border-gray-300 transition-all relative card-hover-gradient">
+                    <div class="h-48 bg-gray-100 bg-cover bg-center" style="background-image: url('<?= $foto_berita ?>');"></div>
+                    <div class="p-5">
+                        <span class="inline-block bg-xenon-50 text-xenon-400 text-[10px] font-semibold px-2.5 py-1 rounded font-sora uppercase tracking-wider mb-2"><?= htmlspecialchars($b['cabang'] ?? 'Umum') ?></span>
+                        <h4 class="font-sora font-semibold text-gray-900 text-sm leading-snug mb-2"><?= htmlspecialchars($b['judul']) ?></h4>
+                        <p class="text-gray-500 text-xs line-clamp-2 leading-relaxed"><?= strip_tags($b['isi'] ?? '') ?></p>
                     </div>
+                    <div class="gradient-line absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-purple-600"></div>
                 </div>
-                <?php 
-                    endforeach; 
-                else: 
-                ?>
-                    <p class="text-[#9CA0B8] col-span-3 text-center py-8 text-sm">Belum ada berita yang dipublikasikan.</p>
+                <?php endforeach; else: ?>
+                    <p class="text-gray-400 col-span-3 text-center py-10">Belum ada berita.</p>
                 <?php endif; ?>
             </div>
-        </section>
+        </div>
+    </section>
 
-    </main>
+    <!-- ===== CTA Section ===== -->
+    <section class="hero-bg py-20 lg:py-24">
+        <div class="max-w-3xl mx-auto px-4 text-center">
+            <h2 class="font-sora font-bold text-white text-3xl lg:text-5xl tracking-[-2px] mb-6">Siap untuk berenang?</h2>
+            <p class="text-gray-400 text-base lg:text-lg mb-8 max-w-xl mx-auto">Bergabunglah dengan Swift Swimming Club dan raih prestasi terbaikmu bersama pelatih bersertifikat nasional & internasional.</p>
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                <a href="pendaftaran.php" class="blue-gradient text-white px-8 py-3.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Daftar Sekarang</a>
+                <a href="https://wa.me/6289668366724" target="_blank" class="border border-white/20 text-white px-8 py-3.5 rounded-lg font-medium text-sm hover:bg-white/5 transition-colors inline-flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                    Hubungi via WhatsApp
+                </a>
+            </div>
+        </div>
+    </section>
 
-    <!-- Footer -->
-    <footer class="bg-[#21243D] text-white mt-16">
-        <div class="max-w-6xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-3 gap-10">
-            <div>
+    <!-- ===== FOOTER (Dark) ===== -->
+    <footer class="bg-xenon-950 border-t border-white/5">
+        <div class="max-w-[1440px] mx-auto px-4 lg:px-10 py-12 grid grid-cols-1 md:grid-cols-4 gap-10">
+            <div class="md:col-span-1">
                 <div class="flex items-center gap-2 mb-4">
-                    <div class="w-7 h-7 rounded-lg bg-[#5468FF] flex items-center justify-center">
-                        <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                    </div>
-                    <span class="font-bold text-sm">SWIFT<span class="text-[#5468FF]">_SC</span></span>
+                    <img src="assets/logo.png" alt="Swift SC" class="h-8 w-8 object-contain rounded" onerror="this.style.display='none'">
+                    <span class="font-sora font-bold text-white text-sm">Swift<span class="text-xenon-400">SC</span></span>
                 </div>
-                <p class="text-xs text-[#9CA0B8] leading-relaxed">Mencetak atlet renang berprestasi dengan fasilitas dan metode kepelatihan terbaik.</p>
+                <p class="text-xs text-gray-500 leading-relaxed">Mencetak atlet renang berprestasi dengan fasilitas dan metode kepelatihan terbaik.</p>
             </div>
             
             <div>
-                <h4 class="text-xs font-semibold uppercase tracking-wider text-[#6B6F8D] mb-4">Media Sosial</h4>
-                <ul class="space-y-3 text-sm">
-                    <li><a href="https://instagram.com/swiftswimmingclub" target="_blank" class="text-[#9CA0B8] hover:text-white transition-colors flex items-center gap-2">
+                <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-500 mb-4 font-sora">Menu</h4>
+                <ul class="space-y-2.5 text-sm">
+                    <li><a href="#tentang" class="text-gray-400 hover:text-white transition-colors">Profil</a></li>
+                    <li><a href="#program" class="text-gray-400 hover:text-white transition-colors">Program</a></li>
+                    <li><a href="#jadwal" class="text-gray-400 hover:text-white transition-colors">Jadwal</a></li>
+                    <li><a href="#pelatih" class="text-gray-400 hover:text-white transition-colors">Pelatih</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-500 mb-4 font-sora">Sosial Media</h4>
+                <ul class="space-y-2.5 text-sm">
+                    <li><a href="https://instagram.com/swiftswimmingclub" target="_blank" class="text-gray-400 hover:text-white transition-colors flex items-center gap-2">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.88z"/></svg>
-                        swiftswimmingclub
+                        Instagram
                     </a></li>
-                    <li><a href="https://tiktok.com/@swiftswimmingclub" target="_blank" class="text-[#9CA0B8] hover:text-white transition-colors flex items-center gap-2">
+                    <li><a href="https://tiktok.com/@swiftswimmingclub" target="_blank" class="text-gray-400 hover:text-white transition-colors flex items-center gap-2">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z"/></svg>
-                        swiftswimmingclub
+                        TikTok
                     </a></li>
                 </ul>
             </div>
 
             <div>
-                <h4 class="text-xs font-semibold uppercase tracking-wider text-[#6B6F8D] mb-4">WhatsApp Pendaftaran</h4>
-                <a href="https://wa.me/6289668366724" target="_blank" class="inline-flex items-center gap-2 text-green-400 hover:text-green-300 font-semibold transition-colors">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-500 mb-4 font-sora">Pendaftaran</h4>
+                <a href="https://wa.me/6289668366724" target="_blank" class="inline-flex items-center gap-2 text-green-400 hover:text-green-300 font-semibold text-sm transition-colors">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
                     +62 896-6836-6724
                 </a>
-                <p class="text-[11px] text-[#6B6F8D] mt-2">Klik untuk chat langsung via WhatsApp</p>
+                <p class="text-[11px] text-gray-600 mt-2">Klik untuk chat langsung</p>
             </div>
         </div>
-        <div class="border-t border-white/5 py-4 text-center">
-            <p class="text-[11px] text-[#6B6F8D]">&copy; <?= date('Y'); ?> Swift Swimming Club. All Rights Reserved.</p>
+        <div class="border-t border-white/5 py-5">
+            <p class="text-center text-[11px] text-gray-600">&copy; <?= date('Y'); ?> Swift Swimming Club. All Rights Reserved.</p>
         </div>
     </footer>
 
     <script>
         // Mobile menu toggle
-        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
-            document.getElementById('mobileMenu').classList.toggle('hidden');
-        });
-        // Close mobile menu on link click
-        document.querySelectorAll('#mobileMenu a').forEach(function(link) {
-            link.addEventListener('click', function() {
-                document.getElementById('mobileMenu').classList.add('hidden');
-            });
+        const mobileBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        mobileBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+        document.querySelectorAll('#mobileMenu a').forEach(link => {
+            link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
         });
     </script>
 </body>

@@ -66,10 +66,8 @@ if (isset($_POST['daftar'])) {
         <!-- Logo -->
         <div class="text-center mb-6">
             <a href="index.php" class="inline-flex items-center gap-2 mb-4">
-                <div class="w-8 h-8 rounded-lg bg-[#5468FF] flex items-center justify-center">
-                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                </div>
-                <span class="font-bold text-[15px] text-[#21243D]">SWIFT<span class="text-[#5468FF]">_SC</span></span>
+                <img src="assets/logo.png" alt="Swift SC" class="h-9 w-9 object-contain rounded-lg" onerror="this.onerror=null; this.outerHTML='<div class=\'w-9 h-9 rounded-lg bg-[#5468FF] flex items-center justify-center\'><svg class=\'w-4 h-4 text-white\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2.5\' d=\'M13 10V3L4 14h7v7l9-11h-7z\'></path></svg></div>';">
+                <span class="font-bold text-[15px] text-[#21243D]">Swift<span class="text-[#5468FF]">SC</span></span>
             </a>
             <h1 class="text-xl font-bold text-[#21243D]">Formulir Pendaftaran</h1>
             <p class="text-sm text-[#6B6F8D] mt-1">Gabung Swift Swimming Club sekarang</p>
