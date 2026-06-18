@@ -8,7 +8,7 @@ if (isset($_POST['tambah'])) {
     $no_hp = mysqli_real_escape_string($koneksi, $_POST['no_hp']);
     $id_kolam = mysqli_real_escape_string($koneksi, $_POST['id_kolam']);
 
-    $q = mysqli_query($koneksi, "INSERT INTO member (nama, jenis_kelamin, no_hp, cabang_id, role) VALUES ('$nama', '$jenis_kelamin', '$no_hp', '$id_kolam', 'Atlet')");
+    $q = mysqli_query($koneksi, "INSERT INTO member (nama, jenis_kelamin, no_hp, cabang_id) VALUES ('$nama', '$jenis_kelamin', '$no_hp', '$id_kolam')");
     if($q) {
         header("location:atlet.php?pesan=sukses_tambah");
     } else {
