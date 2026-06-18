@@ -196,7 +196,23 @@ try {
                     <span class="inline-block text-xenon-400 text-xs font-semibold uppercase tracking-widest mb-4 font-sora">Tentang Kami</span>
                     <h2 class="font-sora font-bold text-gray-900 text-3xl lg:text-[2.625rem] lg:leading-[3.4rem] tracking-[-0.01em] mb-6"><?= htmlspecialchars($cmsData['hero_subtitle']) ?></h2>
                     <p class="text-gray-600 leading-relaxed text-base lg:text-lg"><?= nl2br(htmlspecialchars($cmsData['about_text'])) ?></p>
-                </div>
+                    
+                    <?php if(!empty($cmsData['visi']) || !empty($cmsData['misi'])): ?>
+                    <div class="mt-6 space-y-4">
+                        <?php if(!empty($cmsData['visi'])): ?>
+                        <div class="bg-xenon-50/50 rounded-lg p-4 border border-xenon-100">
+                            <p class="text-[10px] font-semibold text-xenon-400 uppercase tracking-widest mb-1 font-sora">Visi</p>
+                            <p class="text-sm text-gray-700 leading-relaxed"><?= nl2br(htmlspecialchars($cmsData['visi'])) ?></p>
+                        </div>
+                        <?php endif; ?>
+                        <?php if(!empty($cmsData['misi'])): ?>
+                        <div class="bg-gray-50 rounded-lg p-4 border border-gray-100">
+                            <p class="text-[10px] font-semibold text-gray-500 uppercase tracking-widest mb-1 font-sora">Misi</p>
+                            <p class="text-sm text-gray-700 leading-relaxed"><?= nl2br(htmlspecialchars($cmsData['misi'])) ?></p>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                    <?php endif; ?>
                 
                 <div class="space-y-3">
                     <p class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4 font-sora">Menerima Siswa-Siswi Baru</p>
