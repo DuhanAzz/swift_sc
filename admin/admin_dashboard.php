@@ -22,7 +22,7 @@ if($q_atlet) {
 $hari_ini = date('Y-m-d');
 $hadir_hari_ini = 0;
 
-$q_presensi = mysqli_query($koneksi, "SELECT COUNT(p.id) as hadir FROM presensi p JOIN member m ON p.member_id = m.id WHERE p.tanggal='$hari_ini' AND p.status='Hadir' AND m.cabang_id='$admin_pool_id'");
+$q_presensi = mysqli_query($koneksi, "SELECT COUNT(a.id) as hadir FROM absensi a JOIN member m ON a.member_id = m.id WHERE a.tanggal='$hari_ini' AND a.status='Hadir' AND m.cabang_id='$admin_pool_id'");
 if($q_presensi) {
     $hadir_hari_ini = mysqli_fetch_assoc($q_presensi)['hadir'] ?? 0;
 }

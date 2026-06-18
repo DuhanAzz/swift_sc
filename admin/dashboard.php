@@ -15,7 +15,7 @@ if($q_atlet) {
 // 2. Mengambil Total Kehadiran Hari Ini
 $hari_ini = date('Y-m-d');
 $hadir_hari_ini = 0;
-$q_presensi = mysqli_query($koneksi, "SELECT COUNT(id) as hadir FROM presensi WHERE tanggal='$hari_ini' AND status='Hadir'");
+$q_presensi = mysqli_query($koneksi, "SELECT COUNT(id) as hadir FROM absensi WHERE tanggal='$hari_ini' AND status='Hadir'");
 if($q_presensi) {
     $hadir_hari_ini = mysqli_fetch_assoc($q_presensi)['hadir'] ?? 0;
 }
