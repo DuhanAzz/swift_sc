@@ -171,6 +171,10 @@ include '../includes/koneksi.php';
                     <input type="text" name="no_hp" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm transition-all" placeholder="Contoh: 08123456789" required>
                 </div>
                 
+                <div class="mb-5">
+                    <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Tanggal Lahir</label>
+                    <input type="date" name="tanggal_lahir" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm transition-all" required>
+                </div>
                     <div class="mb-6">
                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Pilih Cabang Latihan</label>
                         <select name="id_kolam" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm transition-all" required>

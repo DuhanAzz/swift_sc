@@ -7,8 +7,19 @@ if (isset($_POST['tambah'])) {
     $jenis_kelamin = mysqli_real_escape_string($koneksi, $_POST['jenis_kelamin']);
     $no_hp = mysqli_real_escape_string($koneksi, $_POST['no_hp']);
     $id_kolam = mysqli_real_escape_string($koneksi, $_POST['id_kolam']);
+    $tanggal_lahir = mysqli_real_escape_string($koneksi, $_POST['tanggal_lahir'] ?? date('Y-m-d'));
+    $tanggal_gabung = date('Y-m-d');
 
-    $q = mysqli_query($koneksi, "INSERT INTO member (nama, jenis_kelamin, no_hp, cabang_id) VALUES ('$nama', '$jenis_kelamin', '$no_hp', '$id_kolam')");
+    // Auto-generate NIA: SWF-YYYY-XXXX
+    $tahun = date('Y');
+    $q_last = mysqli_query($koneksi, "SELECT id FROM member ORDER BY id DESC LIMIT 1");
+    $next_id = 1;
+    if($q_last && $row = mysqli_fetch_assoc($q_last)) {
+        $next_id = $row['id'] + 1;
+    }
+    $nia = 'SWF-' . $tahun . '-' . str_pad($next_id, 4, '0', STR_PAD_LEFT);
+
+    $q = mysqli_query($koneksi, "INSERT INTO member (nia, nama, jenis_kelamin, no_hp, tanggal_lahir, cabang_id, tanggal_gabung) VALUES ('$nia', '$nama', '$jenis_kelamin', '$no_hp', '$tanggal_lahir', '$id_kolam', '$tanggal_gabung')");
     if($q) {
         header("location:atlet.php?pesan=sukses_tambah");
     } else {
