@@ -41,65 +41,68 @@ if($q_perf) {
 }
 ?>
 
-<div class="p-4 sm:ml-64">
-    <div class="p-4 rounded-lg mt-14">
-        
-        <div class="mb-8">
-            <h1 class="text-3xl font-extrabold text-gray-800 tracking-tight">Dashboard Admin Cabang</h1>
-            <p class="text-base text-gray-500 mt-1">Ringkasan aktivitas Swift SC untuk cabang: <span class="font-bold text-blue-600"><?= htmlspecialchars($admin_cabang); ?></span>.</p>
+<div class="lg:ml-[270px] pt-20 lg:pt-6 p-4 lg:p-8 page-content min-h-screen">
+    
+        <div class="mb-8 animate-fade-in">
+            <h1 class="text-2xl lg:text-3xl font-sora font-bold text-white tracking-tight">Dashboard Admin Cabang</h1>
+            <p class="text-sm text-slate-400 mt-1">Ringkasan aktivitas Swift SC untuk cabang: <span class="font-semibold text-electric-400"><?= htmlspecialchars($admin_cabang); ?></span></p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl p-6 shadow-lg text-white">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6 mb-8">
+            <!-- Stat Card 1: Total Atlet -->
+            <div class="stat-card glass-card-solid rounded-2xl p-5 lg:p-6 animate-slide-up">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-blue-100 text-sm font-bold uppercase tracking-wider mb-1">Total Atlet Cabang</p>
-                        <h3 class="text-4xl font-black"><?= $total_atlet; ?> <span class="text-lg font-medium text-blue-200">Orang</span></h3>
+                        <p class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider mb-2">Total Atlet Cabang</p>
+                        <h3 class="text-3xl lg:text-4xl font-sora font-bold text-white"><?= $total_atlet; ?> <span class="text-base font-normal text-slate-500">Orang</span></h3>
                     </div>
-                    <div class="p-3 bg-white/20 rounded-xl">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    <div class="p-3 rounded-xl bg-electric-500/10 border border-electric-500/20">
+                        <svg class="w-7 h-7 text-electric-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-gradient-to-br from-green-500 to-green-700 rounded-2xl p-6 shadow-lg text-white">
+            <!-- Stat Card 2: Hadir Hari Ini -->
+            <div class="stat-card glass-card-solid rounded-2xl p-5 lg:p-6 animate-slide-up" style="animation-delay: 0.1s">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-green-100 text-sm font-bold uppercase tracking-wider mb-1">Hadir Latihan Hari Ini</p>
-                        <h3 class="text-4xl font-black"><?= $hadir_hari_ini; ?> <span class="text-lg font-medium text-green-200">Atlet</span></h3>
+                        <p class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider mb-2">Hadir Latihan Hari Ini</p>
+                        <h3 class="text-3xl lg:text-4xl font-sora font-bold text-white"><?= $hadir_hari_ini; ?> <span class="text-base font-normal text-slate-500">Atlet</span></h3>
                     </div>
-                    <div class="p-3 bg-white/20 rounded-xl">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <div class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+                        <svg class="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-gradient-to-br from-amber-500 to-amber-700 rounded-2xl p-6 shadow-lg text-white">
+            <!-- Stat Card 3: Total Rekor -->
+            <div class="stat-card glass-card-solid rounded-2xl p-5 lg:p-6 animate-slide-up" style="animation-delay: 0.2s">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-amber-100 text-sm font-bold uppercase tracking-wider mb-1">Total Rekor Dicatat</p>
-                        <h3 class="text-4xl font-black"><?= isset($total_rekor) ? $total_rekor : 0; ?> <span class="text-lg font-medium text-amber-200">Data</span></h3>
+                        <p class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider mb-2">Total Rekor Dicatat</p>
+                        <h3 class="text-3xl lg:text-4xl font-sora font-bold text-white"><?= isset($total_rekor) ? $total_rekor : 0; ?> <span class="text-base font-normal text-slate-500">Data</span></h3>
                     </div>
-                    <div class="p-3 bg-white/20 rounded-xl">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                        <svg class="w-7 h-7 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100">
-            <div class="p-5 border-b border-gray-100 flex justify-between items-center">
-                <h2 class="text-lg font-bold text-gray-800">5 Pencatatan Waktu Terakhir (Cabang Ini)</h2>
-                <a href="admin_pelatih.php" class="text-sm font-semibold text-blue-600 hover:underline">Lihat Semua Performa &rarr;</a>
+        <!-- Recent Performance Table -->
+        <div class="glass-card-solid rounded-2xl overflow-hidden animate-slide-up" style="animation-delay: 0.3s">
+            <div class="p-5 border-b border-white/5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                <h2 class="text-base font-sora font-semibold text-white">5 Pencatatan Waktu Terakhir</h2>
+                <a href="performa.php" class="text-xs font-semibold text-electric-400 hover:text-electric-300 transition-colors">Lihat Semua &rarr;</a>
             </div>
             <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left text-gray-500">
-                    <thead class="text-xs text-gray-400 uppercase bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3">Atlet</th>
-                            <th class="px-6 py-3">Gaya & Jarak</th>
-                            <th class="px-6 py-3 text-center">Waktu Tempuh</th>
-                            <th class="px-6 py-3">Tanggal</th>
+                <table class="w-full text-sm text-left table-dark">
+                    <thead>
+                        <tr class="text-[11px] text-slate-500 uppercase tracking-wider">
+                            <th class="px-6 py-3 font-semibold">Atlet</th>
+                            <th class="px-6 py-3 font-semibold">Gaya & Jarak</th>
+                            <th class="px-6 py-3 font-semibold text-center">Waktu Tempuh</th>
+                            <th class="px-6 py-3 font-semibold">Tanggal</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -108,16 +111,16 @@ if($q_perf) {
                             foreach($recent_performances as $d) {
                                 $nama_atlet = $d['nama_atlet'] ?? 'Unknown';
                         ?>
-                        <tr class="border-b hover:bg-gray-50">
-                            <td class="px-6 py-4 font-bold text-gray-800"><?= htmlspecialchars($nama_atlet); ?></td>
-                            <td class="px-6 py-4 text-blue-600 font-medium"><?= htmlspecialchars($d['gaya_renang'] ?? '-'); ?> - <?= htmlspecialchars($d['jarak'] ?? '-'); ?>m</td>
-                            <td class="px-6 py-4 text-center font-bold text-slate-700"><?= htmlspecialchars($d['waktu_formatted'] ?? '-'); ?></td>
-                            <td class="px-6 py-4 text-gray-400"><?= isset($d['tanggal_rekor']) ? date('d M Y', strtotime($d['tanggal_rekor'])) : '-'; ?></td>
+                        <tr>
+                            <td class="px-6 py-4 font-semibold text-slate-200"><?= htmlspecialchars($nama_atlet); ?></td>
+                            <td class="px-6 py-4 text-electric-400 font-medium"><?= htmlspecialchars($d['gaya_renang'] ?? '-'); ?> — <?= htmlspecialchars($d['jarak'] ?? '-'); ?>m</td>
+                            <td class="px-6 py-4 text-center font-bold font-mono text-white"><?= htmlspecialchars($d['waktu_formatted'] ?? '-'); ?></td>
+                            <td class="px-6 py-4 text-slate-500"><?= isset($d['tanggal_rekor']) ? date('d M Y', strtotime($d['tanggal_rekor'])) : '-'; ?></td>
                         </tr>
                         <?php 
                             }
                         } else {
-                            echo '<tr><td colspan="4" class="px-6 py-6 text-center text-gray-400">Belum ada data dicatat di cabang ini.</td></tr>';
+                            echo '<tr><td colspan="4" class="px-6 py-10 text-center text-slate-500">Belum ada data dicatat di cabang ini.</td></tr>';
                         }
                         ?>
                     </tbody>
@@ -125,7 +128,7 @@ if($q_perf) {
             </div>
         </div>
 
-    </div>
 </div>
 
 <?php include '../includes/footer.php'; ?>
+
