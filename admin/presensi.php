@@ -66,7 +66,7 @@ $admin_pool_id = $_SESSION['pool_id'] ?? '';
                                 
                                 $status_skrg = 'Hadir';
                                 $ket_skrg = '';
-                                $q_pres = mysqli_query($koneksi, "SELECT * FROM presensi WHERE member_id='$atlet_id' AND tanggal='$tanggal_absensi'");
+                                $q_pres = mysqli_query($koneksi, "SELECT * FROM absensi WHERE member_id='$atlet_id' AND tanggal='$tanggal_absensi'");
                                 if($q_pres && mysqli_num_rows($q_pres) > 0) {
                                     $pDoc = mysqli_fetch_assoc($q_pres);
                                     $status_skrg = $pDoc['status'] ?? 'Hadir';

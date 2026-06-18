@@ -12,13 +12,15 @@ if(isset($_POST['simpan_presensi'])){
         $status = mysqli_real_escape_string($koneksi, $status);
         $ket = mysqli_real_escape_string($koneksi, $keterangan[$atlet_id] ?? '');
         
-        $cek = mysqli_query($koneksi, "SELECT id FROM presensi WHERE member_id='$atlet_id' AND tanggal='$tanggal'");
+        $cek = mysqli_query($koneksi, "SELECT id FROM absensi WHERE member_id='$atlet_id' AND tanggal='$tanggal'");
         if(mysqli_num_rows($cek) > 0) {
             $row = mysqli_fetch_assoc($cek);
             $id = $row['id'];
-            mysqli_query($koneksi, "UPDATE presensi SET status='$status', keterangan='$ket' WHERE id='$id'");
+            mysqli_query($koneksi, "UPDATE absensi SET status='$status', keterangan='$ket' WHERE id='$id'");
         } else {
-            mysqli_query($koneksi, "INSERT INTO presensi (member_id, tanggal, status, keterangan) VALUES ('$atlet_id', '$tanggal', '$status', '$ket')");
+            $admin_pool_id = $_SESSION['pool_id'] ?? '';
+            $recorded_by = $_SESSION['id'] ?? 0;
+            mysqli_query($koneksi, "INSERT INTO absensi (member_id, tanggal, status, cabang_id, recorded_by, keterangan) VALUES ('$atlet_id', '$tanggal', '$status', '$admin_pool_id', '$recorded_by', '$ket')");
         }
     }
     

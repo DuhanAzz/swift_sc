@@ -69,17 +69,17 @@ $filter_pool = isset($_GET['pool']) ? $_GET['pool'] : '50m';
                     <?php
                     // Query untuk mengambil waktu tercepat, diurutkan berdasarkan time_ms dari yang terkecil (ASC)
                     $query = mysqli_query($koneksi, "
-                        SELECT p.*, a.nama AS nama_atlet 
-                        FROM performances p 
-                        JOIN atlet a ON p.member_id = a.id 
-                        WHERE p.swim_style = '$filter_style' 
-                        AND p.distance = '$filter_distance' 
-                        AND p.pool_length = '$filter_pool' 
-                        ORDER BY p.time_ms ASC 
+                        SELECT p.*, m.nama AS nama_atlet 
+                        FROM performa p 
+                        JOIN member m ON p.member_id = m.id 
+                        WHERE p.gaya_renang = '$filter_style' 
+                        AND p.jarak = '$filter_distance' 
+                        AND p.tipe_kolam = '$filter_pool' 
+                        ORDER BY p.waktu_ms ASC 
                         LIMIT 50
                     ");
                     
-                    if(mysqli_num_rows($query) > 0) {
+                    if($query && mysqli_num_rows($query) > 0) {
                         $rank = 1;
                         while($data = mysqli_fetch_assoc($query)) {
                             // Logika untuk memberikan warna/ikon pada peringkat 1, 2, dan 3
@@ -105,10 +105,10 @@ $filter_pool = isset($_GET['pool']) ? $_GET['pool'] : '50m';
                         <td class="px-6 py-4 text-center font-bold text-gray-900 text-lg"><?= $rank_display; ?></td>
                         <td class="px-6 py-4 font-bold text-gray-800 text-base"><?= htmlspecialchars($data['nama_atlet']); ?></td>
                         <td class="px-6 py-4 text-center font-black text-xl <?= $time_class; ?> tracking-wider">
-                            <?= htmlspecialchars($data['time_formatted']); ?>
+                            <?= htmlspecialchars($data['waktu_formatted']); ?>
                         </td>
                         <td class="px-6 py-4 text-center text-gray-500 font-medium">
-                            <?= date('d M Y', strtotime($data['record_date'])); ?>
+                            <?= date('d M Y', strtotime($data['tanggal_rekor'])); ?>
                         </td>
                     </tr>
                     <?php 
