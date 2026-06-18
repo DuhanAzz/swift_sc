@@ -7,8 +7,21 @@ if (!isset($_SESSION['status']) || $_SESSION['status'] != "sudah_login" || $_SES
 include '../includes/header.php';
 include '../includes/sidebar.php';
 include '../includes/koneksi.php';
+include '../includes/invoice_template.php';
 
 $admin_pool_id = $_SESSION['pool_id'] ?? '';
+
+// Check if we need to show invoice modal (after approve)
+$show_invoice = false;
+$invoice_data = [];
+if (isset($_GET['invoice_id'])) {
+    $inv_id = intval($_GET['invoice_id']);
+    $q_inv = mysqli_query($koneksi, "SELECT m.*, c.nama_cabang FROM member m LEFT JOIN cabang c ON m.cabang_id = c.id WHERE m.id = '$inv_id'");
+    if ($q_inv && mysqli_num_rows($q_inv) > 0) {
+        $invoice_data = mysqli_fetch_assoc($q_inv);
+        $show_invoice = true;
+    }
+}
 ?>
 
 <div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
@@ -155,6 +168,81 @@ $admin_pool_id = $_SESSION['pool_id'] ?? '';
 
     </div>
 </div>
+
+<!-- ===== INVOICE MODAL ===== -->
+<?php if ($show_invoice && !empty($invoice_data)): 
+    $inv_nama = htmlspecialchars($invoice_data['nama']);
+    $inv_nia = htmlspecialchars($invoice_data['nia']);
+    $inv_cabang = htmlspecialchars($invoice_data['nama_cabang'] ?? 'Swift SC');
+    $inv_tanggal = $invoice_data['tanggal_gabung'];
+    $inv_no_hp = $invoice_data['no_hp'];
+    $inv_phone_wa = formatPhoneWA($inv_no_hp);
+    $invoice_text = generateInvoicePendaftaran($inv_nama, $inv_nia, $inv_cabang, $inv_tanggal, $inv_no_hp);
+?>
+<div id="invoiceModal" class="fixed inset-0 bg-black/50 z-[999] flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
+        <!-- Header -->
+        <div class="px-6 py-4 border-b border-[#E8E8EF] flex items-center justify-between">
+            <div>
+                <h3 class="text-base font-bold text-algolia-navy">Invoice Pendaftaran</h3>
+                <p class="text-xs text-gray-500">Member berhasil disetujui — kirim invoice pembayaran</p>
+            </div>
+            <button onclick="closeInvoiceModal()" class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        
+        <!-- Invoice Preview -->
+        <div class="px-6 py-4 overflow-y-auto flex-1">
+            <div class="bg-gray-50 border border-[#E8E8EF] rounded-lg p-4">
+                <pre id="invoiceText" class="text-xs text-gray-700 whitespace-pre-wrap font-mono leading-relaxed"><?= $invoice_text ?></pre>
+            </div>
+            
+            <!-- Member Info Summary -->
+            <div class="mt-4 grid grid-cols-2 gap-3">
+                <div class="bg-blue-50 rounded-lg p-3 border border-blue-100">
+                    <p class="text-[10px] text-blue-600 font-semibold uppercase">Member</p>
+                    <p class="text-sm font-bold text-gray-800"><?= $inv_nama ?></p>
+                    <p class="text-xs text-gray-500"><?= $inv_nia ?></p>
+                </div>
+                <div class="bg-green-50 rounded-lg p-3 border border-green-100">
+                    <p class="text-[10px] text-green-600 font-semibold uppercase">WhatsApp</p>
+                    <p class="text-sm font-bold text-gray-800"><?= htmlspecialchars($inv_no_hp) ?></p>
+                    <p class="text-xs text-gray-500"><?= $inv_cabang ?></p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="px-6 py-4 border-t border-[#E8E8EF] bg-gray-50 flex flex-col sm:flex-row gap-2">
+            <button onclick="copyInvoice()" id="copyBtn" class="flex-1 flex items-center justify-center gap-2 bg-white border border-[#E8E8EF] text-gray-700 font-semibold py-2.5 px-4 rounded-lg text-sm hover:bg-gray-50 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                <span id="copyBtnText">Copy Invoice</span>
+            </button>
+            <a href="https://wa.me/<?= $inv_phone_wa ?>?text=<?= urlencode($invoice_text) ?>" target="_blank" class="flex-1 flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-semibold py-2.5 px-4 rounded-lg text-sm transition-colors">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
+                Kirim via WhatsApp
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+function closeInvoiceModal() {
+    document.getElementById('invoiceModal').style.display = 'none';
+    // Clean URL
+    window.history.replaceState({}, document.title, 'admin_member.php?pesan=sukses_approve');
+}
+function copyInvoice() {
+    const text = document.getElementById('invoiceText').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById('copyBtnText');
+        btn.textContent = '✓ Tersalin!';
+        setTimeout(() => { btn.textContent = 'Copy Invoice'; }, 2000);
+    });
+}
+</script>
+<?php endif; ?>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
 <?php include '../includes/footer.php'; ?>

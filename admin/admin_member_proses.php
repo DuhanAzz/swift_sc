@@ -37,7 +37,10 @@ if (isset($_POST['approve'])) {
                 $query_update = "UPDATE calon_member SET status_approval = 'Approved' WHERE id = '$pending_id'";
                 mysqli_query($koneksi, $query_update);
                 
-                header("location:admin_member.php?pesan=sukses_approve");
+                // Get the newly inserted member ID for invoice
+                $new_member_id = mysqli_insert_id($koneksi);
+                
+                header("location:admin_member.php?pesan=sukses_approve&invoice_id=" . $new_member_id);
                 exit;
             } else {
                 throw new Exception("Gagal insert ke tabel member");
