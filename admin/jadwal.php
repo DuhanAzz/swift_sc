@@ -75,12 +75,12 @@ include '../includes/koneksi.php';
                         <tbody class="divide-y divide-gray-100">
                             <?php
                             $jadwalArray = [];
-                            try {
-                                $documents = $database->getDocuments('jadwal');
-                                foreach ($documents as $data) {
-                                    $jadwalArray[] = $data;
+                            $q = mysqli_query($koneksi, "SELECT * FROM jadwal");
+                            if($q) {
+                                while($row = mysqli_fetch_assoc($q)) {
+                                    $jadwalArray[] = $row;
                                 }
-                            } catch (\Exception $e) {}
+                            }
 
                             $hari_order = ['Senin' => 1, 'Selasa' => 2, 'Rabu' => 3, 'Kamis' => 4, 'Jumat' => 5, 'Sabtu' => 6, 'Minggu' => 7];
 

@@ -54,28 +54,12 @@ include '../includes/koneksi.php';
                     <?php
                     $no = 1;
                     $atletArray = [];
-                    try {
-                        $documents = $database->getDocuments('atlet');
-                        foreach ($documents as $data) {
-                            // Ambil nama kolam dari collection pools
-                            $data['nama_kolam'] = '-';
-                            if (!empty($data['id_kolam'])) {
-                                try {
-                                    $poolDoc = $database->getDocument('pools', $data['id_kolam']);
-                                    if ($poolDoc) {
-                                        $data['nama_kolam'] = $poolDoc['name'];
-                                    }
-                                } catch (\Exception $e) {}
-                            }
-                            
-                            $atletArray[] = $data;
+                    $q_atlet = mysqli_query($koneksi, "SELECT m.*, c.nama_cabang as nama_kolam FROM member m LEFT JOIN cabang c ON m.cabang_id = c.id WHERE m.role='Atlet' ORDER BY m.id DESC");
+                    if($q_atlet) {
+                        while($row = mysqli_fetch_assoc($q_atlet)) {
+                            $atletArray[] = $row;
                         }
-                    } catch (\Exception $e) {}
-
-                    // Sort by string id DESC
-                    usort($atletArray, function($a, $b) {
-                        return strcmp($b['id'], $a['id']);
-                    });
+                    }
 
                     // Cek apakah ada datanya
                     if(count($atletArray) > 0) {
@@ -127,14 +111,14 @@ include '../includes/koneksi.php';
                                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Cabang Latihan</label>
                                         <select name="id_kolam" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-medium rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full p-3 shadow-sm transition-all" required>
                                             <?php
-                                            try {
-                                                $q_kolam = $database->getDocuments('pools');
-                                                foreach($q_kolam as $k) {
+                                            $q_kolam = mysqli_query($koneksi, "SELECT * FROM cabang");
+                                            if($q_kolam) {
+                                                while($k = mysqli_fetch_assoc($q_kolam)) {
                                                     $k_id = $k['id'];
-                                                    $select = ($k_id == $data['id_kolam']) ? 'selected' : '';
-                                                    echo "<option value='".$k_id."' $select>".htmlspecialchars($k['name'])."</option>";
+                                                    $select = ($k_id == $data['cabang_id']) ? 'selected' : '';
+                                                    echo "<option value='".$k_id."' $select>".htmlspecialchars($k['nama_cabang'])."</option>";
                                                 }
-                                            } catch (\Exception $e) {}
+                                            }
                                             ?>
                                         </select>
                                     </div>
@@ -187,21 +171,21 @@ include '../includes/koneksi.php';
                     <input type="text" name="no_hp" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-medium rounded-xl focus:ring-teal-600 focus:border-teal-600 block w-full p-3 shadow-sm transition-all" placeholder="Contoh: 08123456789" required>
                 </div>
                 
-                <div class="mb-6">
-                    <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Pilih Cabang Latihan</label>
-                    <select name="id_kolam" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-medium rounded-xl focus:ring-teal-600 focus:border-teal-600 block w-full p-3 shadow-sm transition-all" required>
-                        <option value="" disabled selected>-- Pilih Kolam Renang --</option>
-                        <?php
-                        try {
-                            $q_kolam2 = $database->getDocuments('pools');
-                            foreach($q_kolam2 as $k2) {
-                                $k_id2 = $k2['id'];
-                                echo "<option value='".$k_id2."'>".htmlspecialchars($k2['name'])."</option>";
+                    <div class="mb-6">
+                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Pilih Cabang Latihan</label>
+                        <select name="id_kolam" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-medium rounded-xl focus:ring-teal-600 focus:border-teal-600 block w-full p-3 shadow-sm transition-all" required>
+                            <option value="" disabled selected>-- Pilih Kolam Renang --</option>
+                            <?php
+                            $q_kolam2 = mysqli_query($koneksi, "SELECT * FROM cabang");
+                            if($q_kolam2) {
+                                while($k2 = mysqli_fetch_assoc($q_kolam2)) {
+                                    $k_id2 = $k2['id'];
+                                    echo "<option value='".$k_id2."'>".htmlspecialchars($k2['nama_cabang'])."</option>";
+                                }
                             }
-                        } catch (\Exception $e) {}
-                        ?>
-                    </select>
-                </div>
+                            ?>
+                        </select>
+                    </div>
                 
                 <button type="submit" name="tambah" class="w-full text-white bg-teal-600 hover:bg-teal-700 font-bold rounded-xl text-sm px-5 py-3 shadow-md hover:shadow-lg transition-all">Simpan Data Atlet</button>
             </form>

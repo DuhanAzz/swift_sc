@@ -1,12 +1,12 @@
 <?php
 include '../includes/koneksi.php';
 
-$id = $_GET['id']; // Firestore Document ID
+$id = mysqli_real_escape_string($koneksi, $_GET['id']);
 
-try {
-    $database->deleteDocument('atlet', $id);
+$q = mysqli_query($koneksi, "DELETE FROM member WHERE id='$id' AND role='Atlet'");
+if($q) {
     header("location:atlet.php?pesan=sukses_hapus");
-} catch (\Exception $e) {
-    echo "Gagal menghapus: " . $e->getMessage();
+} else {
+    echo "Gagal menghapus: " . mysqli_error($koneksi);
 }
 ?>

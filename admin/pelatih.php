@@ -54,36 +54,25 @@ include '../includes/koneksi.php';
                     <?php
                     $no = 1;
                     $coachesArray = [];
-                    try {
-                        $documents = $database->getDocuments('coaches');
-                        foreach ($documents as $data) {
-                            $data['nama_kolam'] = '-';
-                            if (!empty($data['id_kolam'])) {
-                                try {
-                                    $poolDoc = $database->getDocument('pools', $data['id_kolam']);
-                                    if ($poolDoc) {
-                                        $data['nama_kolam'] = $poolDoc['name'];
-                                    }
-                                } catch (\Exception $e) {}
-                            }
-                            $coachesArray[] = $data;
+                    $q_pelatih = mysqli_query($koneksi, "SELECT p.*, c.nama_cabang as nama_kolam FROM pelatih p LEFT JOIN cabang c ON p.cabang = c.id ORDER BY p.id DESC");
+                    if($q_pelatih) {
+                        while($row = mysqli_fetch_assoc($q_pelatih)) {
+                            $coachesArray[] = $row;
                         }
-                    } catch (\Exception $e) {}
-
-                    usort($coachesArray, function($a, $b) { return strcmp($b['id'], $a['id']); });
+                    }
 
                     if(count($coachesArray) > 0) {
                         foreach($coachesArray as $data) {
                     ?>
                     <tr class="bg-white border-b hover:bg-indigo-50 transition-colors">
                         <td class="px-6 py-4 font-medium text-gray-900"><?= $no++; ?></td>
-                        <td class="px-6 py-4 font-bold text-gray-800"><?= htmlspecialchars($data['nama_pelatih']); ?></td>
-                        <td class="px-6 py-4"><span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded border border-indigo-400"><?= htmlspecialchars($data['lisensi']); ?></span></td>
-                        <td class="px-6 py-4"><?= htmlspecialchars($data['no_hp']); ?></td>
-                        <td class="px-6 py-4 font-semibold text-indigo-700"><?= htmlspecialchars($data['nama_kolam']); ?></td>
+                        <td class="px-6 py-4 font-bold text-gray-800"><?= htmlspecialchars($data['nama']); ?></td>
+                        <td class="px-6 py-4"><span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded border border-indigo-400"><?= htmlspecialchars($data['sertifikasi']); ?></span></td>
+                        <td class="px-6 py-4"><?= htmlspecialchars($data['jabatan']); ?></td>
+                        <td class="px-6 py-4 font-semibold text-indigo-700"><?= htmlspecialchars($data['nama_kolam'] ?? $data['cabang']); ?></td>
                         <td class="px-6 py-4 text-center space-x-3">
                             <button data-modal-target="modalEditPelatih<?= $data['id']; ?>" data-modal-toggle="modalEditPelatih<?= $data['id']; ?>" class="font-medium text-blue-600 hover:underline">Edit</button>
-                            <a href="hapus_pelatih.php?id=<?= $data['id']; ?>" onclick="return confirm('Hapus pelatih <?= $data['nama_pelatih']; ?>?')" class="font-medium text-red-600 hover:underline">Hapus</a>
+                            <a href="hapus_pelatih.php?id=<?= $data['id']; ?>" onclick="return confirm('Hapus pelatih <?= $data['nama']; ?>?')" class="font-medium text-red-600 hover:underline">Hapus</a>
                         </td>
                     </tr>
 
@@ -100,33 +89,33 @@ include '../includes/koneksi.php';
                                     <input type="hidden" name="id" value="<?= $data['id']; ?>">
                                     <div class="mb-5">
                                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Nama Pelatih</label>
-                                        <input type="text" name="nama_pelatih" value="<?= $data['nama_pelatih']; ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-medium rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3 shadow-sm" required>
+                                        <input type="text" name="nama_pelatih" value="<?= htmlspecialchars($data['nama']); ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-medium rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3 shadow-sm" required>
                                     </div>
                                     <div class="mb-5">
                                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Lisensi</label>
                                         <select name="lisensi" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-medium rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3 shadow-sm" required>
-                                            <option value="Lisensi D" <?= ($data['lisensi'] == 'Lisensi D') ? 'selected' : '' ?>>Lisensi D (Pemula)</option>
-                                            <option value="Lisensi C" <?= ($data['lisensi'] == 'Lisensi C') ? 'selected' : '' ?>>Lisensi C (Menengah)</option>
-                                            <option value="Lisensi B" <?= ($data['lisensi'] == 'Lisensi B') ? 'selected' : '' ?>>Lisensi B (Lanjutan)</option>
-                                            <option value="Lisensi Nasional" <?= ($data['lisensi'] == 'Lisensi Nasional') ? 'selected' : '' ?>>Lisensi Nasional</option>
+                                            <option value="Lisensi D" <?= ($data['sertifikasi'] == 'Lisensi D') ? 'selected' : '' ?>>Lisensi D (Pemula)</option>
+                                            <option value="Lisensi C" <?= ($data['sertifikasi'] == 'Lisensi C') ? 'selected' : '' ?>>Lisensi C (Menengah)</option>
+                                            <option value="Lisensi B" <?= ($data['sertifikasi'] == 'Lisensi B') ? 'selected' : '' ?>>Lisensi B (Lanjutan)</option>
+                                            <option value="Lisensi Nasional" <?= ($data['sertifikasi'] == 'Lisensi Nasional') ? 'selected' : '' ?>>Lisensi Nasional</option>
                                         </select>
                                     </div>
                                     <div class="mb-5">
                                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">No. HP</label>
-                                        <input type="text" name="no_hp" value="<?= $data['no_hp']; ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-medium rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3 shadow-sm" required>
+                                        <input type="text" name="no_hp" value="<?= htmlspecialchars($data['jabatan']); ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-medium rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3 shadow-sm" required>
                                     </div>
                                     <div class="mb-6">
                                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Lokasi Melatih</label>
                                         <select name="id_kolam" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-medium rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3 shadow-sm" required>
                                             <?php
-                                            try {
-                                                $q_kolam = $database->getDocuments('pools');
-                                                foreach($q_kolam as $k) {
+                                            $q_kolam = mysqli_query($koneksi, "SELECT * FROM cabang");
+                                            if($q_kolam) {
+                                                while($k = mysqli_fetch_assoc($q_kolam)) {
                                                     $k_id = $k['id'];
-                                                    $select = ($k_id == $data['id_kolam']) ? 'selected' : '';
-                                                    echo "<option value='".$k_id."' $select>".htmlspecialchars($k['name'])."</option>";
+                                                    $select = ($k_id == $data['cabang']) ? 'selected' : '';
+                                                    echo "<option value='".$k_id."' $select>".htmlspecialchars($k['nama_cabang'])."</option>";
                                                 }
-                                            } catch (\Exception $e) {}
+                                            }
                                             ?>
                                         </select>
                                     </div>
@@ -180,13 +169,13 @@ include '../includes/koneksi.php';
                     <select name="id_kolam" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-medium rounded-xl focus:ring-indigo-600 focus:border-indigo-600 block w-full p-3 shadow-sm" required>
                         <option value="" disabled selected>-- Pilih Lokasi --</option>
                         <?php
-                        try {
-                            $query_kolam = $database->getDocuments('pools');
-                            foreach($query_kolam as $kolam) {
+                        $query_kolam = mysqli_query($koneksi, "SELECT * FROM cabang");
+                        if($query_kolam) {
+                            while($kolam = mysqli_fetch_assoc($query_kolam)) {
                                 $kolam_id = $kolam['id'];
-                                echo "<option value='".$kolam_id."'>".htmlspecialchars($kolam['name'])."</option>";
+                                echo "<option value='".$kolam_id."'>".htmlspecialchars($kolam['nama_cabang'])."</option>";
                             }
-                        } catch (\Exception $e) {}
+                        }
                         ?>
                     </select>
                 </div>
