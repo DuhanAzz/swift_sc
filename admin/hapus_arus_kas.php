@@ -1,12 +1,13 @@
 <?php
 include '../includes/koneksi.php';
 
-$id = $_GET['id'];
+$id = mysqli_real_escape_string($koneksi, $_GET['id']);
 
-try {
-    $database->deleteDocument('cash_flows', $id);
+$q = mysqli_query($koneksi, "DELETE FROM cash_flows WHERE id='$id'");
+
+if($q) {
     header("location:arus_kas.php?pesan=sukses_hapus");
-} catch (\Exception $e) {
-    echo "Gagal menghapus: " . $e->getMessage();
+} else {
+    echo "Gagal menghapus: " . mysqli_error($koneksi);
 }
 ?>

@@ -13,6 +13,7 @@ $nama_bulan = [
     '05' => 'Mei', '06' => 'Juni', '07' => 'Juli', '08' => 'Agustus',
     '09' => 'September', '10' => 'Oktober', '11' => 'November', '12' => 'Desember'
 ];
+$admin_pool_id = $_SESSION['pool_id'] ?? '';
 ?>
 
 <div class="p-4 sm:ml-64">
@@ -55,16 +56,17 @@ $nama_bulan = [
                     <tbody>
                         <?php
                         $q_atlet = [];
-                        try {
-                            $docs = $database->getDocuments('atlet');
-                            foreach($docs as $data) {
-                                $q_atlet[] = $data;
+                        $q_str = "SELECT * FROM member WHERE role='Atlet'";
+                        if(!empty($admin_pool_id)) {
+                            $q_str .= " AND cabang_id='$admin_pool_id'";
+                        }
+                        $q_str .= " ORDER BY nama ASC";
+                        $q = mysqli_query($koneksi, $q_str);
+                        if($q) {
+                            while($row = mysqli_fetch_assoc($q)) {
+                                $q_atlet[] = $row;
                             }
-                        } catch (\Exception $e) {}
-
-                        usort($q_atlet, function($a, $b) {
-                            return strcmp($a['nama'] ?? '', $b['nama'] ?? '');
-                        });
+                        }
 
                         $no = 1;
                         foreach($q_atlet as $a){
@@ -74,15 +76,13 @@ $nama_bulan = [
                             $jumlah = '';
                             $ket = '';
                             
-                            try {
-                                $pDoc = $database->getDocument('pembayaran', $atlet_id . '_' . $filter_bulan . '_' . $filter_tahun);
-                                if ($pDoc) {
-                                    $pData = $pDoc;
-                                    $status = $pData['status'] ?? 'Belum Bayar';
-                                    $jumlah = $pData['jumlah_bayar'] ?? '';
-                                    $ket = $pData['keterangan'] ?? '';
-                                }
-                            } catch (\Exception $e) {}
+                            $q_bayar = mysqli_query($koneksi, "SELECT * FROM pembayaran WHERE member_id='$atlet_id' AND bulan='$filter_bulan' AND tahun='$filter_tahun'");
+                            if($q_bayar && mysqli_num_rows($q_bayar) > 0) {
+                                $pData = mysqli_fetch_assoc($q_bayar);
+                                $status = $pData['status'] ?? 'Belum Bayar';
+                                $jumlah = $pData['jumlah_bayar'] ?? '';
+                                $ket = $pData['keterangan'] ?? '';
+                            }
                         ?>
                         <tr class="hover:bg-blue-50">
                             <td class="border border-gray-200 p-2 text-center text-gray-400"><?= $no++; ?></td>

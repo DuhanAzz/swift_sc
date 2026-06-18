@@ -5,8 +5,9 @@ include '../includes/header.php';
 include '../includes/sidebar.php';
 include '../includes/koneksi.php';
 
-// Cek ID User yang sedang login (Pastikan saat proses login, id user disimpan di session)
-// $user_id_login = $_SESSION['id_user']; 
+// Cek ID User yang sedang login
+$user_id_login = $_SESSION['user_id'] ?? 0;
+$admin_pool_id = $_SESSION['pool_id'] ?? '';
 ?>
 
 <div class="p-4 sm:ml-64">
@@ -50,40 +51,21 @@ include '../includes/koneksi.php';
                 <tbody>
                     <?php
                     $kasArray = [];
-                    try {
-                        $documents = $database->getDocuments('cash_flows');
-                        foreach ($documents as $data) {
-                            $data['nama_kolam'] = '-';
-                            if (!empty($data['pool_id'])) {
-                                try {
-                                    $poolDoc = $database->getDocument('pools', $data['pool_id']);
-                                    if ($poolDoc) {
-                                        $data['nama_kolam'] = $poolDoc['name'];
-                                    }
-                                } catch (\Exception $e) {}
-                            }
-                            
-                            $data['nama_admin'] = '-';
-                            if (!empty($data['user_id'])) {
-                                try {
-                                    $userDoc = $database->getDocument('users', $data['user_id']);
-                                    if ($userDoc) {
-                                        $data['nama_admin'] = $userDoc['name'];
-                                    }
-                                } catch (\Exception $e) {}
-                            }
-                            
-                            $kasArray[] = $data;
+                    $q_str = "SELECT c.*, b.nama_cabang as nama_kolam, u.name as nama_admin 
+                              FROM cash_flows c 
+                              LEFT JOIN cabang b ON c.pool_id = b.id 
+                              LEFT JOIN users u ON c.user_id = u.id ";
+                    if(!empty($admin_pool_id)) {
+                        $q_str .= " WHERE c.pool_id = '$admin_pool_id'";
+                    }
+                    $q_str .= " ORDER BY c.transaction_date DESC, c.id DESC";
+                    
+                    $q_kas = mysqli_query($koneksi, $q_str);
+                    if($q_kas) {
+                        while($row = mysqli_fetch_assoc($q_kas)) {
+                            $kasArray[] = $row;
                         }
-                    } catch (\Exception $e) {}
-
-                    usort($kasArray, function($a, $b) {
-                        $dateDiff = strcmp($b['transaction_date'] ?? '', $a['transaction_date'] ?? '');
-                        if ($dateDiff === 0) {
-                            return strcmp($b['id'], $a['id']);
-                        }
-                        return $dateDiff;
-                    });
+                    }
 
                     if(count($kasArray) > 0) {
                         foreach($kasArray as $data) {
@@ -97,8 +79,8 @@ include '../includes/koneksi.php';
                         <td class="px-6 py-4 truncate max-w-xs"><?= htmlspecialchars($data['description']); ?></td>
                         <td class="px-6 py-4 font-bold text-right <?= $text_color; ?>"><?= number_format($data['amount'], 0, ',', '.'); ?></td>
                         <td class="px-6 py-4 text-xs">
-                            <div class="font-bold text-slate-700"><?= htmlspecialchars($data['nama_kolam']); ?></div>
-                            <div class="text-gray-400">Oleh: <?= htmlspecialchars($data['nama_admin']); ?></div>
+                            <div class="font-bold text-slate-700"><?= htmlspecialchars($data['nama_kolam'] ?? '-'); ?></div>
+                            <div class="text-gray-400">Oleh: <?= htmlspecialchars($data['nama_admin'] ?? '-'); ?></div>
                         </td>
                         <td class="px-6 py-4 text-center space-x-3">
                             <button data-modal-target="modalEditKas<?= $data['id']; ?>" data-modal-toggle="modalEditKas<?= $data['id']; ?>" class="font-medium text-blue-600 hover:underline">Edit</button>
@@ -169,13 +151,14 @@ include '../includes/koneksi.php';
                     <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Cabang Kolam</label>
                     <select name="pool_id" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
                         <?php
-                        try {
-                            $q_kolam = $database->getDocuments('pools');
-                            foreach($q_kolam as $k) {
+                        $q_kolam = mysqli_query($koneksi, "SELECT * FROM cabang");
+                        if($q_kolam) {
+                            while($k = mysqli_fetch_assoc($q_kolam)) {
                                 $k_id = $k['id'];
-                                echo "<option value='".$k_id."'>".htmlspecialchars($k['name'])."</option>";
+                                $sel = ($k_id == $admin_pool_id) ? 'selected' : '';
+                                echo "<option value='".$k_id."' $sel>".htmlspecialchars($k['nama_cabang'])."</option>";
                             }
-                        } catch (\Exception $e) {}
+                        }
                         ?>
                     </select>
                 </div>

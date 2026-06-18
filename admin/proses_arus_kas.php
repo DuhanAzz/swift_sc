@@ -4,53 +4,40 @@ include '../includes/koneksi.php';
 
 // PROSES TAMBAH KAS BARU
 if(isset($_POST['tambah'])){
-    $pool_id          = $_POST['pool_id'];
+    $pool_id          = mysqli_real_escape_string($koneksi, $_POST['pool_id']);
     // Mengambil ID user dari session admin yang sedang login
-    $user_id          = $_SESSION['uid'] ?? 'admin'; 
+    $user_id          = $_SESSION['user_id'] ?? 0; 
     
-    $transaction_date = $_POST['transaction_date'];
-    $type             = $_POST['type'];
-    $category         = $_POST['category'];
-    $amount           = $_POST['amount'];
-    $description      = $_POST['description'];
+    $transaction_date = mysqli_real_escape_string($koneksi, $_POST['transaction_date']);
+    $type             = mysqli_real_escape_string($koneksi, $_POST['type']);
+    $category         = mysqli_real_escape_string($koneksi, $_POST['category']);
+    $amount           = (int)$_POST['amount'];
+    $description      = mysqli_real_escape_string($koneksi, $_POST['description']);
 
-    try {
-        $database->newDocument('cash_flows', [
-            'pool_id' => $pool_id,
-            'user_id' => $user_id,
-            'transaction_date' => $transaction_date,
-            'type' => $type,
-            'category' => $category,
-            'amount' => (int)$amount,
-            'description' => $description,
-            'created_at' => date('Y-m-d H:i:s')
-        ]);
+    $q = mysqli_query($koneksi, "INSERT INTO cash_flows (pool_id, user_id, transaction_date, type, category, amount, description) VALUES ('$pool_id', '$user_id', '$transaction_date', '$type', '$category', '$amount', '$description')");
+    
+    if($q) {
         header("location:arus_kas.php?pesan=sukses_tambah");
-    } catch (\Exception $e) {
-        echo "Gagal: " . $e->getMessage();
+    } else {
+        echo "Gagal: " . mysqli_error($koneksi);
     }
 }
 
 // PROSES EDIT DATA KAS
 if(isset($_POST['edit'])){
-    $id               = $_POST['id'];
-    $transaction_date = $_POST['transaction_date'];
-    $type             = $_POST['type'];
-    $category         = $_POST['category'];
-    $amount           = $_POST['amount'];
-    $description      = $_POST['description'];
+    $id               = mysqli_real_escape_string($koneksi, $_POST['id']);
+    $transaction_date = mysqli_real_escape_string($koneksi, $_POST['transaction_date']);
+    $type             = mysqli_real_escape_string($koneksi, $_POST['type']);
+    $category         = mysqli_real_escape_string($koneksi, $_POST['category']);
+    $amount           = (int)$_POST['amount'];
+    $description      = mysqli_real_escape_string($koneksi, $_POST['description']);
 
-    try {
-        $database->setDocument('cash_flows', $id, [
-            'transaction_date' => $transaction_date,
-            'type' => $type,
-            'category' => $category,
-            'amount' => (int)$amount,
-            'description' => $description
-        ]);
+    $q = mysqli_query($koneksi, "UPDATE cash_flows SET transaction_date='$transaction_date', type='$type', category='$category', amount='$amount', description='$description' WHERE id='$id'");
+    
+    if($q) {
         header("location:arus_kas.php?pesan=sukses_edit");
-    } catch (\Exception $e) {
-        echo "Gagal: " . $e->getMessage();
+    } else {
+        echo "Gagal: " . mysqli_error($koneksi);
     }
 }
 ?>

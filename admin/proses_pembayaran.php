@@ -3,30 +3,29 @@ session_start();
 include '../includes/koneksi.php';
 
 if(isset($_POST['simpan_bayar'])){
-    $bulan = $_POST['bulan'];
-    $tahun = $_POST['tahun'];
+    $bulan = mysqli_real_escape_string($koneksi, $_POST['bulan']);
+    $tahun = mysqli_real_escape_string($koneksi, $_POST['tahun']);
     $statuses = $_POST['status']; // array [atlet_id => status]
     $jumlah = $_POST['jumlah']; // array [atlet_id => jumlah]
     $keterangan = $_POST['keterangan']; // array [atlet_id => keterangan]
 
     foreach($statuses as $atlet_id => $status){
+        $atlet_id = mysqli_real_escape_string($koneksi, $atlet_id);
+        $status = mysqli_real_escape_string($koneksi, $status);
         $jml = (int)($jumlah[$atlet_id] ?? 0);
-        $ket = $keterangan[$atlet_id] ?? '';
+        $ket = mysqli_real_escape_string($koneksi, $keterangan[$atlet_id] ?? '');
         
-        // Composite ID for uniqueness per atlet per bulan per tahun
-        $docId = $atlet_id . '_' . $bulan . '_' . $tahun;
+        $tgl_bayar = ($status == 'Lunas') ? date('Y-m-d H:i:s') : 'NULL';
+        $tgl_bayar_val = ($status == 'Lunas') ? "'$tgl_bayar'" : "NULL";
         
-        try {
-            $database->setDocument('pembayaran', $docId, [
-                'atlet_id' => $atlet_id,
-                'bulan' => $bulan,
-                'tahun' => $tahun,
-                'status' => $status,
-                'jumlah_bayar' => $jml,
-                'keterangan' => $ket,
-                'updated_at' => date('Y-m-d H:i:s')
-            ]);
-        } catch (\Exception $e) {}
+        $cek = mysqli_query($koneksi, "SELECT id FROM pembayaran WHERE member_id='$atlet_id' AND bulan='$bulan' AND tahun='$tahun'");
+        if(mysqli_num_rows($cek) > 0) {
+            $row = mysqli_fetch_assoc($cek);
+            $id = $row['id'];
+            mysqli_query($koneksi, "UPDATE pembayaran SET status='$status', jumlah_bayar='$jml', keterangan='$ket', tgl_bayar=$tgl_bayar_val WHERE id='$id'");
+        } else {
+            mysqli_query($koneksi, "INSERT INTO pembayaran (member_id, bulan, tahun, status, tgl_bayar, jumlah_bayar, keterangan) VALUES ('$atlet_id', '$bulan', '$tahun', '$status', $tgl_bayar_val, '$jml', '$ket')");
+        }
     }
     
     header("location:pembayaran.php?bulan=$bulan&tahun=$tahun&pesan=sukses_simpan");
