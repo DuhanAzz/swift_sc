@@ -5,8 +5,8 @@ include '../includes/koneksi.php';
 if(isset($_POST['simpan_presensi'])){
     $tanggal = mysqli_real_escape_string($koneksi, $_POST['tanggal']);
     $status_array = $_POST['status'];
-    $coach_cabang_id = $_SESSION['cabang_id'] ?? '';
-    $recorded_by = $_SESSION['id'] ?? 0;
+    $coach_cabang_id = $_SESSION['cabang'] ?? '';
+    $recorded_by = $_SESSION['user_id'] ?? 0;
     
     $success = true;
     

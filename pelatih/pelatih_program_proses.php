@@ -9,8 +9,8 @@ if(isset($_POST['simpan'])){
     $deskripsi   = mysqli_real_escape_string($koneksi, $_POST['deskripsi']);
     $tipe_program = 'Harian';
     
-    $coach_cabang_id = $_SESSION['cabang_id'] ?? '';
-    $pelatih_id = $_SESSION['id'] ?? 0;
+    $coach_cabang_id = $_SESSION['cabang'] ?? '';
+    $pelatih_id = $_SESSION['user_id'] ?? 0;
 
     $q_insert = mysqli_query($koneksi, "INSERT INTO program_latihan (pelatih_id, tanggal, target_grup, judul, tipe_program, deskripsi, cabang_id) VALUES ('$pelatih_id', '$tanggal', '$target_grup', '$judul', '$tipe_program', '$deskripsi', '$coach_cabang_id')");
     if($q_insert) {

@@ -20,6 +20,7 @@ if (isset($_POST['login'])) {
             // Verifikasi password
             if (password_verify($password, $userData['password'])) {
                 // Set Session
+                $_SESSION['user_id'] = $userData['id'];
                 $_SESSION['email'] = $userData['email'];
                 $_SESSION['name'] = isset($userData['username']) ? $userData['username'] : 'User';
                 $_SESSION['role'] = strtolower($userData['role']);

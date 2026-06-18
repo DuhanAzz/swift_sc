@@ -19,8 +19,8 @@ if(isset($_POST['tambah'])){
     $time_ms = ($menit * 60000) + ($detik * 1000) + ($milidetik * 10);
     $notes       = mysqli_real_escape_string($koneksi, $_POST['notes']);
 
-    $coach_cabang_id = $_SESSION['cabang_id'] ?? '';
-    $recorded_by = $_SESSION['id'] ?? 0;
+    $coach_cabang_id = $_SESSION['cabang'] ?? '';
+    $recorded_by = $_SESSION['user_id'] ?? 0;
 
     $q = mysqli_query($koneksi, "INSERT INTO performa (member_id, cabang_id, gaya_renang, jarak, tipe_kolam, waktu_formatted, waktu_ms, tanggal_rekor, catatan, recorded_by) VALUES ('$member_id', '$coach_cabang_id', '$swim_style', '$distance', '$pool_length', '$time_formatted', '$time_ms', '$record_date', '$notes', '$recorded_by')");
     
@@ -47,7 +47,7 @@ if(isset($_POST['edit'])){
     $time_formatted = sprintf("%02d:%02d.%02d", $menit, $detik, $milidetik);
     $time_ms = ($menit * 60000) + ($detik * 1000) + ($milidetik * 10);
     $notes       = mysqli_real_escape_string($koneksi, $_POST['notes']);
-    $recorded_by = $_SESSION['id'] ?? 0;
+    $recorded_by = $_SESSION['user_id'] ?? 0;
 
     $q = mysqli_query($koneksi, "UPDATE performa SET member_id='$member_id', gaya_renang='$swim_style', jarak='$distance', tipe_kolam='$pool_length', waktu_formatted='$time_formatted', waktu_ms='$time_ms', tanggal_rekor='$record_date', catatan='$notes', recorded_by='$recorded_by' WHERE id='$id'");
     

@@ -5,7 +5,7 @@ include '../includes/header.php';
 include '../includes/sidebar.php';
 include '../includes/koneksi.php';
 
-$coach_cabang_id = $_SESSION['cabang_id'] ?? '';
+$coach_cabang_id = $_SESSION['cabang'] ?? '';
 $hari_ini = date('Y-m-d');
 $hadir_hari_ini = 0;
 $q_hadir = mysqli_query($koneksi, "SELECT COUNT(id) as total FROM absensi WHERE tanggal='$hari_ini' AND status='Hadir' AND cabang_id='$coach_cabang_id'");

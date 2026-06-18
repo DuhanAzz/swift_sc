@@ -46,7 +46,7 @@ include '../includes/koneksi.php';
                 </thead>
                 <tbody>
                     <?php
-                    $coach_cabang_id = $_SESSION['cabang_id'] ?? '';
+                    $coach_cabang_id = $_SESSION['cabang'] ?? '';
                     $performaArray = [];
                     $q_perf = mysqli_query($koneksi, "SELECT p.*, m.nama as nama_atlet FROM performa p LEFT JOIN member m ON p.member_id = m.id WHERE p.cabang_id='$coach_cabang_id' ORDER BY p.tanggal_rekor DESC, p.id DESC");
                     if($q_perf) {

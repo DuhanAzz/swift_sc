@@ -8,7 +8,7 @@ include '../includes/header.php';
 include '../includes/sidebar.php';
 include '../includes/koneksi.php';
 
-$coach_cabang_id = $_SESSION['cabang_id'] ?? '';
+$coach_cabang_id = $_SESSION['cabang'] ?? '';
 $tanggal_hari_ini = date('Y-m-d');
 
 // Ambil semua atlet di cabang ini

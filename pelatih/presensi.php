@@ -46,7 +46,7 @@ $tanggal_absensi = isset($_GET['tanggal']) ? $_GET['tanggal'] : date('Y-m-d');
                         </thead>
                         <tbody>
                             <?php
-                            $coach_cabang_id = $_SESSION['cabang_id'] ?? '';
+                            $coach_cabang_id = $_SESSION['cabang'] ?? '';
                             
                             $q_atlet = [];
                             $res_atlet = mysqli_query($koneksi, "SELECT * FROM member WHERE 1=1 AND cabang_id='$coach_cabang_id' ORDER BY nama ASC");

@@ -8,8 +8,8 @@ include '../includes/header.php';
 include '../includes/sidebar.php';
 include '../includes/koneksi.php';
 
-$coach_cabang_id = $_SESSION['cabang_id'] ?? '';
-$coach_id = $_SESSION['id'] ?? 0;
+$coach_cabang_id = $_SESSION['cabang'] ?? '';
+$coach_id = $_SESSION['user_id'] ?? 0;
 $coach_name = $_SESSION['name'] ?? 'Pelatih';
 
 // 1. Total Atlet di Cabang Pelatih
@@ -31,7 +31,7 @@ if($q_hadir) {
 
 // 3. Pencatatan Performa Terbaru (Oleh Pelatih Ini)
 $recent_performances = [];
-$q_perf = mysqli_query($koneksi, "SELECT p.*, m.nama as nama_atlet FROM performa p LEFT JOIN member m ON p.member_id = m.id WHERE p.cabang_id='$coach_cabang_id' AND p.pelatih_id='$coach_id' ORDER BY p.tanggal_rekor DESC, p.id DESC LIMIT 3");
+$q_perf = mysqli_query($koneksi, "SELECT p.*, m.nama as nama_atlet FROM performa p LEFT JOIN member m ON p.member_id = m.id WHERE p.cabang_id='$coach_cabang_id' AND p.recorded_by='$coach_id' ORDER BY p.tanggal_rekor DESC, p.id DESC LIMIT 3");
 if($q_perf) {
     while($row = mysqli_fetch_assoc($q_perf)) {
         $recent_performances[] = $row;

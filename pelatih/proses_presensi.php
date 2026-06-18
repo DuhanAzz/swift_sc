@@ -6,8 +6,8 @@ if(isset($_POST['simpan_presensi'])){
     $tanggal = mysqli_real_escape_string($koneksi, $_POST['tanggal']);
     $statuses = $_POST['status']; // Ini array [atlet_id => status]
     $keterangan = $_POST['keterangan']; // Ini array [atlet_id => keterangan]
-    $coach_cabang_id = $_SESSION['cabang_id'] ?? '';
-    $recorded_by = $_SESSION['id'] ?? 0;
+    $coach_cabang_id = $_SESSION['cabang'] ?? '';
+    $recorded_by = $_SESSION['user_id'] ?? 0;
 
     foreach($statuses as $atlet_id => $status){
         $ket = $keterangan[$atlet_id] ?? '';

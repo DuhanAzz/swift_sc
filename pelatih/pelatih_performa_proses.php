@@ -17,9 +17,10 @@ if(isset($_POST['simpan'])){
     $time_in_ms = ((int)$_POST['time_m'] * 60000) + ((int)$_POST['time_s'] * 1000) + ((int)$_POST['time_ms'] * 10);
     $notes = mysqli_real_escape_string($koneksi, $_POST['notes']);
 
-    $pelatih_id = $_SESSION['id'] ?? 0;
+    $recorded_by = $_SESSION['user_id'] ?? 0;
+    $cabang_id = $_SESSION['cabang'] ?? 0;
 
-    $q_insert = mysqli_query($koneksi, "INSERT INTO performa (member_id, pelatih_id, gaya_renang, jarak, waktu_formatted, waktu_ms, tanggal_rekor, catatan_pelatih) VALUES ('$member_id', '$pelatih_id', '$swim_style', '$distance', '$time_formatted', '$time_in_ms', '$record_date', '$notes')");
+    $q_insert = mysqli_query($koneksi, "INSERT INTO performa (member_id, cabang_id, gaya_renang, jarak, waktu_formatted, waktu_ms, tanggal_rekor, catatan, recorded_by) VALUES ('$member_id', '$cabang_id', '$swim_style', '$distance', '$time_formatted', '$time_in_ms', '$record_date', '$notes', '$recorded_by')");
     if($q_insert) {
         header("location:pelatih_performa.php?pesan=sukses");
     } else {
