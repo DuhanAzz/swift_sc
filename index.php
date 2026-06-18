@@ -543,6 +543,18 @@ try {
         document.querySelectorAll('#mobileMenu a').forEach(link => {
             link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
         });
+
+        // Slider functionality
+        let currentSlide = 0;
+        function moveSlider(dir) {
+            const track = document.getElementById('sliderTrack');
+            if (!track) return;
+            const slides = track.children.length;
+            currentSlide = (currentSlide + dir + slides) % slides;
+            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+        }
+        // Auto-advance slider
+        setInterval(() => { if(document.getElementById('sliderTrack')) moveSlider(1); }, 5000);
     </script>
 </body>
 </html>
