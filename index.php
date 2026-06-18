@@ -10,9 +10,10 @@ $cmsData = [
 ];
 
 try {
-    $existingCms = $database->getDocument('cms_content', 'global');
-    if ($existingCms) {
-        $cmsData = array_merge($cmsData, $existingCms);
+    $q_cms = mysqli_query($koneksi, "SELECT judul, konten FROM cms_landing WHERE tipe='Banner' AND status='Aktif' LIMIT 1");
+    if($q_cms && $row_cms = mysqli_fetch_assoc($q_cms)) {
+        $cmsData['hero_title'] = $row_cms['judul'];
+        $cmsData['hero_desc'] = $row_cms['konten'];
     }
 } catch (\Exception $e) {}
 ?>
@@ -179,13 +180,18 @@ try {
                         <tbody class="divide-y divide-slate-800/50 bg-slate-900/60 backdrop-blur-md text-slate-200">
                             <?php
                             $schedules = [];
-                            try { $schedules = $database->getDocuments('public_schedules'); } catch (\Exception $e) {}
+                            try {
+                                $q_jadwal = mysqli_query($koneksi, "SELECT * FROM jadwal ORDER BY id ASC");
+                                while($row = mysqli_fetch_assoc($q_jadwal)) {
+                                    $schedules[] = $row;
+                                }
+                            } catch (\Exception $e) {}
                             if(count($schedules) > 0) {
                                 foreach($schedules as $s) {
                             ?>
                             <tr class="hover:bg-slate-800 transition-colors">
                                 <td class="p-5 font-semibold"><?= htmlspecialchars($s['lokasi']) ?></td>
-                                <td class="p-5"><?= htmlspecialchars($s['hari']) ?> <span class="block text-slate-400 text-sm">(<?= htmlspecialchars($s['jam']) ?> WIB)</span></td>
+                                <td class="p-5"><?= htmlspecialchars($s['hari']) ?> <span class="block text-slate-400 text-sm">(<?= date('H:i', strtotime($s['jam_mulai'])) ?> - <?= date('H:i', strtotime($s['jam_selesai'])) ?> WIB)</span></td>
                             </tr>
                             <?php } } else { ?>
                             <tr class="hover:bg-slate-800 transition-colors">
@@ -259,11 +265,9 @@ try {
                 <?php
                 $pelatihList = [];
                 try {
-                    $allPelatih = $database->getDocuments('coaches');
-                    foreach($allPelatih as $p) {
-                        if (isset($p['is_highlighted']) && $p['is_highlighted'] == true) {
-                            $pelatihList[] = $p;
-                        }
+                    $q_pelatih = mysqli_query($koneksi, "SELECT * FROM pelatih LIMIT 3");
+                    while($row = mysqli_fetch_assoc($q_pelatih)) {
+                        $pelatihList[] = $row;
                     }
                 } catch (\Exception $e) {}
                 
@@ -295,11 +299,10 @@ try {
                 <?php
                 $beritaList = [];
                 try {
-                    $beritaList = $database->getDocuments('berita');
-                    usort($beritaList, function($a, $b) {
-                        return strcmp($b['id'] ?? '', $a['id'] ?? '');
-                    });
-                    $beritaList = array_slice($beritaList, 0, 3);
+                    $q_berita = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY id DESC LIMIT 3");
+                    while($row = mysqli_fetch_assoc($q_berita)) {
+                        $beritaList[] = $row;
+                    }
                 } catch (\Exception $e) {}
                 
                 if (count($beritaList) > 0) :
@@ -311,7 +314,7 @@ try {
                     <div class="p-6 relative bg-slate-900/40">
                         <span class="absolute -top-3 left-6 badge-orange px-3 py-1 rounded-full text-xs font-bold shadow-[0_4px_10px_rgba(249,115,22,0.5)]"><?= $b['cabang'] ?? 'Umum' ?></span>
                         <h4 class="text-xl font-bold text-white mb-2 leading-tight"> <?= htmlspecialchars($b['judul']) ?> </h4>
-                        <p class="text-slate-400 text-sm line-clamp-3 mb-4"><?= strip_tags($b['konten']) ?></p>
+                        <p class="text-slate-400 text-sm line-clamp-3 mb-4"><?= strip_tags($b['isi'] ?? '') ?></p>
                         <p class="text-teal-500 font-bold text-xs uppercase tracking-wider">Oleh: Swift Admin</p>
                     </div>
                 </div>

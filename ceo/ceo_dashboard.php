@@ -10,31 +10,18 @@ include '../includes/koneksi.php';
 
 // 1. Total Active Members (Semua Atlet)
 $total_atlet = 0;
-try {
-    $atletSnapshot = $database->getDocuments('atlet');
-    $total_atlet = count($atletSnapshot);
-} catch (\Exception $e) { }
+$q1 = mysqli_query($koneksi, "SELECT COUNT(id) as total FROM member");
+if($q1 && $r = mysqli_fetch_assoc($q1)) $total_atlet = $r['total'];
 
 // 2. Total Coaches
 $total_pelatih = 0;
-try {
-    $pelatihSnapshot = $database->getDocuments('pelatih');
-    $total_pelatih = count($pelatihSnapshot);
-} catch (\Exception $e) { }
+$q2 = mysqli_query($koneksi, "SELECT COUNT(id) as total FROM pelatih");
+if($q2 && $r = mysqli_fetch_assoc($q2)) $total_pelatih = $r['total'];
 
 // 3. Total Cash (Saldo Global)
 $total_kas = 0;
-try {
-    $cashSnapshot = $database->getDocuments('cash_flows');
-    foreach ($cashSnapshot as $cash) {
-        $nominal = floatval($cash['amount'] ?? 0);
-        if (($cash['type'] ?? '') == 'Pemasukan') {
-            $total_kas += $nominal;
-        } else if (($cash['type'] ?? '') == 'Pengeluaran') {
-            $total_kas -= $nominal;
-        }
-    }
-} catch (\Exception $e) { }
+$q3 = mysqli_query($koneksi, "SELECT SUM(CASE WHEN type='Pemasukan' THEN amount ELSE -amount END) as total_saldo FROM cash_flows");
+if($q3 && $r = mysqli_fetch_assoc($q3)) $total_kas = floatval($r['total_saldo']);
 
 ?>
 
