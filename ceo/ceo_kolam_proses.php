@@ -2,38 +2,37 @@
 include '../includes/koneksi.php';
 
 if(isset($_POST['tambah'])){
-    $name = $_POST['name'];
-    $location = $_POST['location'];
+    $name = mysqli_real_escape_string($koneksi, $_POST['name']);
+    $location = mysqli_real_escape_string($koneksi, $_POST['location']);
 
-    try {
-        $database->newDocument('pools', [
-            'name' => $name,
-            'location' => $location,
-            'created_at' => date('Y-m-d H:i:s')
-        ]);
+    $q = mysqli_query($koneksi, "INSERT INTO cabang (nama_cabang, lokasi) VALUES ('$name', '$location')");
+    if($q) {
         header("location:ceo_manage_kolam.php?pesan=sukses_tambah");
-    } catch (\Exception $e) { header("location:ceo_manage_kolam.php?pesan=gagal"); }
+    } else {
+        header("location:ceo_manage_kolam.php?pesan=gagal");
+    }
 }
 
 if(isset($_POST['edit'])){
-    $id = $_POST['id'];
-    $name = $_POST['name'];
-    $location = $_POST['location'];
+    $id = mysqli_real_escape_string($koneksi, $_POST['id']);
+    $name = mysqli_real_escape_string($koneksi, $_POST['name']);
+    $location = mysqli_real_escape_string($koneksi, $_POST['location']);
 
-    try {
-        $database->setDocument('pools', $id, [
-            'name' => $name,
-            'location' => $location
-        ]);
+    $q = mysqli_query($koneksi, "UPDATE cabang SET nama_cabang='$name', lokasi='$location' WHERE id='$id'");
+    if($q) {
         header("location:ceo_manage_kolam.php?pesan=sukses_edit");
-    } catch (\Exception $e) { header("location:ceo_manage_kolam.php?pesan=gagal"); }
+    } else {
+        header("location:ceo_manage_kolam.php?pesan=gagal");
+    }
 }
 
 if(isset($_GET['hapus'])){
-    $id = $_GET['hapus'];
-    try {
-        $database->deleteDocument('pools', $id);
+    $id = mysqli_real_escape_string($koneksi, $_GET['hapus']);
+    $q = mysqli_query($koneksi, "DELETE FROM cabang WHERE id='$id'");
+    if($q) {
         header("location:ceo_manage_kolam.php?pesan=sukses_hapus");
-    } catch (\Exception $e) { header("location:ceo_manage_kolam.php?pesan=gagal"); }
+    } else {
+        header("location:ceo_manage_kolam.php?pesan=gagal");
+    }
 }
 ?>

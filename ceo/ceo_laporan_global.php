@@ -13,57 +13,30 @@ $cash_flows = [];
 $total_masuk = 0;
 $total_keluar = 0;
 
-try {
-    $docs = $database->getDocuments('cash_flows');
-    foreach ($docs as $d) {
-        // Ambil nama kolam jika ada
-        $nama_kolam = 'Pusat';
-        if (!empty($d['pool_id'])) {
-            try {
-                $pool = $database->getDocument('pools', $d['pool_id']);
-                if ($pool) $nama_kolam = $pool['name'];
-            } catch (\Exception $e) {}
-        }
-        $d['nama_kolam'] = $nama_kolam;
-        $cash_flows[] = $d;
-
-        $nominal = floatval($d['amount'] ?? 0);
-        if (($d['type'] ?? '') == 'Pemasukan') {
+$q_cf = mysqli_query($koneksi, "SELECT cash_flows.*, cabang.nama_cabang FROM cash_flows LEFT JOIN cabang ON cash_flows.pool_id = cabang.id ORDER BY transaction_date DESC");
+if($q_cf) {
+    while($row = mysqli_fetch_assoc($q_cf)) {
+        $row['nama_kolam'] = $row['nama_cabang'] ?? 'Pusat';
+        $row['date'] = $row['transaction_date'];
+        
+        $nominal = floatval($row['amount'] ?? 0);
+        if ($row['type'] == 'Pemasukan') {
             $total_masuk += $nominal;
-        } else if (($d['type'] ?? '') == 'Pengeluaran') {
+        } else if ($row['type'] == 'Pengeluaran') {
             $total_keluar += $nominal;
         }
+        $cash_flows[] = $row;
     }
-} catch (\Exception $e) {}
-
-// Urutkan Cash Flow Terbaru
-usort($cash_flows, function($a, $b) {
-    return strcmp($b['date'] ?? '', $a['date'] ?? '');
-});
+}
 
 // --- Ambil Leaderboard Atlet Global ---
 $performances = [];
-try {
-    $perfDocs = $database->getDocuments('performances');
-    foreach ($perfDocs as $p) {
-        $nama_atlet = 'Unknown';
-        if (!empty($p['member_id'])) {
-            try {
-                $atlet = $database->getDocument('atlet', $p['member_id']);
-                if ($atlet) $nama_atlet = $atlet['nama'];
-            } catch (\Exception $e) {}
-        }
-        $p['nama_atlet'] = $nama_atlet;
-        $performances[] = $p;
+$q_perf = mysqli_query($koneksi, "SELECT performa.*, member.nama as nama_atlet FROM performa LEFT JOIN member ON performa.member_id = member.id ORDER BY waktu_ms ASC LIMIT 100");
+if($q_perf) {
+    while($row = mysqli_fetch_assoc($q_perf)) {
+        $performances[] = $row;
     }
-} catch (\Exception $e) {}
-
-// Urutkan berdasarkan waktu tercepat (ASC)
-usort($performances, function($a, $b) {
-    $waktu_a = $a['time_formatted'] ?? '99:99.99';
-    $waktu_b = $b['time_formatted'] ?? '99:99.99';
-    return strcmp($waktu_a, $waktu_b);
-});
+}
 ?>
 
 <div class="p-4 sm:ml-64">
@@ -127,7 +100,7 @@ usort($performances, function($a, $b) {
                             <tr class="bg-white border-b hover:bg-slate-50">
                                 <td class="px-6 py-4"><?= date('d M Y', strtotime($c['date'])); ?></td>
                                 <td class="px-6 py-4 font-bold"><?= htmlspecialchars($c['nama_kolam']); ?></td>
-                                <td class="px-6 py-4"><span class="px-2 py-1 bg-gray-100 border rounded text-xs"><?= htmlspecialchars($c['type']); ?></span></td>
+                                <td class="px-6 py-4"><span class="px-2 py-1 bg-gray-100 border rounded text-xs"><?= htmlspecialchars($c['category'] ?? $c['type']); ?></span></td>
                                 <td class="px-6 py-4"><?= htmlspecialchars($c['description']); ?></td>
                                 <td class="px-6 py-4 font-bold <?= $color ?>">Rp <?= number_format($c['amount'], 0, ',', '.'); ?></td>
                             </tr>
@@ -159,9 +132,9 @@ usort($performances, function($a, $b) {
                             <tr class="bg-white border-b hover:bg-slate-50">
                                 <td class="px-6 py-4 font-black text-slate-800">#<?= $rank++; ?></td>
                                 <td class="px-6 py-4 font-bold text-indigo-700"><?= htmlspecialchars($p['nama_atlet']); ?></td>
-                                <td class="px-6 py-4"><?= htmlspecialchars($p['swim_style'] ?? '-'); ?></td>
-                                <td class="px-6 py-4"><?= htmlspecialchars($p['distance'] ?? '-'); ?>m</td>
-                                <td class="px-6 py-4 font-black text-slate-900"><?= htmlspecialchars($p['time_formatted'] ?? '-'); ?></td>
+                                <td class="px-6 py-4"><?= htmlspecialchars($p['gaya_renang'] ?? '-'); ?></td>
+                                <td class="px-6 py-4"><?= htmlspecialchars($p['jarak'] ?? '-'); ?>m</td>
+                                <td class="px-6 py-4 font-black text-slate-900"><?= htmlspecialchars($p['waktu_formatted'] ?? '-'); ?></td>
                             </tr>
                             <?php } } else { echo "<tr><td colspan='5' class='text-center py-4'>Belum ada data prestasi.</td></tr>"; } ?>
                         </tbody>

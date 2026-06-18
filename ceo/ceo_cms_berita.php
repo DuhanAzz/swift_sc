@@ -43,10 +43,12 @@ include '../includes/koneksi.php';
             <?php
             $beritaArray = [];
             try {
-                $beritaArray = $database->getDocuments('berita');
-                usort($beritaArray, function($a, $b) {
-                    return strcmp($b['id'] ?? '', $a['id'] ?? '');
-                });
+                $q_berita = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY id DESC");
+                if($q_berita) {
+                    while($row = mysqli_fetch_assoc($q_berita)) {
+                        $beritaArray[] = $row;
+                    }
+                }
             } catch (\Exception $e) {}
 
             if(count($beritaArray) > 0) {
@@ -61,7 +63,7 @@ include '../includes/koneksi.php';
                         <span class="text-xs text-gray-500"><?= date('d M Y', strtotime($data['tanggal'])); ?></span>
                     </div>
                     <h3 class="text-lg font-bold text-gray-800 mb-2 leading-tight"><?= htmlspecialchars($data['judul']); ?></h3>
-                    <p class="text-sm text-gray-500 line-clamp-3 mb-4 flex-1"><?= strip_tags($data['konten']); ?></p>
+                    <p class="text-sm text-gray-500 line-clamp-3 mb-4 flex-1"><?= strip_tags($data['isi'] ?? ''); ?></p>
                     
                     <div class="flex space-x-2 mt-auto border-t pt-4">
                         <button onclick="document.getElementById('modalEditBerita<?= $data['id']; ?>').classList.remove('hidden')" class="flex-1 bg-gray-100 text-gray-700 font-bold py-2 rounded hover:bg-gray-200 transition">Edit</button>
@@ -86,7 +88,7 @@ include '../includes/koneksi.php';
                                     <select name="kategori" class="w-full p-2 border rounded-lg focus:ring-pink-500" required>
                                         <option value="Prestasi" <?= $data['kategori'] == 'Prestasi' ? 'selected' : '' ?>>Prestasi</option>
                                         <option value="Pengumuman" <?= $data['kategori'] == 'Pengumuman' ? 'selected' : '' ?>>Pengumuman</option>
-                                        <option value="Artikel Umum" <?= $data['kategori'] == 'Artikel Umum' ? 'selected' : '' ?>>Artikel Umum</option>
+                                        <option value="Artikel" <?= $data['kategori'] == 'Artikel' ? 'selected' : '' ?>>Artikel</option>
                                     </select>
                                 </div>
                                 <div>
@@ -104,7 +106,7 @@ include '../includes/koneksi.php';
                             </div>
                             <div class="mb-6">
                                 <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Konten Berita</label>
-                                <textarea name="konten" rows="6" class="w-full p-2 border rounded-lg focus:ring-pink-500" required><?= htmlspecialchars($data['konten']); ?></textarea>
+                                <textarea name="konten" rows="6" class="w-full p-2 border rounded-lg focus:ring-pink-500" required><?= htmlspecialchars($data['isi'] ?? ''); ?></textarea>
                             </div>
                             <button type="submit" name="edit" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 rounded-lg">Simpan Perubahan</button>
                         </form>
@@ -133,7 +135,7 @@ include '../includes/koneksi.php';
                         <select name="kategori" class="w-full p-2 border rounded-lg focus:ring-pink-500" required>
                             <option value="Prestasi">Prestasi</option>
                             <option value="Pengumuman">Pengumuman</option>
-                            <option value="Artikel Umum">Artikel Umum</option>
+                            <option value="Artikel">Artikel</option>
                         </select>
                     </div>
                     <div>

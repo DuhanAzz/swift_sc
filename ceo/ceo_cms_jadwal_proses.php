@@ -2,42 +2,32 @@
 include '../includes/koneksi.php';
 
 if(isset($_POST['tambah'])){
-    $lokasi = $_POST['lokasi'];
-    $hari = $_POST['hari'];
-    $jam = $_POST['jam'];
+    $lokasi      = mysqli_real_escape_string($koneksi, $_POST['lokasi']);
+    $hari        = mysqli_real_escape_string($koneksi, $_POST['hari']);
+    $jam_mulai   = mysqli_real_escape_string($koneksi, $_POST['jam_mulai']);
+    $jam_selesai = mysqli_real_escape_string($koneksi, $_POST['jam_selesai']);
 
-    try {
-        $database->newDocument('public_schedules', [
-            'lokasi' => $lokasi,
-            'hari' => $hari,
-            'jam' => $jam,
-            'created_at' => date('Y-m-d H:i:s')
-        ]);
-        header("location:ceo_cms_jadwal.php?pesan=sukses_tambah");
-    } catch (\Exception $e) { header("location:ceo_cms_jadwal.php?pesan=gagal"); }
+    $q = mysqli_query($koneksi, "INSERT INTO jadwal (lokasi, hari, jam_mulai, jam_selesai) VALUES ('$lokasi', '$hari', '$jam_mulai', '$jam_selesai')");
+    if($q) { header("location:ceo_cms_jadwal.php?pesan=sukses_tambah"); }
+    else { header("location:ceo_cms_jadwal.php?pesan=gagal"); }
 }
 
 if(isset($_POST['edit'])){
-    $id = $_POST['id'];
-    $lokasi = $_POST['lokasi'];
-    $hari = $_POST['hari'];
-    $jam = $_POST['jam'];
+    $id          = mysqli_real_escape_string($koneksi, $_POST['id']);
+    $lokasi      = mysqli_real_escape_string($koneksi, $_POST['lokasi']);
+    $hari        = mysqli_real_escape_string($koneksi, $_POST['hari']);
+    $jam_mulai   = mysqli_real_escape_string($koneksi, $_POST['jam_mulai']);
+    $jam_selesai = mysqli_real_escape_string($koneksi, $_POST['jam_selesai']);
 
-    try {
-        $database->setDocument('public_schedules', $id, [
-            'lokasi' => $lokasi,
-            'hari' => $hari,
-            'jam' => $jam
-        ]);
-        header("location:ceo_cms_jadwal.php?pesan=sukses_edit");
-    } catch (\Exception $e) { header("location:ceo_cms_jadwal.php?pesan=gagal"); }
+    $q = mysqli_query($koneksi, "UPDATE jadwal SET lokasi='$lokasi', hari='$hari', jam_mulai='$jam_mulai', jam_selesai='$jam_selesai' WHERE id='$id'");
+    if($q) { header("location:ceo_cms_jadwal.php?pesan=sukses_edit"); }
+    else { header("location:ceo_cms_jadwal.php?pesan=gagal"); }
 }
 
 if(isset($_GET['hapus'])){
-    $id = $_GET['hapus'];
-    try {
-        $database->deleteDocument('public_schedules', $id);
-        header("location:ceo_cms_jadwal.php?pesan=sukses_hapus");
-    } catch (\Exception $e) { header("location:ceo_cms_jadwal.php?pesan=gagal"); }
+    $id = mysqli_real_escape_string($koneksi, $_GET['hapus']);
+    $q = mysqli_query($koneksi, "DELETE FROM jadwal WHERE id='$id'");
+    if($q) { header("location:ceo_cms_jadwal.php?pesan=sukses_hapus"); }
+    else { header("location:ceo_cms_jadwal.php?pesan=gagal"); }
 }
 ?>

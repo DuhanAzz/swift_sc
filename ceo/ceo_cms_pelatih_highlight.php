@@ -35,16 +35,20 @@ include '../includes/koneksi.php';
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <?php
             $coachesArray = [];
             try {
-                $coachesArray = $database->getDocuments('coaches');
+                $q_pelatih = mysqli_query($koneksi, "SELECT * FROM pelatih");
+                if($q_pelatih) {
+                    while($row = mysqli_fetch_assoc($q_pelatih)) {
+                        $coachesArray[] = $row;
+                    }
+                }
             } catch (\Exception $e) {}
 
             if(count($coachesArray) > 0) {
                 foreach($coachesArray as $data) {
-                    $foto_pelatih = (!empty($data['foto']) && file_exists("../admin/" . $data['foto'])) ? "../admin/" . $data['foto'] : "https://ui-avatars.com/api/?name=" . urlencode($data['nama_pelatih']) . "&background=0f172a&color=fff&size=256";
-                    $is_highlighted = isset($data['is_highlighted']) && $data['is_highlighted'] == true;
+                    $foto_pelatih = (!empty($data['foto']) && file_exists("../admin/" . $data['foto'])) ? "../admin/" . $data['foto'] : "https://ui-avatars.com/api/?name=" . urlencode($data['nama']) . "&background=0f172a&color=fff&size=256";
+                    $is_highlighted = isset($data['is_highlighted']) && $data['is_highlighted'] == 1;
             ?>
             <div class="bg-white rounded-2xl shadow-sm border <?= $is_highlighted ? 'border-teal-400 ring-2 ring-teal-100' : 'border-gray-100' ?> overflow-hidden relative">
                 
@@ -57,9 +61,9 @@ include '../includes/koneksi.php';
 
                 <div class="h-48 bg-slate-800 bg-cover bg-center" style="background-image: url('<?= $foto_pelatih ?>');"></div>
                 <div class="p-5 text-center">
-                    <h4 class="text-xl font-bold text-gray-800"><?= htmlspecialchars($data['nama_pelatih']); ?></h4>
+                    <h4 class="text-xl font-bold text-gray-800"><?= htmlspecialchars($data['nama']); ?></h4>
                     <p class="text-orange-500 font-semibold text-sm mb-2"><?= htmlspecialchars($data['jabatan'] ?? 'Pelatih'); ?></p>
-                    <p class="text-xs text-slate-500 line-clamp-2 mb-4"><?= htmlspecialchars($data['lisensi']); ?></p>
+                    <p class="text-xs text-slate-500 line-clamp-2 mb-4"><?= htmlspecialchars($data['sertifikasi'] ?? '-'); ?></p>
 
                     <form action="ceo_cms_pelatih_proses.php" method="POST">
                         <input type="hidden" name="id" value="<?= $data['id']; ?>">

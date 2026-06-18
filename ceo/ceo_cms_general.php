@@ -19,27 +19,34 @@ $cmsData = [
 ];
 
 try {
-    $existingCms = $database->getDocument('cms_content', 'global');
-    if ($existingCms) {
+    $q_cms = mysqli_query($koneksi, "SELECT * FROM cms_landing ORDER BY id DESC LIMIT 1");
+    if($q_cms && mysqli_num_rows($q_cms) > 0) {
+        $existingCms = mysqli_fetch_assoc($q_cms);
         $cmsData = array_merge($cmsData, $existingCms);
     }
 } catch (\Exception $e) { }
 
 if (isset($_POST['simpan_cms'])) {
-    $newData = [
-        'hero_title' => $_POST['hero_title'],
-        'hero_subtitle' => $_POST['hero_subtitle'],
-        'hero_desc' => $_POST['hero_desc'],
-        'about_text' => $_POST['about_text'],
-        'updated_at' => date('Y-m-d H:i:s')
-    ];
+    $hero_title = mysqli_real_escape_string($koneksi, $_POST['hero_title']);
+    $hero_subtitle = mysqli_real_escape_string($koneksi, $_POST['hero_subtitle']);
+    $hero_desc = mysqli_real_escape_string($koneksi, $_POST['hero_desc']);
+    $about_text = mysqli_real_escape_string($koneksi, $_POST['about_text']);
 
-    try {
-        $database->setDocument('cms_content', 'global', $newData);
+    $q_check = mysqli_query($koneksi, "SELECT id FROM cms_landing LIMIT 1");
+    if(mysqli_num_rows($q_check) > 0) {
+        $q_save = mysqli_query($koneksi, "UPDATE cms_landing SET hero_title='$hero_title', hero_subtitle='$hero_subtitle', hero_desc='$hero_desc', about_text='$about_text'");
+    } else {
+        $q_save = mysqli_query($koneksi, "INSERT INTO cms_landing (hero_title, hero_subtitle, hero_desc, about_text) VALUES ('$hero_title', '$hero_subtitle', '$hero_desc', '$about_text')");
+    }
+
+    if($q_save) {
         $pesan = "<div class='p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 border border-green-200'>Konten web berhasil diperbarui!</div>";
-        $cmsData = array_merge($cmsData, $newData);
-    } catch (\Exception $e) {
-        $pesan = "<div class='p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200'>Gagal menyimpan konten: " . $e->getMessage() . "</div>";
+        $cmsData['hero_title'] = $_POST['hero_title'];
+        $cmsData['hero_subtitle'] = $_POST['hero_subtitle'];
+        $cmsData['hero_desc'] = $_POST['hero_desc'];
+        $cmsData['about_text'] = $_POST['about_text'];
+    } else {
+        $pesan = "<div class='p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200'>Gagal menyimpan konten.</div>";
     }
 }
 ?>

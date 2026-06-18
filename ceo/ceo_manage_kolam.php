@@ -49,15 +49,18 @@ include '../includes/koneksi.php';
                     <?php
                     $poolsArray = [];
                     try {
-                        $poolsArray = $database->getDocuments('pools');
+                        $q_kolam = mysqli_query($koneksi, "SELECT * FROM cabang");
+                        while($row = mysqli_fetch_assoc($q_kolam)) {
+                            $poolsArray[] = $row;
+                        }
                     } catch (\Exception $e) {}
 
                     if(count($poolsArray) > 0) {
                         foreach($poolsArray as $data) {
                     ?>
                     <tr class="bg-white border-b hover:bg-slate-50">
-                        <td class="px-6 py-4 font-bold text-gray-800"><?= htmlspecialchars($data['name']); ?></td>
-                        <td class="px-6 py-4 text-slate-600"><?= htmlspecialchars($data['location']); ?></td>
+                        <td class="px-6 py-4 font-bold text-gray-800"><?= htmlspecialchars($data['nama_cabang']); ?></td>
+                        <td class="px-6 py-4 text-slate-600"><?= htmlspecialchars($data['lokasi']); ?></td>
                         <td class="px-6 py-4 text-center space-x-2">
                             <button data-modal-target="modalEditKolam<?= $data['id']; ?>" data-modal-toggle="modalEditKolam<?= $data['id']; ?>" class="font-medium text-blue-600 hover:underline">Edit</button>
                             <a href="ceo_kolam_proses.php?hapus=<?= $data['id']; ?>" onclick="return confirm('Yakin ingin menghapus kolam ini?')" class="font-medium text-red-600 hover:underline">Hapus</a>
@@ -75,11 +78,11 @@ include '../includes/koneksi.php';
                                 <input type="hidden" name="id" value="<?= $data['id']; ?>">
                                 <div class="mb-4">
                                     <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Nama Kolam</label>
-                                    <input type="text" name="name" value="<?= htmlspecialchars($data['name']); ?>" class="w-full p-2 border rounded-lg focus:ring-indigo-500" required>
+                                    <input type="text" name="name" value="<?= htmlspecialchars($data['nama_cabang']); ?>" class="w-full p-2 border rounded-lg focus:ring-indigo-500" required>
                                 </div>
                                 <div class="mb-6">
                                     <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Lokasi / Alamat</label>
-                                    <textarea name="location" rows="3" class="w-full p-2 border rounded-lg focus:ring-indigo-500" required><?= htmlspecialchars($data['location']); ?></textarea>
+                                    <textarea name="location" rows="3" class="w-full p-2 border rounded-lg focus:ring-indigo-500" required><?= htmlspecialchars($data['lokasi']); ?></textarea>
                                 </div>
                                 <button type="submit" name="edit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg">Simpan Perubahan</button>
                             </form>

@@ -5,11 +5,11 @@ $uploadDir = __DIR__ . '/../admin/uploads/';
 if (!is_dir($uploadDir)) { mkdir($uploadDir, 0777, true); }
 
 if(isset($_POST['tambah'])){
-    $kategori = $_POST['kategori'];
-    $judul = $_POST['judul'];
-    $tanggal = $_POST['tanggal'];
-    $konten = $_POST['konten'];
-    $cabang = 'Umum';
+    $kategori = mysqli_real_escape_string($koneksi, $_POST['kategori']);
+    $judul    = mysqli_real_escape_string($koneksi, $_POST['judul']);
+    $tanggal  = mysqli_real_escape_string($koneksi, $_POST['tanggal']);
+    $konten   = mysqli_real_escape_string($koneksi, $_POST['konten']);
+    $cabang   = 'Umum';
 
     $gambar = '';
     if (isset($_FILES['gambar']) && $_FILES['gambar']['error'] === 0) {
@@ -20,53 +20,37 @@ if(isset($_POST['tambah'])){
         }
     }
 
-    try {
-        $database->newDocument('berita', [
-            'kategori' => $kategori,
-            'judul' => $judul,
-            'tanggal' => $tanggal,
-            'konten' => $konten,
-            'cabang' => $cabang,
-            'gambar' => $gambar,
-            'created_at' => date('Y-m-d H:i:s')
-        ]);
-        header("location:ceo_cms_berita.php?pesan=sukses_tambah");
-    } catch (\Exception $e) { header("location:ceo_cms_berita.php?pesan=gagal"); }
+    $q = mysqli_query($koneksi, "INSERT INTO berita (kategori, judul, tanggal, isi, cabang, gambar) VALUES ('$kategori', '$judul', '$tanggal', '$konten', '$cabang', '$gambar')");
+    if($q) { header("location:ceo_cms_berita.php?pesan=sukses_tambah"); }
+    else { header("location:ceo_cms_berita.php?pesan=gagal"); }
 }
 
 if(isset($_POST['edit'])){
-    $id = $_POST['id'];
-    $kategori = $_POST['kategori'];
-    $judul = $_POST['judul'];
-    $tanggal = $_POST['tanggal'];
-    $konten = $_POST['konten'];
+    $id       = mysqli_real_escape_string($koneksi, $_POST['id']);
+    $kategori = mysqli_real_escape_string($koneksi, $_POST['kategori']);
+    $judul    = mysqli_real_escape_string($koneksi, $_POST['judul']);
+    $tanggal  = mysqli_real_escape_string($koneksi, $_POST['tanggal']);
+    $konten   = mysqli_real_escape_string($koneksi, $_POST['konten']);
 
-    $dataUpdate = [
-        'kategori' => $kategori,
-        'judul' => $judul,
-        'tanggal' => $tanggal,
-        'konten' => $konten
-    ];
-
+    $q_gambar = "";
     if (isset($_FILES['gambar']) && $_FILES['gambar']['error'] === 0) {
         $ext = strtolower(pathinfo($_FILES['gambar']['name'], PATHINFO_EXTENSION));
         $filename = uniqid('news_') . '.' . $ext;
         if (move_uploaded_file($_FILES['gambar']['tmp_name'], $uploadDir . $filename)) {
-            $dataUpdate['gambar'] = 'uploads/' . $filename;
+            $gambar = 'uploads/' . $filename;
+            $q_gambar = ", gambar='$gambar'";
         }
     }
 
-    try {
-        $database->setDocument('berita', $id, $dataUpdate);
-        header("location:ceo_cms_berita.php?pesan=sukses_edit");
-    } catch (\Exception $e) { header("location:ceo_cms_berita.php?pesan=gagal"); }
+    $q = mysqli_query($koneksi, "UPDATE berita SET kategori='$kategori', judul='$judul', tanggal='$tanggal', isi='$konten' $q_gambar WHERE id='$id'");
+    if($q) { header("location:ceo_cms_berita.php?pesan=sukses_edit"); }
+    else { header("location:ceo_cms_berita.php?pesan=gagal"); }
 }
 
 if(isset($_GET['hapus'])){
-    $id = $_GET['hapus'];
-    try {
-        $database->deleteDocument('berita', $id);
-        header("location:ceo_cms_berita.php?pesan=sukses_hapus");
-    } catch (\Exception $e) { header("location:ceo_cms_berita.php?pesan=gagal"); }
+    $id = mysqli_real_escape_string($koneksi, $_GET['hapus']);
+    $q = mysqli_query($koneksi, "DELETE FROM berita WHERE id='$id'");
+    if($q) { header("location:ceo_cms_berita.php?pesan=sukses_hapus"); }
+    else { header("location:ceo_cms_berita.php?pesan=gagal"); }
 }
 ?>

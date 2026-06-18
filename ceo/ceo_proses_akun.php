@@ -4,133 +4,100 @@ include '../includes/koneksi.php';
 // === PROSES ADMIN & MANAJER ===
 
 if(isset($_POST['tambah_admin'])){
-    $name     = $_POST['name'];
-    $email    = $_POST['email'];
+    $name     = mysqli_real_escape_string($koneksi, $_POST['name']);
+    $email    = mysqli_real_escape_string($koneksi, $_POST['email']);
     $role_id  = $_POST['role_id'];
-    $password = $_POST['password'];
-    $pool_id  = empty($_POST['pool_id']) ? null : $_POST['pool_id'];
-    $role_str = ($role_id == 1) ? 'ceo' : 'admin';
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $pool_id  = empty($_POST['pool_id']) ? "NULL" : "'".mysqli_real_escape_string($koneksi, $_POST['pool_id'])."'";
+    $role_str = ($role_id == 1) ? 'CEO' : 'Admin';
 
-    try {
-        $userProperties = [
-            'email' => $email,
-            'emailVerified' => false,
-            'password' => $password,
-            'displayName' => $name,
-        ];
-        $createdUser = $auth->createUser($userProperties);
-        $uid = $createdUser->uid;
-
-        $database->setDocument('users', $uid, [
-            'name' => $name,
-            'email' => $email,
-            'role' => $role_str,
-            'role_id' => $role_id,
-            'pool_id' => $pool_id,
-            'created_at' => date('Y-m-d H:i:s')
-        ]);
-        header("location:ceo_manage_akun.php?pesan=sukses_admin");
-    } catch (\Exception $e) { header("location:ceo_manage_akun.php?pesan=gagal"); }
+    $q = mysqli_query($koneksi, "INSERT INTO users (username, email, password, role, cabang_id) VALUES ('$name', '$email', '$password', '$role_str', $pool_id)");
+    if($q) { header("location:ceo_manage_akun.php?pesan=sukses_admin"); }
+    else { header("location:ceo_manage_akun.php?pesan=gagal"); }
 }
 
 if(isset($_POST['edit_admin'])){
-    $id       = $_POST['id'];
-    $name     = $_POST['name'];
-    $email    = $_POST['email'];
+    $id       = mysqli_real_escape_string($koneksi, $_POST['id']);
+    $name     = mysqli_real_escape_string($koneksi, $_POST['name']);
+    $email    = mysqli_real_escape_string($koneksi, $_POST['email']);
     $role_id  = $_POST['role_id'];
+    $pool_id  = empty($_POST['pool_id']) ? "NULL" : "'".mysqli_real_escape_string($koneksi, $_POST['pool_id'])."'";
+    $role_str = ($role_id == 1) ? 'CEO' : 'Admin';
     $password = $_POST['password'];
-    $pool_id  = empty($_POST['pool_id']) ? null : $_POST['pool_id'];
-    $role_str = ($role_id == 1) ? 'ceo' : 'admin';
 
-    try {
-        $userProperties = ['email' => $email, 'displayName' => $name];
-        if(!empty($password)) { $userProperties['password'] = $password; }
-        $auth->updateUser($id, $userProperties);
+    if(!empty($password)) {
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+        $q = mysqli_query($koneksi, "UPDATE users SET username='$name', email='$email', role='$role_str', cabang_id=$pool_id, password='$hash' WHERE id='$id'");
+    } else {
+        $q = mysqli_query($koneksi, "UPDATE users SET username='$name', email='$email', role='$role_str', cabang_id=$pool_id WHERE id='$id'");
+    }
 
-        $database->setDocument('users', $id, [
-            'name' => $name,
-            'email' => $email,
-            'role' => $role_str,
-            'role_id' => $role_id,
-            'pool_id' => $pool_id
-        ]);
-        header("location:ceo_manage_akun.php?pesan=sukses_admin");
-    } catch (\Exception $e) { header("location:ceo_manage_akun.php?pesan=gagal"); }
+    if($q) { header("location:ceo_manage_akun.php?pesan=sukses_admin"); }
+    else { header("location:ceo_manage_akun.php?pesan=gagal"); }
 }
 
 if(isset($_GET['hapus_admin'])){
-    $id = $_GET['hapus_admin'];
-    try {
-        $auth->deleteUser($id);
-        $database->deleteDocument('users', $id);
-        header("location:ceo_manage_akun.php?pesan=hapus_admin");
-    } catch (\Exception $e) { header("location:ceo_manage_akun.php?pesan=gagal"); }
+    $id = mysqli_real_escape_string($koneksi, $_GET['hapus_admin']);
+    $q = mysqli_query($koneksi, "DELETE FROM users WHERE id='$id'");
+    if($q) { header("location:ceo_manage_akun.php?pesan=hapus_admin"); }
+    else { header("location:ceo_manage_akun.php?pesan=gagal"); }
 }
 
 // === PROSES PELATIH ===
 
 if(isset($_POST['tambah_pelatih'])){
-    $nama_pelatih = $_POST['nama_pelatih'];
-    $email        = $_POST['email'];
-    $password     = $_POST['password'];
-    $lisensi      = $_POST['lisensi'];
-    $no_hp        = $_POST['no_hp'];
-    $id_kolam     = $_POST['id_kolam'];
+    $nama_pelatih = mysqli_real_escape_string($koneksi, $_POST['nama_pelatih']);
+    $email        = mysqli_real_escape_string($koneksi, $_POST['email']);
+    $password     = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $lisensi      = mysqli_real_escape_string($koneksi, $_POST['lisensi']);
+    $no_hp        = mysqli_real_escape_string($koneksi, $_POST['no_hp']);
+    $cabang_str   = empty($_POST['id_kolam']) ? 'Pusat' : mysqli_real_escape_string($koneksi, $_POST['id_kolam']);
 
-    try {
-        $userProperties = [
-            'email' => $email,
-            'emailVerified' => false,
-            'password' => $password,
-            'displayName' => $nama_pelatih,
-        ];
-        $createdUser = $auth->createUser($userProperties);
-        $uid = $createdUser->uid;
+    $q_cab = mysqli_query($koneksi, "SELECT id FROM cabang WHERE nama_cabang='$cabang_str' LIMIT 1");
+    $cabang_id = "NULL";
+    if($q_cab && $row_cab = mysqli_fetch_assoc($q_cab)) {
+        $cabang_id = "'" . $row_cab['id'] . "'";
+    }
 
-        $database->setDocument('users', $uid, [
-            'name' => $nama_pelatih,
-            'email' => $email,
-            'role' => 'coach',
-            'role_id' => 3,
-            'pool_id' => $id_kolam,
-            'created_at' => date('Y-m-d H:i:s')
-        ]);
+    $q1 = mysqli_query($koneksi, "INSERT INTO users (username, email, password, role, cabang_id) VALUES ('$nama_pelatih', '$email', '$password', 'Pelatih', $cabang_id)");
+    $q2 = mysqli_query($koneksi, "INSERT INTO pelatih (nama, jabatan, sertifikasi, cabang) VALUES ('$nama_pelatih', '$no_hp', '$lisensi', '$cabang_str')");
 
-        $database->newDocument('coaches', [
-            'auth_uid' => $uid,
-            'nama_pelatih' => $nama_pelatih,
-            'lisensi' => $lisensi,
-            'no_hp' => $no_hp,
-            'id_kolam' => $id_kolam,
-            'created_at' => date('Y-m-d H:i:s')
-        ]);
-        header("location:ceo_manage_akun.php?pesan=sukses_pelatih");
-    } catch (\Exception $e) { header("location:ceo_manage_akun.php?pesan=gagal"); }
+    if($q1 && $q2) { header("location:ceo_manage_akun.php?pesan=sukses_pelatih"); }
+    else { header("location:ceo_manage_akun.php?pesan=gagal"); }
 }
 
 if(isset($_POST['edit_pelatih'])){
-    $id           = $_POST['id'];
-    $nama_pelatih = $_POST['nama_pelatih'];
-    $lisensi      = $_POST['lisensi'];
-    $no_hp        = $_POST['no_hp'];
-    $id_kolam     = $_POST['id_kolam'];
+    $id           = mysqli_real_escape_string($koneksi, $_POST['id']);
+    $nama_pelatih = mysqli_real_escape_string($koneksi, $_POST['nama_pelatih']);
+    $lisensi      = mysqli_real_escape_string($koneksi, $_POST['lisensi']);
+    $no_hp        = mysqli_real_escape_string($koneksi, $_POST['no_hp']);
+    $id_kolam     = mysqli_real_escape_string($koneksi, $_POST['id_kolam']);
 
-    try {
-        $database->setDocument('coaches', $id, [
-            'nama_pelatih' => $nama_pelatih,
-            'lisensi' => $lisensi,
-            'no_hp' => $no_hp,
-            'id_kolam' => $id_kolam
-        ]);
-        header("location:ceo_manage_akun.php?pesan=sukses_pelatih");
-    } catch (\Exception $e) { header("location:ceo_manage_akun.php?pesan=gagal"); }
+    // Get old name
+    $q_old = mysqli_query($koneksi, "SELECT nama FROM pelatih WHERE id='$id'");
+    $old_nama = ($q_old && $row = mysqli_fetch_assoc($q_old)) ? $row['nama'] : '';
+
+    $q = mysqli_query($koneksi, "UPDATE pelatih SET nama='$nama_pelatih', sertifikasi='$lisensi', jabatan='$no_hp', cabang='$id_kolam' WHERE id='$id'");
+    
+    if($old_nama && $old_nama !== $nama_pelatih) {
+        mysqli_query($koneksi, "UPDATE users SET username='$nama_pelatih' WHERE username='$old_nama' AND role='Pelatih'");
+    }
+
+    if($q) { header("location:ceo_manage_akun.php?pesan=sukses_pelatih"); }
+    else { header("location:ceo_manage_akun.php?pesan=gagal"); }
 }
 
 if(isset($_GET['hapus_pelatih'])){
-    $id = $_GET['hapus_pelatih'];
-    try {
-        $database->deleteDocument('coaches', $id);
-        header("location:ceo_manage_akun.php?pesan=hapus_pelatih");
-    } catch (\Exception $e) { header("location:ceo_manage_akun.php?pesan=gagal"); }
+    $id = mysqli_real_escape_string($koneksi, $_GET['hapus_pelatih']);
+    
+    $q_get = mysqli_query($koneksi, "SELECT nama FROM pelatih WHERE id='$id'");
+    if($q_get && $row = mysqli_fetch_assoc($q_get)) {
+        $nama = $row['nama'];
+        mysqli_query($koneksi, "DELETE FROM users WHERE username='$nama' AND role='Pelatih'");
+    }
+
+    $q = mysqli_query($koneksi, "DELETE FROM pelatih WHERE id='$id'");
+    if($q) { header("location:ceo_manage_akun.php?pesan=hapus_pelatih"); }
+    else { header("location:ceo_manage_akun.php?pesan=gagal"); }
 }
 ?>

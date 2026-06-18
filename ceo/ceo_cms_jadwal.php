@@ -53,7 +53,12 @@ include '../includes/koneksi.php';
                     <?php
                     $schedulesArray = [];
                     try {
-                        $schedulesArray = $database->getDocuments('public_schedules');
+                        $q_jadwal = mysqli_query($koneksi, "SELECT * FROM jadwal ORDER BY id ASC");
+                        if($q_jadwal) {
+                            while($row = mysqli_fetch_assoc($q_jadwal)) {
+                                $schedulesArray[] = $row;
+                            }
+                        }
                     } catch (\Exception $e) {}
 
                     if(count($schedulesArray) > 0) {
@@ -62,7 +67,7 @@ include '../includes/koneksi.php';
                     <tr class="bg-white border-b hover:bg-slate-50">
                         <td class="px-6 py-4 font-bold text-gray-800"><?= htmlspecialchars($data['lokasi']); ?></td>
                         <td class="px-6 py-4 text-slate-600"><?= htmlspecialchars($data['hari']); ?></td>
-                        <td class="px-6 py-4 font-mono text-indigo-600"><?= htmlspecialchars($data['jam']); ?> WIB</td>
+                        <td class="px-6 py-4 font-mono text-indigo-600"><?= date('H:i', strtotime($data['jam_mulai'])); ?> - <?= date('H:i', strtotime($data['jam_selesai'])); ?> WIB</td>
                         <td class="px-6 py-4 text-center space-x-2">
                             <button data-modal-target="modalEditJadwal<?= $data['id']; ?>" data-modal-toggle="modalEditJadwal<?= $data['id']; ?>" class="font-medium text-blue-600 hover:underline">Edit</button>
                             <a href="ceo_cms_jadwal_proses.php?hapus=<?= $data['id']; ?>" onclick="return confirm('Hapus jadwal ini?')" class="font-medium text-red-600 hover:underline">Hapus</a>
@@ -84,11 +89,25 @@ include '../includes/koneksi.php';
                                 </div>
                                 <div class="mb-4">
                                     <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Hari Latihan</label>
-                                    <input type="text" name="hari" value="<?= htmlspecialchars($data['hari']); ?>" placeholder="Contoh: Rabu dan Jumat" class="w-full p-2 border rounded-lg focus:ring-orange-500" required>
+                                    <select name="hari" class="w-full p-2 border rounded-lg focus:ring-orange-500" required>
+                                        <?php
+                                        $hari_list = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'];
+                                        foreach($hari_list as $h) {
+                                            $sel = ($data['hari'] == $h) ? 'selected' : '';
+                                            echo "<option value='$h' $sel>$h</option>";
+                                        }
+                                        ?>
+                                    </select>
                                 </div>
-                                <div class="mb-6">
-                                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Jam Latihan</label>
-                                    <input type="text" name="jam" value="<?= htmlspecialchars($data['jam']); ?>" placeholder="Contoh: 15.30 - 17.00" class="w-full p-2 border rounded-lg focus:ring-orange-500" required>
+                                <div class="mb-6 grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Jam Mulai</label>
+                                        <input type="time" name="jam_mulai" value="<?= date('H:i', strtotime($data['jam_mulai'])); ?>" class="w-full p-2 border rounded-lg focus:ring-orange-500" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Jam Selesai</label>
+                                        <input type="time" name="jam_selesai" value="<?= date('H:i', strtotime($data['jam_selesai'])); ?>" class="w-full p-2 border rounded-lg focus:ring-orange-500" required>
+                                    </div>
                                 </div>
                                 <button type="submit" name="edit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 rounded-lg">Simpan Perubahan</button>
                             </form>
@@ -116,11 +135,25 @@ include '../includes/koneksi.php';
             </div>
             <div class="mb-4">
                 <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Hari Latihan</label>
-                <input type="text" name="hari" placeholder="Contoh: Rabu dan Jumat" class="w-full p-2 border rounded-lg focus:ring-orange-500" required>
+                <select name="hari" class="w-full p-2 border rounded-lg focus:ring-orange-500" required>
+                    <option value="Senin">Senin</option>
+                    <option value="Selasa">Selasa</option>
+                    <option value="Rabu">Rabu</option>
+                    <option value="Kamis">Kamis</option>
+                    <option value="Jumat">Jumat</option>
+                    <option value="Sabtu">Sabtu</option>
+                    <option value="Minggu">Minggu</option>
+                </select>
             </div>
-            <div class="mb-6">
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Jam Latihan</label>
-                <input type="text" name="jam" placeholder="Contoh: 15.30 - 17.00" class="w-full p-2 border rounded-lg focus:ring-orange-500" required>
+            <div class="mb-6 grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Jam Mulai</label>
+                    <input type="time" name="jam_mulai" class="w-full p-2 border rounded-lg focus:ring-orange-500" required>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Jam Selesai</label>
+                    <input type="time" name="jam_selesai" class="w-full p-2 border rounded-lg focus:ring-orange-500" required>
+                </div>
             </div>
             <button type="submit" name="tambah" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 rounded-lg">Simpan Jadwal</button>
         </form>

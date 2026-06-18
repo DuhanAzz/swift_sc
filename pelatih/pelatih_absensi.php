@@ -8,30 +8,26 @@ include '../includes/header.php';
 include '../includes/sidebar.php';
 include '../includes/koneksi.php';
 
-$coach_pool_id = $_SESSION['pool_id'] ?? '';
+$coach_cabang_id = $_SESSION['cabang_id'] ?? '';
 $tanggal_hari_ini = date('Y-m-d');
 
-// Ambil semua atlet di pool ini
+// Ambil semua atlet di cabang ini
 $atlet_list = [];
-try {
-    $docs = $database->getDocuments('atlet');
-    foreach ($docs as $d) {
-        if (($d['pool_id'] ?? '') == $coach_pool_id) {
-            $atlet_list[] = $d;
-        }
+$q_atlet = mysqli_query($koneksi, "SELECT * FROM member WHERE role='Atlet' AND cabang_id='$coach_cabang_id'");
+if($q_atlet) {
+    while($row = mysqli_fetch_assoc($q_atlet)) {
+        $atlet_list[] = $row;
     }
-} catch (\Exception $e) {}
+}
 
 // Ambil data presensi hari ini
 $presensi_hari_ini = [];
-try {
-    $pDocs = $database->getDocuments('presensi');
-    foreach ($pDocs as $p) {
-        if (($p['tanggal'] ?? '') == $tanggal_hari_ini && ($p['pool_id'] ?? '') == $coach_pool_id) {
-            $presensi_hari_ini[$p['member_id']] = $p['status'];
-        }
+$q_presensi = mysqli_query($koneksi, "SELECT * FROM absensi WHERE tanggal='$tanggal_hari_ini' AND cabang_id='$coach_cabang_id'");
+if($q_presensi) {
+    while($row = mysqli_fetch_assoc($q_presensi)) {
+        $presensi_hari_ini[$row['member_id']] = $row['status'];
     }
-} catch (\Exception $e) {}
+}
 ?>
 
 <div class="p-4 sm:ml-64">
@@ -78,7 +74,7 @@ try {
                         </div>
                         <div>
                             <h3 class="font-bold text-gray-800 text-sm"><?= htmlspecialchars($atlet['nama']) ?></h3>
-                            <p class="text-xs text-gray-400 font-mono"><?= htmlspecialchars($atlet['nia'] ?? 'NEW') ?></p>
+                            <p class="text-xs text-gray-400 font-mono"><?= htmlspecialchars($atlet['nisn'] ?? 'NEW') ?></p>
                         </div>
                     </div>
                     

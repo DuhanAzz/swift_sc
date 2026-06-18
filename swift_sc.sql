@@ -256,7 +256,8 @@ CREATE TABLE `pelatih` (
   `jabatan` varchar(100) NOT NULL,
   `sertifikasi` text DEFAULT NULL,
   `foto` varchar(255) DEFAULT 'default_coach.jpg',
-  `cabang` varchar(100) DEFAULT 'Pusat'
+  `cabang` varchar(100) DEFAULT 'Pusat',
+  `is_highlighted` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --

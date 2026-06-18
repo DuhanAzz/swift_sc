@@ -265,7 +265,11 @@ try {
                 <?php
                 $pelatihList = [];
                 try {
-                    $q_pelatih = mysqli_query($koneksi, "SELECT * FROM pelatih LIMIT 3");
+                    $q_pelatih = mysqli_query($koneksi, "SELECT * FROM pelatih WHERE is_highlighted=1 LIMIT 3");
+                    // jika kurang dari 3 atau tidak ada, fallback ambil aja sembarang
+                    if(!$q_pelatih || mysqli_num_rows($q_pelatih) == 0) {
+                        $q_pelatih = mysqli_query($koneksi, "SELECT * FROM pelatih LIMIT 3");
+                    }
                     while($row = mysqli_fetch_assoc($q_pelatih)) {
                         $pelatihList[] = $row;
                     }

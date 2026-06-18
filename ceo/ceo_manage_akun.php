@@ -67,29 +67,22 @@ include '../includes/koneksi.php';
                             <?php
                             $usersArray = [];
                             try {
-                                $documents = $database->getDocuments('users');
-                                foreach ($documents as $data) {
-                                    if ((isset($data['role_id']) && in_array($data['role_id'], [1, 2])) || (isset($data['role']) && in_array($data['role'], ['ceo', 'admin']))) {
-                                        $data['nama_kolam'] = '-';
-                                        if (!empty($data['pool_id'])) {
-                                            try {
-                                                $poolDoc = $database->getDocument('pools', $data['pool_id']);
-                                                if ($poolDoc) $data['nama_kolam'] = $poolDoc['name'];
-                                            } catch (\Exception $e) {}
-                                        }
-                                        $usersArray[] = $data;
+                                $q_admin = mysqli_query($koneksi, "SELECT users.*, cabang.nama_cabang as nama_kolam FROM users LEFT JOIN cabang ON users.cabang_id = cabang.id WHERE role IN ('CEO', 'Admin')");
+                                if($q_admin) {
+                                    while($row = mysqli_fetch_assoc($q_admin)) {
+                                        $usersArray[] = $row;
                                     }
                                 }
                             } catch (\Exception $e) {}
 
                             if(count($usersArray) > 0) {
                                 foreach($usersArray as $data) {
-                                    $role_id = $data['role_id'] ?? ($data['role'] == 'ceo' ? 1 : 2);
+                                    $role_id = ($data['role'] == 'CEO') ? 1 : 2;
                                     $nama_role = ($role_id == 1) ? 'Super Admin' : 'Manajer Kolam';
-                                    $akses_kolam = empty($data['pool_id']) ? 'Semua Cabang' : htmlspecialchars($data['nama_kolam']);
+                                    $akses_kolam = empty($data['cabang_id']) ? 'Semua Cabang' : htmlspecialchars($data['nama_kolam']);
                             ?>
                             <tr class="bg-white border-b hover:bg-slate-50">
-                                <td class="px-6 py-4 font-bold text-gray-800"><?= htmlspecialchars($data['name']); ?></td>
+                                <td class="px-6 py-4 font-bold text-gray-800"><?= htmlspecialchars($data['username']); ?></td>
                                 <td class="px-6 py-4"><?= htmlspecialchars($data['email']); ?></td>
                                 <td class="px-6 py-4 font-semibold text-indigo-600"><?= $nama_role; ?></td>
                                 <td class="px-6 py-4"><?= $akses_kolam; ?></td>
@@ -108,7 +101,7 @@ include '../includes/koneksi.php';
                                     </div>
                                     <form action="ceo_proses_akun.php" method="POST">
                                         <input type="hidden" name="id" value="<?= $data['id']; ?>">
-                                        <input type="text" name="name" value="<?= htmlspecialchars($data['name']); ?>" class="w-full mb-3 p-2 border rounded" required>
+                                        <input type="text" name="name" value="<?= htmlspecialchars($data['username']); ?>" class="w-full mb-3 p-2 border rounded" required>
                                         <input type="email" name="email" value="<?= htmlspecialchars($data['email']); ?>" class="w-full mb-3 p-2 border rounded" required>
                                         <select name="role_id" class="w-full mb-3 p-2 border rounded">
                                             <option value="1" <?= $role_id==1 ? 'selected' : '' ?>>Super Admin</option>
@@ -118,10 +111,10 @@ include '../includes/koneksi.php';
                                             <option value="">-- Semua Cabang --</option>
                                             <?php
                                             try {
-                                                $q_kolam = $database->getDocuments('pools');
-                                                foreach($q_kolam as $k) {
-                                                    $sel = ($k['id'] == ($data['pool_id'] ?? '')) ? 'selected' : '';
-                                                    echo "<option value='{$k['id']}' $sel>{$k['name']}</option>";
+                                                $q_kolam = mysqli_query($koneksi, "SELECT * FROM cabang");
+                                                while($k = mysqli_fetch_assoc($q_kolam)) {
+                                                    $sel = ($k['id'] == ($data['cabang_id'] ?? '')) ? 'selected' : '';
+                                                    echo "<option value='{$k['id']}' $sel>{$k['nama_cabang']}</option>";
                                                 }
                                             } catch (\Exception $e) {}
                                             ?>
@@ -158,16 +151,11 @@ include '../includes/koneksi.php';
                             <?php
                             $coachesArray = [];
                             try {
-                                $documents = $database->getDocuments('coaches');
-                                foreach ($documents as $data) {
-                                    $data['nama_kolam'] = '-';
-                                    if (!empty($data['id_kolam'])) {
-                                        try {
-                                            $poolDoc = $database->getDocument('pools', $data['id_kolam']);
-                                            if ($poolDoc) $data['nama_kolam'] = $poolDoc['name'];
-                                        } catch (\Exception $e) {}
+                                $q_pelatih = mysqli_query($koneksi, "SELECT * FROM pelatih");
+                                if($q_pelatih) {
+                                    while($row = mysqli_fetch_assoc($q_pelatih)) {
+                                        $coachesArray[] = $row;
                                     }
-                                    $coachesArray[] = $data;
                                 }
                             } catch (\Exception $e) {}
 
@@ -175,10 +163,10 @@ include '../includes/koneksi.php';
                                 foreach($coachesArray as $data) {
                             ?>
                             <tr class="bg-white border-b hover:bg-slate-50">
-                                <td class="px-6 py-4 font-bold text-gray-800"><?= htmlspecialchars($data['nama_pelatih']); ?></td>
-                                <td class="px-6 py-4"><span class="bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded border"><?= htmlspecialchars($data['lisensi']); ?></span></td>
-                                <td class="px-6 py-4"><?= htmlspecialchars($data['no_hp']); ?></td>
-                                <td class="px-6 py-4"><?= htmlspecialchars($data['nama_kolam']); ?></td>
+                                <td class="px-6 py-4 font-bold text-gray-800"><?= htmlspecialchars($data['nama']); ?></td>
+                                <td class="px-6 py-4"><span class="bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded border"><?= htmlspecialchars($data['sertifikasi'] ?? '-'); ?></span></td>
+                                <td class="px-6 py-4"><?= htmlspecialchars($data['jabatan']); ?></td>
+                                <td class="px-6 py-4"><?= htmlspecialchars($data['cabang']); ?></td>
                                 <td class="px-6 py-4 text-center space-x-2">
                                     <button data-modal-target="modalEditPelatih<?= $data['id']; ?>" data-modal-toggle="modalEditPelatih<?= $data['id']; ?>" class="font-medium text-blue-600 hover:underline">Edit</button>
                                     <a href="ceo_proses_akun.php?hapus_pelatih=<?= $data['id']; ?>" onclick="return confirm('Hapus pelatih ini?')" class="font-medium text-red-600 hover:underline">Hapus</a>
@@ -194,16 +182,16 @@ include '../includes/koneksi.php';
                                     </div>
                                     <form action="ceo_proses_akun.php" method="POST">
                                         <input type="hidden" name="id" value="<?= $data['id']; ?>">
-                                        <input type="text" name="nama_pelatih" value="<?= htmlspecialchars($data['nama_pelatih']); ?>" class="w-full mb-3 p-2 border rounded" required>
-                                        <input type="text" name="lisensi" value="<?= htmlspecialchars($data['lisensi']); ?>" class="w-full mb-3 p-2 border rounded" required>
-                                        <input type="text" name="no_hp" value="<?= htmlspecialchars($data['no_hp']); ?>" class="w-full mb-3 p-2 border rounded" required>
+                                        <input type="text" name="nama_pelatih" value="<?= htmlspecialchars($data['nama']); ?>" class="w-full mb-3 p-2 border rounded" required>
+                                        <input type="text" name="lisensi" value="<?= htmlspecialchars($data['sertifikasi'] ?? ''); ?>" placeholder="Sertifikasi / Lisensi" class="w-full mb-3 p-2 border rounded" required>
+                                        <input type="text" name="no_hp" value="<?= htmlspecialchars($data['jabatan'] ?? ''); ?>" placeholder="Jabatan" class="w-full mb-3 p-2 border rounded" required>
                                         <select name="id_kolam" class="w-full mb-4 p-2 border rounded">
                                             <?php
                                             try {
-                                                $q_kolam = $database->getDocuments('pools');
-                                                foreach($q_kolam as $k) {
-                                                    $sel = ($k['id'] == $data['id_kolam']) ? 'selected' : '';
-                                                    echo "<option value='{$k['id']}' $sel>{$k['name']}</option>";
+                                                $q_kolam = mysqli_query($koneksi, "SELECT * FROM cabang");
+                                                while($k = mysqli_fetch_assoc($q_kolam)) {
+                                                    $sel = ($k['nama_cabang'] == $data['cabang']) ? 'selected' : '';
+                                                    echo "<option value='{$k['nama_cabang']}' $sel>{$k['nama_cabang']}</option>";
                                                 }
                                             } catch (\Exception $e) {}
                                             ?>
@@ -241,9 +229,9 @@ include '../includes/koneksi.php';
                 <option value="">-- Semua Cabang --</option>
                 <?php
                 try {
-                    $q_kolam = $database->getDocuments('pools');
-                    foreach($q_kolam as $k) {
-                        echo "<option value='{$k['id']}'>{$k['name']}</option>";
+                    $q_kolam = mysqli_query($koneksi, "SELECT * FROM cabang");
+                    while($k = mysqli_fetch_assoc($q_kolam)) {
+                        echo "<option value='{$k['id']}'>{$k['nama_cabang']}</option>";
                     }
                 } catch (\Exception $e) {}
                 ?>
@@ -264,15 +252,15 @@ include '../includes/koneksi.php';
             <input type="text" name="nama_pelatih" placeholder="Nama Lengkap Pelatih" class="w-full mb-3 p-2 border rounded" required>
             <input type="email" name="email" placeholder="Email untuk Login" class="w-full mb-3 p-2 border rounded" required>
             <input type="password" name="password" placeholder="Password Login" class="w-full mb-3 p-2 border rounded" required>
-            <input type="text" name="lisensi" placeholder="Lisensi" class="w-full mb-3 p-2 border rounded" required>
-            <input type="text" name="no_hp" placeholder="No. HP" class="w-full mb-3 p-2 border rounded" required>
+            <input type="text" name="lisensi" placeholder="Sertifikasi / Lisensi" class="w-full mb-3 p-2 border rounded" required>
+            <input type="text" name="no_hp" placeholder="Jabatan" class="w-full mb-3 p-2 border rounded" required>
             <select name="id_kolam" class="w-full mb-4 p-2 border rounded" required>
                 <option value="">-- Pilih Lokasi --</option>
                 <?php
                 try {
-                    $q_kolam = $database->getDocuments('pools');
-                    foreach($q_kolam as $k) {
-                        echo "<option value='{$k['id']}'>{$k['name']}</option>";
+                    $q_kolam = mysqli_query($koneksi, "SELECT * FROM cabang");
+                    while($k = mysqli_fetch_assoc($q_kolam)) {
+                        echo "<option value='{$k['id']}'>{$k['nama_cabang']}</option>";
                     }
                 } catch (\Exception $e) {}
                 ?>
