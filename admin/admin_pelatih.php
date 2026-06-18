@@ -68,7 +68,7 @@ $admin_pool_id = $_SESSION['pool_id'] ?? '';
                             <tbody>
                                 <?php
                                 $performances = [];
-                                $q_perf = mysqli_query($koneksi, "SELECT p.*, m.nama as nama_atlet FROM performa p LEFT JOIN member m ON p.member_id = m.id WHERE p.cabang_id = '$admin_pool_id' ORDER BY p.tanggal DESC");
+                                $q_perf = mysqli_query($koneksi, "SELECT p.*, m.nama as nama_atlet FROM performa p LEFT JOIN member m ON p.member_id = m.id WHERE p.cabang_id = '$admin_pool_id' ORDER BY p.tanggal_rekor DESC");
                                 if($q_perf) {
                                     while($row = mysqli_fetch_assoc($q_perf)) {
                                         $performances[] = $row;
@@ -81,14 +81,14 @@ $admin_pool_id = $_SESSION['pool_id'] ?? '';
                                         $nama_atlet = $p['nama_atlet'] ?? 'Unknown';
                                 ?>
                                 <tr class="border-b hover:bg-orange-50 transition-colors">
-                                    <td class="px-4 py-3 text-gray-400"><?= isset($p['tanggal']) ? date('d M Y', strtotime($p['tanggal'])) : '-'; ?></td>
+                                    <td class="px-4 py-3 text-gray-400"><?= isset($p['tanggal_rekor']) ? date('d M Y', strtotime($p['tanggal_rekor'])) : '-'; ?></td>
                                     <td class="px-4 py-3 font-bold text-gray-800"><?= htmlspecialchars($nama_atlet); ?></td>
                                     <td class="px-4 py-3">
                                         <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded"><?= htmlspecialchars($p['gaya_renang'] ?? '-'); ?></span>
                                         <span class="text-xs text-gray-500 ml-1"><?= htmlspecialchars($p['jarak'] ?? '-'); ?>m</span>
                                     </td>
-                                    <td class="px-4 py-3 text-center font-bold text-slate-700 bg-slate-50"><?= htmlspecialchars($p['waktu'] ?? '-'); ?></td>
-                                    <td class="px-4 py-3 text-right text-xs text-gray-500"><?= htmlspecialchars($p['pelatih_id'] ?? 'Pelatih'); ?></td>
+                                    <td class="px-4 py-3 text-center font-bold text-slate-700 bg-slate-50"><?= htmlspecialchars($p['waktu_formatted'] ?? '-'); ?></td>
+                                    <td class="px-4 py-3 text-right text-xs text-gray-500">Pelatih (ID: <?= htmlspecialchars($p['recorded_by'] ?? '-'); ?>)</td>
                                 </tr>
                                 <?php } } else { echo "<tr><td colspan='5' class='px-4 py-8 text-center text-gray-500 italic'>Belum ada data performa yang dicatat oleh pelatih di cabang ini.</td></tr>"; } ?>
                             </tbody>

@@ -3,24 +3,23 @@ session_start();
 include '../includes/koneksi.php';
 
 if(isset($_POST['simpan_presensi'])){
-    $tanggal = $_POST['tanggal'];
+    $tanggal = mysqli_real_escape_string($koneksi, $_POST['tanggal']);
     $statuses = $_POST['status']; // Ini array [atlet_id => status]
     $keterangan = $_POST['keterangan']; // Ini array [atlet_id => keterangan]
 
     foreach($statuses as $atlet_id => $status){
-        $ket = $keterangan[$atlet_id] ?? '';
+        $atlet_id = mysqli_real_escape_string($koneksi, $atlet_id);
+        $status = mysqli_real_escape_string($koneksi, $status);
+        $ket = mysqli_real_escape_string($koneksi, $keterangan[$atlet_id] ?? '');
         
-        // Gunakan composite ID untuk menghindari duplikasi absensi atlet yang sama di hari yang sama
-        $docId = $atlet_id . '_' . $tanggal;
-        try {
-            $database->setDocument('presensi', $docId, [
-                'atlet_id' => $atlet_id,
-                'tanggal' => $tanggal,
-                'status' => $status,
-                'keterangan' => $ket,
-                'updated_at' => date('Y-m-d H:i:s')
-            ]);
-        } catch (\Exception $e) {}
+        $cek = mysqli_query($koneksi, "SELECT id FROM presensi WHERE member_id='$atlet_id' AND tanggal='$tanggal'");
+        if(mysqli_num_rows($cek) > 0) {
+            $row = mysqli_fetch_assoc($cek);
+            $id = $row['id'];
+            mysqli_query($koneksi, "UPDATE presensi SET status='$status', keterangan='$ket' WHERE id='$id'");
+        } else {
+            mysqli_query($koneksi, "INSERT INTO presensi (member_id, tanggal, status, keterangan) VALUES ('$atlet_id', '$tanggal', '$status', '$ket')");
+        }
     }
     
     header("location:presensi.php?tanggal=$tanggal&pesan=sukses_simpan");

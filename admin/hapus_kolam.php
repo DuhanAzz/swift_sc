@@ -1,14 +1,13 @@
 <?php
 include '../includes/koneksi.php';
 
-// Tangkap ID (Document ID) yang dikirim lewat URL
-$id = $_GET['id'];
+$id = mysqli_real_escape_string($koneksi, $_GET['id']);
 
-try {
-    // Hapus dokumen di Firestore
-    $database->deleteDocument('pools', $id);
+$q = mysqli_query($koneksi, "DELETE FROM cabang WHERE id='$id'");
+
+if($q) {
     header("location:kolam.php?pesan=sukses_hapus");
-} catch (\Exception $e) {
-    echo "Gagal menghapus data: " . $e->getMessage();
+} else {
+    echo "Gagal menghapus data: " . mysqli_error($koneksi);
 }
 ?>

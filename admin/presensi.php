@@ -6,6 +6,7 @@ include '../includes/sidebar.php';
 include '../includes/koneksi.php';
 
 $tanggal_absensi = isset($_GET['tanggal']) ? $_GET['tanggal'] : date('Y-m-d');
+$admin_pool_id = $_SESSION['pool_id'] ?? '';
 ?>
 
 <div class="p-4 sm:ml-64">
@@ -47,17 +48,17 @@ $tanggal_absensi = isset($_GET['tanggal']) ? $_GET['tanggal'] : date('Y-m-d');
                         <tbody>
                             <?php
                             $q_atlet = [];
-                            try {
-                                $docs = $database->getDocuments('atlet');
-                                foreach($docs as $data) {
-                                    $q_atlet[] = $data;
+                            $q_str = "SELECT * FROM member WHERE role='Atlet'";
+                            if(!empty($admin_pool_id)) {
+                                $q_str .= " AND cabang_id='$admin_pool_id'";
+                            }
+                            $q_str .= " ORDER BY nama ASC";
+                            $q = mysqli_query($koneksi, $q_str);
+                            if($q) {
+                                while($row = mysqli_fetch_assoc($q)) {
+                                    $q_atlet[] = $row;
                                 }
-                            } catch (\Exception $e) {}
-
-                            // Sorting secara manual di PHP karena nama ada di dalam dokumen
-                            usort($q_atlet, function($a, $b) {
-                                return strcmp($a['nama'] ?? '', $b['nama'] ?? '');
-                            });
+                            }
 
                             $no = 1;
                             foreach($q_atlet as $a){
@@ -65,13 +66,12 @@ $tanggal_absensi = isset($_GET['tanggal']) ? $_GET['tanggal'] : date('Y-m-d');
                                 
                                 $status_skrg = 'Hadir';
                                 $ket_skrg = '';
-                                try {
-                                    $pDoc = $database->getDocument('presensi', $atlet_id . '_' . $tanggal_absensi);
-                                    if ($pDoc) {
-                                        $status_skrg = $pDoc['status'] ?? 'Hadir';
-                                        $ket_skrg = $pDoc['keterangan'] ?? '';
-                                    }
-                                } catch (\Exception $e) {}
+                                $q_pres = mysqli_query($koneksi, "SELECT * FROM presensi WHERE member_id='$atlet_id' AND tanggal='$tanggal_absensi'");
+                                if($q_pres && mysqli_num_rows($q_pres) > 0) {
+                                    $pDoc = mysqli_fetch_assoc($q_pres);
+                                    $status_skrg = $pDoc['status'] ?? 'Hadir';
+                                    $ket_skrg = $pDoc['keterangan'] ?? '';
+                                }
                             ?>
                             <tr class="hover:bg-blue-50 transition-colors">
                                 <td class="border border-gray-300 px-3 py-1 text-center bg-gray-50 text-gray-500 font-medium"><?= $no++; ?></td>
