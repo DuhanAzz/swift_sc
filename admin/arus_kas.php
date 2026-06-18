@@ -51,7 +51,7 @@ $admin_pool_id = $_SESSION['pool_id'] ?? '';
                 <tbody>
                     <?php
                     $kasArray = [];
-                    $q_str = "SELECT c.*, b.nama_cabang as nama_kolam, u.name as nama_admin 
+                    $q_str = "SELECT c.*, b.nama_cabang as nama_kolam, u.username as nama_admin 
                               FROM cash_flows c 
                               LEFT JOIN cabang b ON c.pool_id = b.id 
                               LEFT JOIN users u ON c.user_id = u.id ";
