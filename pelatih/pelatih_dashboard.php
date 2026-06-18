@@ -14,7 +14,7 @@ $coach_name = $_SESSION['name'] ?? 'Pelatih';
 
 // 1. Total Atlet di Cabang Pelatih
 $total_atlet = 0;
-$q_atlet = mysqli_query($koneksi, "SELECT COUNT(id) as total FROM member WHERE role='Atlet' AND cabang_id='$coach_cabang_id'");
+$q_atlet = mysqli_query($koneksi, "SELECT COUNT(id) as total FROM member WHERE 1=1 AND cabang_id='$coach_cabang_id'");
 if($q_atlet) {
     $row = mysqli_fetch_assoc($q_atlet);
     $total_atlet = $row['total'];

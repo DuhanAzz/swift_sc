@@ -13,7 +13,7 @@ $tanggal_hari_ini = date('Y-m-d');
 
 // Ambil semua atlet di cabang ini
 $atlet_list = [];
-$q_atlet = mysqli_query($koneksi, "SELECT * FROM member WHERE role='Atlet' AND cabang_id='$coach_cabang_id'");
+$q_atlet = mysqli_query($koneksi, "SELECT * FROM member WHERE 1=1 AND cabang_id='$coach_cabang_id'");
 if($q_atlet) {
     while($row = mysqli_fetch_assoc($q_atlet)) {
         $atlet_list[] = $row;

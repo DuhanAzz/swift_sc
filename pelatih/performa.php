@@ -102,7 +102,7 @@ include '../includes/koneksi.php';
                                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Atlet</label>
                                         <select name="member_id" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
                                             <?php
-                                            $q_atlet_edit = mysqli_query($koneksi, "SELECT * FROM member WHERE role='Atlet' AND cabang_id='$coach_cabang_id' ORDER BY nama ASC");
+                                            $q_atlet_edit = mysqli_query($koneksi, "SELECT * FROM member WHERE 1=1 AND cabang_id='$coach_cabang_id' ORDER BY nama ASC");
                                             if($q_atlet_edit) {
                                                 while($a_data = mysqli_fetch_assoc($q_atlet_edit)) {
                                                     $a_id = $a_data['id'];
@@ -197,7 +197,7 @@ include '../includes/koneksi.php';
                     <select name="member_id" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
                         <option value="">-- Pilih Atlet --</option>
                         <?php
-                        $q_atlet_add = mysqli_query($koneksi, "SELECT * FROM member WHERE role='Atlet' AND cabang_id='$coach_cabang_id' ORDER BY nama ASC");
+                        $q_atlet_add = mysqli_query($koneksi, "SELECT * FROM member WHERE 1=1 AND cabang_id='$coach_cabang_id' ORDER BY nama ASC");
                         if($q_atlet_add) {
                             while($a_data = mysqli_fetch_assoc($q_atlet_add)) {
                                 $a_id = $a_data['id'];

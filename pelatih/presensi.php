@@ -49,7 +49,7 @@ $tanggal_absensi = isset($_GET['tanggal']) ? $_GET['tanggal'] : date('Y-m-d');
                             $coach_cabang_id = $_SESSION['cabang_id'] ?? '';
                             
                             $q_atlet = [];
-                            $res_atlet = mysqli_query($koneksi, "SELECT * FROM member WHERE role='Atlet' AND cabang_id='$coach_cabang_id' ORDER BY nama ASC");
+                            $res_atlet = mysqli_query($koneksi, "SELECT * FROM member WHERE 1=1 AND cabang_id='$coach_cabang_id' ORDER BY nama ASC");
                             if($res_atlet) {
                                 while($row = mysqli_fetch_assoc($res_atlet)) {
                                     $q_atlet[] = $row;
