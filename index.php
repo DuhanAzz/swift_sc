@@ -6,7 +6,9 @@ $cmsData = [
     'hero_title' => "Jump in. let's swim!",
     'hero_subtitle' => "SWIFT SC",
     'hero_desc' => "Klub renang resmi dan tersertifikasi dengan fasilitas pelatih berlisensi nasional & internasional.",
-    'about_text' => "Swift Swimming Club adalah klub renang yang resmi dan telah tersertifikasi. Dengan fasilitas pelatih berlisensi nasional maupun internasional dan peralatan renang yang memadai."
+    'about_text' => "Swift Swimming Club adalah klub renang yang resmi dan telah tersertifikasi. Dengan fasilitas pelatih berlisensi nasional maupun internasional dan peralatan renang yang memadai.",
+    'visi' => '',
+    'misi' => '',
 ];
 
 try {
@@ -15,6 +17,30 @@ try {
         $cmsData['hero_title'] = $row_cms['judul'];
         $cmsData['hero_desc'] = $row_cms['konten'];
     }
+} catch (\Exception $e) {}
+
+// Load tentang_club (visi, misi, deskripsi)
+try {
+    $q_tentang = mysqli_query($koneksi, "SELECT * FROM tentang_club LIMIT 1");
+    if($q_tentang && $row_tentang = mysqli_fetch_assoc($q_tentang)) {
+        if(!empty($row_tentang['deskripsi'])) $cmsData['about_text'] = $row_tentang['deskripsi'];
+        if(!empty($row_tentang['visi'])) $cmsData['visi'] = $row_tentang['visi'];
+        if(!empty($row_tentang['misi'])) $cmsData['misi'] = $row_tentang['misi'];
+    }
+} catch (\Exception $e) {}
+
+// Load slider images
+$sliders = [];
+try {
+    $q_slider = mysqli_query($koneksi, "SELECT * FROM slider WHERE status='Aktif' ORDER BY urutan ASC");
+    if($q_slider) { while($s = mysqli_fetch_assoc($q_slider)) { $sliders[] = $s; } }
+} catch (\Exception $e) {}
+
+// Load cms_banners
+$banners = [];
+try {
+    $q_banners = mysqli_query($koneksi, "SELECT * FROM cms_banners WHERE status='Aktif' ORDER BY urutan ASC");
+    if($q_banners) { while($b = mysqli_fetch_assoc($q_banners)) { $banners[] = $b; } }
 } catch (\Exception $e) {}
 ?>
 <!DOCTYPE html>
