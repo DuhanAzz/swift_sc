@@ -5,24 +5,22 @@ include '../includes/header.php';
 include '../includes/sidebar.php';
 include '../includes/koneksi.php';
 
+$coach_cabang_id = $_SESSION['cabang_id'] ?? '';
 $hari_ini = date('Y-m-d');
 $hadir_hari_ini = 0;
-try {
-    $presensiSnapshot = $database->getDocuments('presensi');
-    foreach ($presensiSnapshot as $doc) {
-        if (($doc['tanggal'] ?? '') === $hari_ini && ($doc['status'] ?? '') === 'Hadir') {
-            $hadir_hari_ini++;
-        }
-    }
-} catch (\Exception $e) { }
+$q_hadir = mysqli_query($koneksi, "SELECT COUNT(id) as total FROM absensi WHERE tanggal='$hari_ini' AND status='Hadir' AND cabang_id='$coach_cabang_id'");
+if($q_hadir) {
+    $row = mysqli_fetch_assoc($q_hadir);
+    $hadir_hari_ini = $row['total'];
+}
 
 $recent_performances = [];
-try {
-    $performaSnapshot = $database->getDocuments('performances');
-    $recent_performances = $performaSnapshot;
-    usort($recent_performances, function($a, $b) { return strcmp($b['id'] ?? '', $a['id'] ?? ''); });
-    $recent_performances = array_slice($recent_performances, 0, 5);
-} catch (\Exception $e) { }
+$q_perf = mysqli_query($koneksi, "SELECT p.*, m.nama as nama_atlet FROM performa p LEFT JOIN member m ON p.member_id = m.id WHERE p.cabang_id='$coach_cabang_id' ORDER BY p.tanggal_rekor DESC, p.id DESC LIMIT 5");
+if($q_perf) {
+    while($row = mysqli_fetch_assoc($q_perf)) {
+        $recent_performances[] = $row;
+    }
+}
 ?>
 
 <div class="p-4 sm:ml-64">
@@ -61,17 +59,11 @@ try {
                         <?php
                         if(count($recent_performances) > 0) {
                             foreach($recent_performances as $d) {
-                                $nama_atlet = 'Unknown';
-                                if(isset($d['member_id'])) {
-                                    try {
-                                        $atletDoc = $database->getDocument('atlet', $d['member_id']);
-                                        if($atletDoc) $nama_atlet = $atletDoc['nama'] ?? 'Unknown';
-                                    } catch (\Exception $e) {}
-                                }
+                                $nama_atlet = $d['nama_atlet'] ?? 'Unknown';
                         ?>
                         <tr class="border-b hover:bg-gray-50">
                             <td class="px-6 py-4 font-bold text-gray-800"><?= htmlspecialchars($nama_atlet); ?></td>
-                            <td class="px-6 py-4 text-blue-600 font-medium"><?= htmlspecialchars($d['swim_style'] ?? '-'); ?> - <?= htmlspecialchars($d['distance'] ?? '-'); ?>m</td>
+                            <td class="px-6 py-4 text-blue-600 font-medium"><?= htmlspecialchars($d['gaya_renang'] ?? '-'); ?> - <?= htmlspecialchars($d['jarak'] ?? '-'); ?>m</td>
                             <td class="px-6 py-4 text-center font-bold text-slate-700"><?= htmlspecialchars($d['time_formatted'] ?? '-'); ?></td>
                         </tr>
                         <?php } } else { echo '<tr><td colspan="3" class="px-6 py-6 text-center text-gray-400">Belum ada data dicatat.</td></tr>'; } ?>

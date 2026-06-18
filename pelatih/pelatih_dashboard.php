@@ -8,46 +8,35 @@ include '../includes/header.php';
 include '../includes/sidebar.php';
 include '../includes/koneksi.php';
 
-$coach_pool_id = $_SESSION['pool_id'] ?? '';
+$coach_cabang_id = $_SESSION['cabang_id'] ?? '';
+$coach_id = $_SESSION['id'] ?? 0;
 $coach_name = $_SESSION['name'] ?? 'Pelatih';
 
 // 1. Total Atlet di Cabang Pelatih
 $total_atlet = 0;
-try {
-    $atletSnapshot = $database->getDocuments('atlet');
-    foreach ($atletSnapshot as $doc) {
-        if (($doc['pool_id'] ?? '') == $coach_pool_id) {
-            $total_atlet++;
-        }
-    }
-} catch (\Exception $e) { }
+$q_atlet = mysqli_query($koneksi, "SELECT COUNT(id) as total FROM member WHERE role='Atlet' AND cabang_id='$coach_cabang_id'");
+if($q_atlet) {
+    $row = mysqli_fetch_assoc($q_atlet);
+    $total_atlet = $row['total'];
+}
 
 // 2. Kehadiran Hari Ini
 $hari_ini = date('Y-m-d');
 $hadir_hari_ini = 0;
-try {
-    $presensiSnapshot = $database->getDocuments('presensi');
-    foreach ($presensiSnapshot as $doc) {
-        if (($doc['tanggal'] ?? '') === $hari_ini && ($doc['status'] ?? '') === 'Hadir' && ($doc['pool_id'] ?? '') == $coach_pool_id) {
-            $hadir_hari_ini++;
-        }
-    }
-} catch (\Exception $e) { }
+$q_hadir = mysqli_query($koneksi, "SELECT COUNT(id) as total FROM absensi WHERE tanggal='$hari_ini' AND status='Hadir' AND cabang_id='$coach_cabang_id'");
+if($q_hadir) {
+    $row = mysqli_fetch_assoc($q_hadir);
+    $hadir_hari_ini = $row['total'];
+}
 
 // 3. Pencatatan Performa Terbaru (Oleh Pelatih Ini)
 $recent_performances = [];
-try {
-    $performaSnapshot = $database->getDocuments('performances');
-    foreach ($performaSnapshot as $doc) {
-        if (($doc['pool_id'] ?? '') == $coach_pool_id && ($doc['recorded_by_name'] ?? '') == $coach_name) {
-            $recent_performances[] = $doc;
-        }
+$q_perf = mysqli_query($koneksi, "SELECT p.*, m.nama as nama_atlet FROM performa p LEFT JOIN member m ON p.member_id = m.id WHERE p.cabang_id='$coach_cabang_id' AND p.pelatih_id='$coach_id' ORDER BY p.tanggal_rekor DESC, p.id DESC LIMIT 3");
+if($q_perf) {
+    while($row = mysqli_fetch_assoc($q_perf)) {
+        $recent_performances[] = $row;
     }
-    usort($recent_performances, function($a, $b) {
-        return strcmp($b['record_date'] ?? '', $a['record_date'] ?? ''); 
-    });
-    $recent_performances = array_slice($recent_performances, 0, 3);
-} catch (\Exception $e) { }
+}
 ?>
 
 <div class="p-4 sm:ml-64">
@@ -107,22 +96,16 @@ try {
                 <?php
                 if(count($recent_performances) > 0) {
                     foreach($recent_performances as $d) {
-                        $nama_atlet = 'Unknown';
-                        if(isset($d['member_id'])) {
-                            try {
-                                $atletDoc = $database->getDocument('atlet', $d['member_id']);
-                                if($atletDoc) $nama_atlet = $atletDoc['nama'] ?? 'Unknown';
-                            } catch (\Exception $e) {}
-                        }
+                        $nama_atlet = $d['nama_atlet'] ?? 'Unknown';
                 ?>
                 <div class="p-4 flex justify-between items-center hover:bg-slate-50 transition-colors">
                     <div>
                         <p class="font-bold text-gray-800"><?= htmlspecialchars($nama_atlet); ?></p>
-                        <p class="text-xs text-gray-500"><?= htmlspecialchars($d['swim_style'] ?? '-'); ?> - <?= htmlspecialchars($d['distance'] ?? '-'); ?>m</p>
+                        <p class="text-xs text-gray-500"><?= htmlspecialchars($d['gaya_renang'] ?? '-'); ?> - <?= htmlspecialchars($d['jarak'] ?? '-'); ?>m</p>
                     </div>
                     <div class="text-right">
                         <span class="bg-slate-800 text-white font-mono text-sm font-bold px-3 py-1 rounded-lg inline-block mb-1 shadow-sm"><?= htmlspecialchars($d['time_formatted'] ?? '-'); ?></span>
-                        <p class="text-[10px] text-gray-400"><?= isset($d['record_date']) ? date('d M Y', strtotime($d['record_date'])) : '-'; ?></p>
+                        <p class="text-[10px] text-gray-400"><?= isset($d['tanggal_rekor']) ? date('d M Y', strtotime($d['tanggal_rekor'])) : '-'; ?></p>
                     </div>
                 </div>
                 <?php } } else { echo '<div class="p-8 text-center text-sm text-gray-500 italic">Belum ada rekor yang Anda catat.</div>'; } ?>
