@@ -80,7 +80,7 @@ include '../includes/koneksi.php';
                         <div class="relative p-4 w-full max-w-md max-h-full">
                             <div class="relative bg-white rounded-xl shadow-lg border border-panel-border">
                                 <div class="flex items-center justify-between p-5 border-b border-gray-100">
-                                    <h3 class="text-xl font-extrabold text-gray-800 tracking-tight">Edit Data Pelatih</h3>
+                                    <h3 class="text-base font-semibold text-algolia-navy">Edit Data Pelatih</h3>
                                     <button type="button" class="text-gray-400 bg-gray-50 hover:bg-red-50 hover:text-red-600 rounded-xl text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-toggle="modalEditPelatih<?= $data['id']; ?>">
                                         <svg class="w-3 h-3" fill="none" viewBox="0 0 14 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/></svg>
                                     </button>
@@ -89,11 +89,11 @@ include '../includes/koneksi.php';
                                     <input type="hidden" name="id" value="<?= $data['id']; ?>">
                                     <div class="mb-5">
                                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Nama Pelatih</label>
-                                        <input type="text" name="nama_pelatih" value="<?= htmlspecialchars($data['nama']); ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm" required>
+                                        <input type="text" name="nama_pelatih" value="<?= htmlspecialchars($data['nama']); ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm" required>
                                     </div>
                                     <div class="mb-5">
                                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Lisensi</label>
-                                        <select name="lisensi" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm" required>
+                                        <select name="lisensi" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm" required>
                                             <option value="Lisensi D" <?= ($data['sertifikasi'] == 'Lisensi D') ? 'selected' : '' ?>>Lisensi D (Pemula)</option>
                                             <option value="Lisensi C" <?= ($data['sertifikasi'] == 'Lisensi C') ? 'selected' : '' ?>>Lisensi C (Menengah)</option>
                                             <option value="Lisensi B" <?= ($data['sertifikasi'] == 'Lisensi B') ? 'selected' : '' ?>>Lisensi B (Lanjutan)</option>
@@ -102,11 +102,11 @@ include '../includes/koneksi.php';
                                     </div>
                                     <div class="mb-5">
                                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">No. HP</label>
-                                        <input type="text" name="no_hp" value="<?= htmlspecialchars($data['jabatan']); ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm" required>
+                                        <input type="text" name="no_hp" value="<?= htmlspecialchars($data['jabatan']); ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm" required>
                                     </div>
                                     <div class="mb-6">
                                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Lokasi Melatih</label>
-                                        <select name="id_kolam" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm" required>
+                                        <select name="id_kolam" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm" required>
                                             <?php
                                             $q_kolam = mysqli_query($koneksi, "SELECT * FROM cabang");
                                             if($q_kolam) {
@@ -140,7 +140,7 @@ include '../includes/koneksi.php';
     <div class="relative p-4 w-full max-w-md max-h-full">
         <div class="relative bg-white rounded-xl shadow-lg border border-panel-border">
             <div class="flex items-center justify-between p-5 border-b border-gray-100">
-                <h3 class="text-xl font-extrabold text-gray-800 tracking-tight">Pendaftaran Pelatih Baru</h3>
+                <h3 class="text-base font-semibold text-algolia-navy">Pendaftaran Pelatih Baru</h3>
                 <button type="button" class="text-gray-400 bg-gray-50 hover:bg-red-50 hover:text-red-600 rounded-xl text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-toggle="modalTambahPelatih">
                     <svg class="w-3 h-3" fill="none" viewBox="0 0 14 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/></svg>
                 </button>
@@ -148,11 +148,11 @@ include '../includes/koneksi.php';
             <form action="proses_pelatih.php" method="POST" class="p-6 text-left">
                 <div class="mb-5">
                     <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Nama Lengkap</label>
-                    <input type="text" name="nama_pelatih" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-medium rounded-xl focus:ring-indigo-600 focus:border-indigo-600 block w-full p-3 shadow-sm" placeholder="Contoh: Coach Richard" required>
+                    <input type="text" name="nama_pelatih" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-indigo-600 focus:border-indigo-600 block w-full p-3 shadow-sm" placeholder="Contoh: Coach Richard" required>
                 </div>
                 <div class="mb-5">
                     <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Tingkat Lisensi</label>
-                    <select name="lisensi" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-medium rounded-xl focus:ring-indigo-600 focus:border-indigo-600 block w-full p-3 shadow-sm" required>
+                    <select name="lisensi" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-indigo-600 focus:border-indigo-600 block w-full p-3 shadow-sm" required>
                         <option value="" disabled selected>-- Pilih Lisensi --</option>
                         <option value="Lisensi D">Lisensi D (Pemula)</option>
                         <option value="Lisensi C">Lisensi C (Menengah)</option>
@@ -162,11 +162,11 @@ include '../includes/koneksi.php';
                 </div>
                 <div class="mb-5">
                     <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">No. HP / WhatsApp</label>
-                    <input type="text" name="no_hp" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-medium rounded-xl focus:ring-indigo-600 focus:border-indigo-600 block w-full p-3 shadow-sm" placeholder="Contoh: 0812..." required>
+                    <input type="text" name="no_hp" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-indigo-600 focus:border-indigo-600 block w-full p-3 shadow-sm" placeholder="Contoh: 0812..." required>
                 </div>
                 <div class="mb-6">
                     <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Tugaskan di Kolam</label>
-                    <select name="id_kolam" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-medium rounded-xl focus:ring-indigo-600 focus:border-indigo-600 block w-full p-3 shadow-sm" required>
+                    <select name="id_kolam" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-indigo-600 focus:border-indigo-600 block w-full p-3 shadow-sm" required>
                         <option value="" disabled selected>-- Pilih Lokasi --</option>
                         <?php
                         $query_kolam = mysqli_query($koneksi, "SELECT * FROM cabang");

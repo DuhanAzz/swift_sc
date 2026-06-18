@@ -93,7 +93,7 @@ if (isset($_POST['upload_hero'])) {
                     <form action="" method="POST" enctype="multipart/form-data" class="p-6">
                         <div class="mb-6">
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Pilih File Gambar</label>
-                            <input type="file" name="hero_image" accept=".jpg,.jpeg,.png,.webp" required class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-all duration-200">
+                            <input type="file" name="hero_image" accept=".jpg,.jpeg,.png,.webp" required class="w-full border border-[#E8E8EF] rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-all duration-200">
                             <p class="mt-2 text-xs text-slate-500">Rekomendasi ukuran: 1920x1080px. Format: JPG atau PNG.</p>
                         </div>
                         <button type="submit" name="upload_hero" class="w-full bg-slate-800 text-white font-bold py-3 rounded-xl hover:bg-slate-900 hover:shadow-lg transition-all duration-200 uppercase tracking-widest text-sm">Ganti Banner</button>

@@ -85,24 +85,24 @@ include '../includes/koneksi.php';
                                     <input type="hidden" name="id" value="<?= $data['id']; ?>">
                                     <div class="mb-4">
                                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Nama Lengkap</label>
-                                        <input type="text" name="name" value="<?= htmlspecialchars($data['username']); ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                                        <input type="text" name="name" value="<?= htmlspecialchars($data['username']); ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
                                     </div>
                                     <div class="mb-4">
                                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Email</label>
-                                        <input type="email" name="email" value="<?= htmlspecialchars($data['email']); ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                                        <input type="email" name="email" value="<?= htmlspecialchars($data['email']); ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
                                     </div>
                                     
                                     <div class="grid grid-cols-2 gap-4 mb-4">
                                         <div>
                                             <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Role</label>
-                                            <select name="role" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                                            <select name="role" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
                                                 <option value="CEO" <?= ($role == 'CEO') ? 'selected' : '' ?>>Super Admin (CEO)</option>
                                                 <option value="Admin" <?= ($role == 'Admin') ? 'selected' : '' ?>>Manajer Kolam (Admin)</option>
                                             </select>
                                         </div>
                                         <div>
                                             <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Akses Kolam</label>
-                                            <select name="cabang_id" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3">
+                                            <select name="cabang_id" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3">
                                                 <option value="">-- Semua Cabang --</option>
                                                 <?php
                                                 $q_kolam = mysqli_query($koneksi, "SELECT * FROM cabang");
@@ -121,7 +121,7 @@ include '../includes/koneksi.php';
                                     <p class="text-xs text-red-500 mb-4">*Kosongkan password jika tidak ingin diubah.</p>
                                     <div class="mb-6">
                                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Password Baru</label>
-                                        <input type="password" name="password" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" placeholder="Masukkan password baru">
+                                        <input type="password" name="password" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" placeholder="Masukkan password baru">
                                     </div>
                                     <button type="submit" name="edit" class="w-full text-white bg-slate-800 hover:bg-slate-900 font-bold rounded-xl text-sm px-5 py-3">Update Pengguna</button>
                                 </form>
@@ -150,27 +150,27 @@ include '../includes/koneksi.php';
             <form action="proses_admin.php" method="POST" class="p-6 text-left">
                 <div class="mb-4">
                     <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Nama Lengkap</label>
-                    <input type="text" name="name" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                    <input type="text" name="name" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
                 </div>
                 <div class="mb-4">
                     <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Email</label>
-                    <input type="email" name="email" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                    <input type="email" name="email" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
                 </div>
                 <div class="mb-4">
                     <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Password</label>
-                    <input type="password" name="password" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                    <input type="password" name="password" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
                 </div>
                 <div class="grid grid-cols-2 gap-4 mb-6">
                     <div>
                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Role</label>
-                        <select name="role" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                        <select name="role" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
                             <option value="CEO">Super Admin (CEO)</option>
                             <option value="Admin">Manajer Kolam (Admin)</option>
                         </select>
                     </div>
                     <div>
                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Penempatan Kolam</label>
-                        <select name="cabang_id" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3">
+                        <select name="cabang_id" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3">
                             <option value="">-- Kosongkan Jika Admin --</option>
                             <?php
                             $q_kolam2 = mysqli_query($koneksi, "SELECT * FROM cabang");

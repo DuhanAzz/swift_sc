@@ -24,12 +24,12 @@ include '../includes/koneksi.php';
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             
             <div class="md:col-span-1">
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                <div class="bg-white p-5 rounded-2xl card-hover">
                     <h2 class="font-bold text-gray-700 mb-4 uppercase text-sm border-b pb-2">Tambah Jadwal Baru</h2>
                     <form action="proses_jadwal.php" method="POST">
                         <div class="mb-4">
                             <label class="block text-xs font-bold text-gray-500 mb-2">Hari</label>
-                            <select name="hari" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5" required>
+                            <select name="hari" class="bg-gray-50 border border-[#E8E8EF] text-sm rounded-lg block w-full p-2.5" required>
                                 <option value="Senin">Senin</option><option value="Selasa">Selasa</option>
                                 <option value="Rabu">Rabu</option><option value="Kamis">Kamis</option>
                                 <option value="Jumat">Jumat</option><option value="Sabtu">Sabtu</option>
@@ -39,20 +39,20 @@ include '../includes/koneksi.php';
                         <div class="grid grid-cols-2 gap-4 mb-4">
                             <div>
                                 <label class="block text-xs font-bold text-gray-500 mb-2">Jam Mulai</label>
-                                <input type="time" name="jam_mulai" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5" required>
+                                <input type="time" name="jam_mulai" class="bg-gray-50 border border-[#E8E8EF] text-sm rounded-lg block w-full p-2.5" required>
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-500 mb-2">Jam Selesai</label>
-                                <input type="time" name="jam_selesai" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5" required>
+                                <input type="time" name="jam_selesai" class="bg-gray-50 border border-[#E8E8EF] text-sm rounded-lg block w-full p-2.5" required>
                             </div>
                         </div>
                         <div class="mb-4">
                             <label class="block text-xs font-bold text-gray-500 mb-2">Lokasi / Kolam</label>
-                            <input type="text" name="lokasi" placeholder="Misal: Kolam Renang Tirtomoyo" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5" required>
+                            <input type="text" name="lokasi" placeholder="Misal: Kolam Renang Tirtomoyo" class="bg-gray-50 border border-[#E8E8EF] text-sm rounded-lg block w-full p-2.5" required>
                         </div>
                         <div class="mb-5">
                             <label class="block text-xs font-bold text-gray-500 mb-2">Fokus Program (Opsional)</label>
-                            <textarea name="program" rows="3" placeholder="Misal: Sprint 50m Gaya Bebas" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5"></textarea>
+                            <textarea name="program" rows="3" placeholder="Misal: Sprint 50m Gaya Bebas" class="bg-gray-50 border border-[#E8E8EF] text-sm rounded-lg block w-full p-2.5"></textarea>
                         </div>
                         <button type="submit" name="tambah_jadwal" class="w-full text-white bg-algolia-blue hover:bg-algolia-darkblue font-bold rounded-lg text-sm px-5 py-2.5">
                             Simpan Jadwal

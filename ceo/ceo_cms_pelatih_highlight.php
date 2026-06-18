@@ -77,7 +77,7 @@ include '../includes/koneksi.php';
                     </form>
                 </div>
             </div>
-            <?php } } else { echo "<div class='col-span-3 text-center py-12 text-gray-500 bg-white rounded-xl border border-dashed border-gray-300'>Belum ada data pelatih. Tambahkan pelatih di menu Manajemen Akun.</div>"; } ?>
+            <?php } } else { echo "<div class='col-span-3 text-center py-12 text-gray-500 bg-white rounded-xl border border-dashed border-[#E8E8EF]'>Belum ada data pelatih. Tambahkan pelatih di menu Manajemen Akun.</div>"; } ?>
         </div>
 
     </div>

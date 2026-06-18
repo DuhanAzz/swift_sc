@@ -68,13 +68,13 @@ if (isset($_GET['hapus'])) {
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 
                 <div class="lg:col-span-1">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 sticky top-24">
+                    <div class="bg-white p-6 rounded-2xl card-hover sticky top-24">
                         <h3 class="text-xl font-bold mb-4 border-b pb-2">Buat Berita Baru</h3>
                         <form action="" method="POST" enctype="multipart/form-data" class="space-y-4">
                             <?php if ($user_role === 'admin'): ?>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Cabang / Pool</label>
-                                <select name="cabang" required class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                <select name="cabang" required class="w-full border border-[#E8E8EF] rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
                                     <option value="Pusat">Pusat</option>
                                     <option value="Cabang Utara">Cabang Utara</option>
                                     <option value="Cabang Selatan">Cabang Selatan</option>
@@ -83,7 +83,7 @@ if (isset($_GET['hapus'])) {
                             <?php endif; ?>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Kategori</label>
-                                <select name="kategori" required class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-blue-500 transition-all duration-200">
+                                <select name="kategori" required class="w-full border border-[#E8E8EF] rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-blue-500 transition-all duration-200">
                                     <option value="Prestasi">Prestasi</option>
                                     <option value="Pengumuman">Pengumuman</option>
                                     <option value="Artikel">Artikel Umum</option>
@@ -91,19 +91,19 @@ if (isset($_GET['hapus'])) {
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Judul Berita</label>
-                                <input type="text" name="judul" required class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-blue-500 transition-all duration-200">
+                                <input type="text" name="judul" required class="w-full border border-[#E8E8EF] rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-blue-500 transition-all duration-200">
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Brosur / Gambar (Opsional)</label>
-                                <input type="file" name="gambar" accept=".jpg,.jpeg,.png" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-all duration-200">
+                                <input type="file" name="gambar" accept=".jpg,.jpeg,.png" class="w-full border border-[#E8E8EF] rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-all duration-200">
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal Publish</label>
-                                <input type="date" name="tanggal" required class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-blue-500 transition-all duration-200" value="<?= date('Y-m-d'); ?>">
+                                <input type="date" name="tanggal" required class="w-full border border-[#E8E8EF] rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-blue-500 transition-all duration-200" value="<?= date('Y-m-d'); ?>">
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Isi Berita</label>
-                                <textarea name="isi" rows="5" required class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-blue-500 transition-all duration-200"></textarea>
+                                <textarea name="isi" rows="5" required class="w-full border border-[#E8E8EF] rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-blue-500 transition-all duration-200"></textarea>
                             </div>
                             <button type="submit" name="tambah" class="w-full bg-blue-600 text-white font-bold py-2 rounded-lg hover:bg-blue-700 hover:shadow-lg transition-all duration-200">Publish Berita</button>
                         </form>

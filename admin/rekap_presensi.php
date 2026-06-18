@@ -24,11 +24,11 @@ $nama_bulan = [
             <p class="text-sm text-gray-500">Laporan statistik kehadiran atlet per periode</p>
         </div>
 
-        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6">
+        <div class="bg-white p-4 rounded-xl card-hover mb-6">
             <form action="rekap_presensi.php" method="GET" class="flex flex-wrap gap-4 items-end">
                 <div class="w-full md:w-48">
                     <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Pilih Bulan</label>
-                    <select name="bulan" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg block w-full p-2.5">
+                    <select name="bulan" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-lg block w-full p-2.5">
                         <?php foreach($nama_bulan as $m => $nama) : ?>
                             <option value="<?= $m; ?>" <?= ($filter_bulan == $m) ? 'selected' : ''; ?>><?= $nama; ?></option>
                         <?php endforeach; ?>
@@ -36,7 +36,7 @@ $nama_bulan = [
                 </div>
                 <div class="w-full md:w-32">
                     <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Tahun</label>
-                    <select name="tahun" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg block w-full p-2.5">
+                    <select name="tahun" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-lg block w-full p-2.5">
                         <?php 
                         $thn_skrg = date('Y');
                         for($i = $thn_skrg; $i >= $thn_skrg-2; $i--) {
@@ -51,8 +51,8 @@ $nama_bulan = [
             </form>
         </div>
 
-        <div class="relative overflow-x-auto shadow-md sm:rounded-xl border border-gray-200 bg-white">
-            <div class="p-4 bg-gray-50 border-b border-gray-200">
+        <div class="relative overflow-x-auto shadow-md sm:rounded-xl border border-[#E8E8EF] bg-white">
+            <div class="p-4 bg-gray-50 border-b border-[#E8E8EF]">
                 <h2 class="font-bold text-gray-700 uppercase text-center">
                     LAPORAN KEHADIRAN: <?= strtoupper($nama_bulan[$filter_bulan]); ?> <?= $filter_tahun; ?>
                 </h2>

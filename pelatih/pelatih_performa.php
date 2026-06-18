@@ -22,7 +22,7 @@ if($q_atlet) {
 ?>
 
 <div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
-    <div class="p-4 rounded-lg mt-14 max-w-2xl mx-auto">
+    <div class="p-4 lg:p-8 page-content">
         
         <?php 
         if(isset($_GET['pesan'])){

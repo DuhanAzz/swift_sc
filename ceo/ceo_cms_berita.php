@@ -114,7 +114,7 @@ include '../includes/koneksi.php';
                 </div>
             </div>
 
-            <?php } } else { echo "<div class='col-span-3 text-center py-12 text-gray-500 bg-white rounded-xl border border-dashed border-gray-300'>Belum ada berita. Klik tombol Tulis Berita Baru.</div>"; } ?>
+            <?php } } else { echo "<div class='col-span-3 text-center py-12 text-gray-500 bg-white rounded-xl border border-dashed border-[#E8E8EF]'>Belum ada berita. Klik tombol Tulis Berita Baru.</div>"; } ?>
         </div>
 
     </div>

@@ -34,13 +34,13 @@ include '../includes/koneksi.php';
             <p class="text-sm text-gray-500">Pusat kendali untuk menambah, mengedit, dan menghapus Admin/Manajer serta Pelatih.</p>
         </div>
 
-        <div class="mb-8 border-b border-gray-200">
+        <div class="mb-8 border-b border-[#E8E8EF]">
             <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
                 <li class="mr-2" role="presentation">
                     <button class="inline-block p-4 border-b-2 rounded-t-lg" id="admin-tab" data-tabs-target="#admin" type="button" role="tab" aria-controls="admin" aria-selected="false">Admin & Manajer Kolam</button>
                 </li>
                 <li class="mr-2" role="presentation">
-                    <button class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300" id="pelatih-tab" data-tabs-target="#pelatih" type="button" role="tab" aria-controls="pelatih" aria-selected="false">Data Pelatih</button>
+                    <button class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-[#E8E8EF]" id="pelatih-tab" data-tabs-target="#pelatih" type="button" role="tab" aria-controls="pelatih" aria-selected="false">Data Pelatih</button>
                 </li>
             </ul>
         </div>

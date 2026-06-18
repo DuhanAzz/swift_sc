@@ -33,13 +33,13 @@ $admin_pool_id = $_SESSION['pool_id'] ?? '';
             <p class="text-sm text-gray-500">Kelola pendaftaran baru dan data atlet aktif untuk cabang Anda.</p>
         </div>
 
-        <div class="mb-8 border-b border-gray-200">
+        <div class="mb-8 border-b border-[#E8E8EF]">
             <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
                 <li class="mr-2" role="presentation">
                     <button class="inline-block p-4 border-b-2 rounded-t-lg text-blue-600 border-blue-600" id="pending-tab" data-tabs-target="#pending" type="button" role="tab" aria-controls="pending" aria-selected="true">Pendaftar Baru</button>
                 </li>
                 <li class="mr-2" role="presentation">
-                    <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300" id="active-tab" data-tabs-target="#active" type="button" role="tab" aria-controls="active" aria-selected="false">Data Member Aktif</button>
+                    <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-[#E8E8EF]" id="active-tab" data-tabs-target="#active" type="button" role="tab" aria-controls="active" aria-selected="false">Data Member Aktif</button>
                 </li>
             </ul>
         </div>

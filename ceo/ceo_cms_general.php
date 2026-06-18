@@ -71,21 +71,21 @@ if (isset($_POST['simpan_cms'])) {
                     <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2">Bagian Hero Banner</h3>
                     <div class="mb-4">
                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Teks Kecil (Atas)</label>
-                        <input type="text" name="hero_title" value="<?= htmlspecialchars($cmsData['hero_title']); ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3 font-cursive text-lg" required>
+                        <input type="text" name="hero_title" value="<?= htmlspecialchars($cmsData['hero_title']); ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3 font-cursive text-lg" required>
                     </div>
                     <div class="mb-4">
                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Judul Utama (Besar)</label>
-                        <input type="text" name="hero_subtitle" value="<?= htmlspecialchars($cmsData['hero_subtitle']); ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3 font-black uppercase" required>
+                        <input type="text" name="hero_subtitle" value="<?= htmlspecialchars($cmsData['hero_subtitle']); ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3 font-black uppercase" required>
                     </div>
                     <div class="mb-6">
                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Deskripsi Pendek</label>
-                        <textarea name="hero_desc" rows="2" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required><?= htmlspecialchars($cmsData['hero_desc']); ?></textarea>
+                        <textarea name="hero_desc" rows="2" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required><?= htmlspecialchars($cmsData['hero_desc']); ?></textarea>
                     </div>
 
                     <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2 mt-8">Bagian Profil / Tentang Klub</h3>
                     <div class="mb-6">
                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Teks Paragraf "Tentang Swift SC"</label>
-                        <textarea name="about_text" rows="4" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required><?= htmlspecialchars($cmsData['about_text']); ?></textarea>
+                        <textarea name="about_text" rows="4" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required><?= htmlspecialchars($cmsData['about_text']); ?></textarea>
                     </div>
 
                     <button type="submit" name="simpan_cms" class="w-full text-white bg-algolia-blue hover:bg-algolia-darkblue font-bold rounded-xl text-sm px-5 py-3 shadow-md">Simpan Perubahan Konten</button>

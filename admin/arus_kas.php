@@ -100,11 +100,11 @@ $admin_pool_id = $_SESSION['pool_id'] ?? '';
                                     <div class="grid grid-cols-2 gap-4 mb-4">
                                         <div>
                                             <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Tanggal</label>
-                                            <input type="date" name="transaction_date" value="<?= $data['transaction_date']; ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                                            <input type="date" name="transaction_date" value="<?= $data['transaction_date']; ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
                                         </div>
                                         <div>
                                             <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Tipe</label>
-                                            <select name="type" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                                            <select name="type" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
                                                 <option value="Pemasukan" <?= ($data['type'] == 'Pemasukan') ? 'selected' : '' ?>>Pemasukan</option>
                                                 <option value="Pengeluaran" <?= ($data['type'] == 'Pengeluaran') ? 'selected' : '' ?>>Pengeluaran</option>
                                             </select>
@@ -112,15 +112,15 @@ $admin_pool_id = $_SESSION['pool_id'] ?? '';
                                     </div>
                                     <div class="mb-4">
                                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Kategori</label>
-                                        <input type="text" name="category" value="<?= $data['category']; ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required placeholder="Cth: SPP Bulanan, Gaji">
+                                        <input type="text" name="category" value="<?= $data['category']; ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required placeholder="Cth: SPP Bulanan, Gaji">
                                     </div>
                                     <div class="mb-4">
                                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Nominal (Rp)</label>
-                                        <input type="number" name="amount" value="<?= $data['amount']; ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                                        <input type="number" name="amount" value="<?= $data['amount']; ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
                                     </div>
                                     <div class="mb-6">
                                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Keterangan</label>
-                                        <textarea name="description" rows="3" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3"><?= htmlspecialchars($data['description']); ?></textarea>
+                                        <textarea name="description" rows="3" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3"><?= htmlspecialchars($data['description']); ?></textarea>
                                     </div>
                                     <button type="submit" name="edit" class="w-full text-white bg-slate-800 hover:bg-slate-900 font-bold rounded-xl text-sm px-5 py-3">Update Transaksi</button>
                                 </form>
@@ -149,7 +149,7 @@ $admin_pool_id = $_SESSION['pool_id'] ?? '';
             <form action="proses_arus_kas.php" method="POST" class="p-6 text-left">
                 <div class="mb-4">
                     <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Cabang Kolam</label>
-                    <select name="pool_id" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                    <select name="pool_id" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
                         <?php
                         $q_kolam = mysqli_query($koneksi, "SELECT * FROM cabang");
                         if($q_kolam) {
@@ -165,11 +165,11 @@ $admin_pool_id = $_SESSION['pool_id'] ?? '';
                 <div class="grid grid-cols-2 gap-4 mb-4">
                     <div>
                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Tanggal</label>
-                        <input type="date" name="transaction_date" value="<?= date('Y-m-d'); ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                        <input type="date" name="transaction_date" value="<?= date('Y-m-d'); ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
                     </div>
                     <div>
                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Tipe</label>
-                        <select name="type" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                        <select name="type" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
                             <option value="Pemasukan">Pemasukan</option>
                             <option value="Pengeluaran">Pengeluaran</option>
                         </select>
@@ -177,15 +177,15 @@ $admin_pool_id = $_SESSION['pool_id'] ?? '';
                 </div>
                 <div class="mb-4">
                     <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Kategori</label>
-                    <input type="text" name="category" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" placeholder="Contoh: SPP Bulanan, Operasional" required>
+                    <input type="text" name="category" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" placeholder="Contoh: SPP Bulanan, Operasional" required>
                 </div>
                 <div class="mb-4">
                     <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Nominal (Rp)</label>
-                    <input type="number" name="amount" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" placeholder="Contoh: 150000" required>
+                    <input type="number" name="amount" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" placeholder="Contoh: 150000" required>
                 </div>
                 <div class="mb-6">
                     <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Keterangan Tambahan</label>
-                    <textarea name="description" rows="2" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" placeholder="Detail transaksi..."></textarea>
+                    <textarea name="description" rows="2" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" placeholder="Detail transaksi..."></textarea>
                 </div>
                 <button type="submit" name="tambah" class="w-full text-white bg-slate-800 hover:bg-slate-900 font-bold rounded-xl text-sm px-5 py-3">Simpan Transaksi</button>
             </form>

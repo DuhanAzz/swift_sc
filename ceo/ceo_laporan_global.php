@@ -68,13 +68,13 @@ if($q_perf) {
             </div>
         </div>
 
-        <div class="mb-8 border-b border-gray-200">
+        <div class="mb-8 border-b border-[#E8E8EF]">
             <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
                 <li class="mr-2" role="presentation">
                     <button class="inline-block p-4 border-b-2 rounded-t-lg" id="cashflow-tab" data-tabs-target="#cashflow" type="button" role="tab" aria-controls="cashflow" aria-selected="false">Arus Kas Global</button>
                 </li>
                 <li class="mr-2" role="presentation">
-                    <button class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300" id="leaderboard-tab" data-tabs-target="#leaderboard" type="button" role="tab" aria-controls="leaderboard" aria-selected="false">Global Leaderboard</button>
+                    <button class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-[#E8E8EF]" id="leaderboard-tab" data-tabs-target="#leaderboard" type="button" role="tab" aria-controls="leaderboard" aria-selected="false">Global Leaderboard</button>
                 </li>
             </ul>
         </div>

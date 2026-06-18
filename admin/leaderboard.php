@@ -19,11 +19,11 @@ $filter_pool = isset($_GET['pool']) ? $_GET['pool'] : '50m';
             <p class="text-sm text-gray-500">Pantau waktu tercepat atlet berdasarkan gaya dan jarak renang</p>
         </div>
 
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 mb-6">
+        <div class="bg-white p-5 rounded-2xl card-hover mb-6">
             <form action="leaderboard.php" method="GET" class="flex flex-col md:flex-row gap-4 items-end">
                 <div class="w-full md:w-1/3">
                     <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Gaya Renang</label>
-                    <select name="style" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-2.5">
+                    <select name="style" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-2.5">
                         <option value="Bebas" <?= ($filter_style == 'Bebas') ? 'selected' : ''; ?>>Gaya Bebas</option>
                         <option value="Dada" <?= ($filter_style == 'Dada') ? 'selected' : ''; ?>>Gaya Dada</option>
                         <option value="Punggung" <?= ($filter_style == 'Punggung') ? 'selected' : ''; ?>>Gaya Punggung</option>
@@ -33,11 +33,11 @@ $filter_pool = isset($_GET['pool']) ? $_GET['pool'] : '50m';
                 </div>
                 <div class="w-full md:w-1/4">
                     <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Jarak (m)</label>
-                    <input type="number" name="distance" value="<?= htmlspecialchars($filter_distance); ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-2.5" placeholder="Contoh: 50" required>
+                    <input type="number" name="distance" value="<?= htmlspecialchars($filter_distance); ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-2.5" placeholder="Contoh: 50" required>
                 </div>
                 <div class="w-full md:w-1/3">
                     <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Tipe Kolam</label>
-                    <select name="pool" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-2.5">
+                    <select name="pool" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-2.5">
                         <option value="25m" <?= ($filter_pool == '25m') ? 'selected' : ''; ?>>Short Course (25m)</option>
                         <option value="50m" <?= ($filter_pool == '50m') ? 'selected' : ''; ?>>Long Course (50m)</option>
                     </select>

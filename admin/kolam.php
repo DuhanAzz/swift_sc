@@ -74,7 +74,7 @@ include '../includes/koneksi.php';
                         <div class="relative p-4 w-full max-w-md max-h-full">
                             <div class="relative bg-white rounded-xl shadow-lg border border-panel-border">
                                 <div class="flex items-center justify-between p-4 border-b">
-                                    <h3 class="text-lg font-semibold text-gray-900">Edit Data Kolam</h3>
+                                    <h3 class="text-base font-semibold text-algolia-navy">Edit Data Kolam</h3>
                                     <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-toggle="modalEdit<?= $data['id']; ?>">
                                         <svg class="w-3 h-3" fill="none" viewBox="0 0 14 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/></svg>
                                     </button>
@@ -83,11 +83,11 @@ include '../includes/koneksi.php';
                                     <input type="hidden" name="id" value="<?= $data['id']; ?>">
                                     <div class="mb-4 text-left">
                                         <label class="block mb-2 text-sm font-medium text-gray-900">Nama Kolam</label>
-                                        <input type="text" name="name" value="<?= htmlspecialchars($data['nama_cabang']); ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-algolia-blue focus:border-algolia-blue block w-full p-2.5" required>
+                                        <input type="text" name="name" value="<?= htmlspecialchars($data['nama_cabang']); ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-lg focus:ring-algolia-blue focus:border-algolia-blue block w-full p-2.5" required>
                                     </div>
                                     <div class="mb-4 text-left">
                                         <label class="block mb-2 text-sm font-medium text-gray-900">Alamat</label>
-                                        <textarea name="address" rows="3" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-algolia-blue focus:border-algolia-blue block w-full p-2.5" required><?= htmlspecialchars($data['lokasi']); ?></textarea>
+                                        <textarea name="address" rows="3" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-lg focus:ring-algolia-blue focus:border-algolia-blue block w-full p-2.5" required><?= htmlspecialchars($data['lokasi']); ?></textarea>
                                     </div>
                                     <button type="submit" name="edit" class="w-full text-white bg-algolia-blue hover:bg-algolia-darkblue font-medium rounded-lg text-sm px-5 py-2.5">Simpan Perubahan</button>
                                 </form>
@@ -105,7 +105,7 @@ include '../includes/koneksi.php';
     <div class="relative p-4 w-full max-w-md max-h-full">
         <div class="relative bg-white rounded-xl shadow-lg border border-panel-border">
             <div class="flex items-center justify-between p-4 border-b">
-                <h3 class="text-lg font-semibold text-gray-900">Tambah Cabang Baru</h3>
+                <h3 class="text-base font-semibold text-algolia-navy">Tambah Cabang Baru</h3>
                 <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-toggle="modalTambah">
                     <svg class="w-3 h-3" fill="none" viewBox="0 0 14 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/></svg>
                 </button>
@@ -113,11 +113,11 @@ include '../includes/koneksi.php';
             <form action="proses_kolam.php" method="POST" class="p-4 text-left">
                 <div class="mb-4">
                     <label class="block mb-2 text-sm font-medium text-gray-900 text-left">Nama Kolam Renang</label>
-                    <input type="text" name="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Contoh: Tirta Olympic" required>
+                    <input type="text" name="name" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Contoh: Tirta Olympic" required>
                 </div>
                 <div class="mb-4">
                     <label class="block mb-2 text-sm font-medium text-gray-900 text-left">Alamat Lengkap</label>
-                    <textarea name="address" rows="3" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Masukkan alamat..." required></textarea>
+                    <textarea name="address" rows="3" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Masukkan alamat..." required></textarea>
                 </div>
                 <button type="submit" name="tambah" class="w-full text-white bg-algolia-blue hover:bg-algolia-darkblue font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-all">Simpan Data</button>
             </form>
