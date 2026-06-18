@@ -35,6 +35,7 @@ include '../includes/koneksi.php';
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <?php
             $coachesArray = [];
             try {
                 $q_pelatih = mysqli_query($koneksi, "SELECT * FROM pelatih");
