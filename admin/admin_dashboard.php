@@ -40,69 +40,86 @@ if($q_perf) {
     }
 }
 ?>
-
-<div class="lg:ml-[270px] pt-20 lg:pt-6 p-4 lg:p-8 page-content min-h-screen">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
     
-        <div class="mb-8 animate-fade-in">
-            <h1 class="text-2xl lg:text-3xl font-sora font-bold text-white tracking-tight">Dashboard Admin Cabang</h1>
-            <p class="text-sm text-slate-400 mt-1">Ringkasan aktivitas Swift SC untuk cabang: <span class="font-semibold text-electric-400"><?= htmlspecialchars($admin_cabang); ?></span></p>
+    <!-- Top Bar (Desktop) -->
+    <div class="topbar hidden lg:flex items-center justify-between h-14 px-6 sticky top-0 z-30">
+        <div>
+            <span class="text-sm font-medium text-algolia-navy">Dashboard</span>
+            <span class="text-sm text-gray-400 mx-2">/</span>
+            <span class="text-sm text-gray-400">Admin Cabang</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <div class="relative">
+                <input type="text" class="search-box w-64 pl-9" placeholder="Search or ask a question" readonly>
+                <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+            <div class="w-8 h-8 rounded-full bg-algolia-blue flex items-center justify-center">
+                <span class="text-white text-xs font-bold"><?= strtoupper(substr($_SESSION['name'] ?? 'A', 0, 1)) ?></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page Content -->
+    <div class="p-4 lg:p-8 page-content">
+        
+        <!-- Page Header -->
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold text-algolia-navy">Selamat Datang!</h1>
+            <p class="text-sm text-gray-500 mt-1">Ringkasan aktivitas Swift SC untuk cabang <span class="font-semibold text-algolia-blue"><?= htmlspecialchars($admin_cabang); ?></span></p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6 mb-8">
-            <!-- Stat Card 1: Total Atlet -->
-            <div class="stat-card glass-card-solid rounded-2xl p-5 lg:p-6 animate-slide-up">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider mb-2">Total Atlet Cabang</p>
-                        <h3 class="text-3xl lg:text-4xl font-sora font-bold text-white"><?= $total_atlet; ?> <span class="text-base font-normal text-slate-500">Orang</span></h3>
-                    </div>
-                    <div class="p-3 rounded-xl bg-electric-500/10 border border-electric-500/20">
-                        <svg class="w-7 h-7 text-electric-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+        <!-- Stat Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            
+            <div class="card p-5">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="stat-label">Total Atlet</span>
+                    <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-algolia-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                     </div>
                 </div>
+                <div class="stat-number"><?= $total_atlet; ?></div>
+                <p class="text-xs text-gray-400 mt-1">Atlet terdaftar di cabang ini</p>
             </div>
 
-            <!-- Stat Card 2: Hadir Hari Ini -->
-            <div class="stat-card glass-card-solid rounded-2xl p-5 lg:p-6 animate-slide-up" style="animation-delay: 0.1s">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider mb-2">Hadir Latihan Hari Ini</p>
-                        <h3 class="text-3xl lg:text-4xl font-sora font-bold text-white"><?= $hadir_hari_ini; ?> <span class="text-base font-normal text-slate-500">Atlet</span></h3>
-                    </div>
-                    <div class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-                        <svg class="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <div class="card p-5">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="stat-label">Hadir Hari Ini</span>
+                    <div class="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
                 </div>
+                <div class="stat-number"><?= $hadir_hari_ini; ?></div>
+                <p class="text-xs text-gray-400 mt-1">Atlet hadir latihan hari ini</p>
             </div>
 
-            <!-- Stat Card 3: Total Rekor -->
-            <div class="stat-card glass-card-solid rounded-2xl p-5 lg:p-6 animate-slide-up" style="animation-delay: 0.2s">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider mb-2">Total Rekor Dicatat</p>
-                        <h3 class="text-3xl lg:text-4xl font-sora font-bold text-white"><?= isset($total_rekor) ? $total_rekor : 0; ?> <span class="text-base font-normal text-slate-500">Data</span></h3>
-                    </div>
-                    <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
-                        <svg class="w-7 h-7 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <div class="card p-5">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="stat-label">Total Rekor</span>
+                    <div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                     </div>
                 </div>
+                <div class="stat-number"><?= isset($total_rekor) ? $total_rekor : 0; ?></div>
+                <p class="text-xs text-gray-400 mt-1">Rekor performa dicatat</p>
             </div>
         </div>
 
         <!-- Recent Performance Table -->
-        <div class="glass-card-solid rounded-2xl overflow-hidden animate-slide-up" style="animation-delay: 0.3s">
-            <div class="p-5 border-b border-white/5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                <h2 class="text-base font-sora font-semibold text-white">5 Pencatatan Waktu Terakhir</h2>
-                <a href="performa.php" class="text-xs font-semibold text-electric-400 hover:text-electric-300 transition-colors">Lihat Semua &rarr;</a>
+        <div class="card overflow-hidden">
+            <div class="px-5 py-4 border-b border-panel-border flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                <h2 class="text-sm font-semibold text-algolia-navy">Pencatatan Waktu Terakhir</h2>
+                <a href="performa.php" class="text-xs font-medium text-algolia-blue hover:underline">Lihat Semua &rarr;</a>
             </div>
             <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left table-dark">
+                <table class="table-algolia">
                     <thead>
-                        <tr class="text-[11px] text-slate-500 uppercase tracking-wider">
-                            <th class="px-6 py-3 font-semibold">Atlet</th>
-                            <th class="px-6 py-3 font-semibold">Gaya & Jarak</th>
-                            <th class="px-6 py-3 font-semibold text-center">Waktu Tempuh</th>
-                            <th class="px-6 py-3 font-semibold">Tanggal</th>
+                        <tr>
+                            <th>Atlet</th>
+                            <th>Gaya & Jarak</th>
+                            <th class="text-center">Waktu Tempuh</th>
+                            <th>Tanggal</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -112,15 +129,15 @@ if($q_perf) {
                                 $nama_atlet = $d['nama_atlet'] ?? 'Unknown';
                         ?>
                         <tr>
-                            <td class="px-6 py-4 font-semibold text-slate-200"><?= htmlspecialchars($nama_atlet); ?></td>
-                            <td class="px-6 py-4 text-electric-400 font-medium"><?= htmlspecialchars($d['gaya_renang'] ?? '-'); ?> — <?= htmlspecialchars($d['jarak'] ?? '-'); ?>m</td>
-                            <td class="px-6 py-4 text-center font-bold font-mono text-white"><?= htmlspecialchars($d['waktu_formatted'] ?? '-'); ?></td>
-                            <td class="px-6 py-4 text-slate-500"><?= isset($d['tanggal_rekor']) ? date('d M Y', strtotime($d['tanggal_rekor'])) : '-'; ?></td>
+                            <td class="font-semibold text-algolia-navy"><?= htmlspecialchars($nama_atlet); ?></td>
+                            <td><span class="text-algolia-blue font-medium"><?= htmlspecialchars($d['gaya_renang'] ?? '-'); ?></span> — <?= htmlspecialchars($d['jarak'] ?? '-'); ?>m</td>
+                            <td class="text-center font-mono font-bold text-algolia-navy"><?= htmlspecialchars($d['waktu_formatted'] ?? '-'); ?></td>
+                            <td class="text-gray-400"><?= isset($d['tanggal_rekor']) ? date('d M Y', strtotime($d['tanggal_rekor'])) : '-'; ?></td>
                         </tr>
                         <?php 
                             }
                         } else {
-                            echo '<tr><td colspan="4" class="px-6 py-10 text-center text-slate-500">Belum ada data dicatat di cabang ini.</td></tr>';
+                            echo '<tr><td colspan="4" class="text-center py-10 text-gray-400">Belum ada data dicatat di cabang ini.</td></tr>';
                         }
                         ?>
                     </tbody>
@@ -128,7 +145,9 @@ if($q_perf) {
             </div>
         </div>
 
+    </div>
 </div>
 
 <?php include '../includes/footer.php'; ?>
+
 
