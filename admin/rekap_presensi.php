@@ -72,20 +72,23 @@ $nama_bulan = [
                 <tbody>
                     <?php
                     // Query sakti untuk menghitung semua status dalam satu kali jalan
+                    $admin_pool_id = $_SESSION['pool_id'] ?? '';
+                    $where_cabang = !empty($admin_pool_id) ? "WHERE m.cabang_id = '$admin_pool_id'" : "";
                     $query = mysqli_query($koneksi, "
                         SELECT 
-                            a.nama,
-                            COUNT(CASE WHEN p.status = 'Hadir' THEN 1 END) as jml_hadir,
-                            COUNT(CASE WHEN p.status = 'Izin' THEN 1 END) as jml_izin,
-                            COUNT(CASE WHEN p.status = 'Sakit' THEN 1 END) as jml_sakit,
-                            COUNT(CASE WHEN p.status = 'Alpa' THEN 1 END) as jml_alpa,
-                            COUNT(p.id) as total_sesi
-                        FROM atlet a
-                        LEFT JOIN presensi p ON a.id = p.atlet_id 
-                            AND MONTH(p.tanggal) = '$filter_bulan' 
-                            AND YEAR(p.tanggal) = '$filter_tahun'
-                        GROUP BY a.id
-                        ORDER BY a.nama ASC
+                            m.nama,
+                            COUNT(CASE WHEN a.status = 'Hadir' THEN 1 END) as jml_hadir,
+                            COUNT(CASE WHEN a.status = 'Izin' THEN 1 END) as jml_izin,
+                            COUNT(CASE WHEN a.status = 'Sakit' THEN 1 END) as jml_sakit,
+                            COUNT(CASE WHEN a.status = 'Alpa' THEN 1 END) as jml_alpa,
+                            COUNT(a.id) as total_sesi
+                        FROM member m
+                        LEFT JOIN absensi a ON m.id = a.member_id 
+                            AND MONTH(a.tanggal) = '$filter_bulan' 
+                            AND YEAR(a.tanggal) = '$filter_tahun'
+                        $where_cabang
+                        GROUP BY m.id
+                        ORDER BY m.nama ASC
                     ");
 
                     $no = 1;

@@ -53,10 +53,10 @@ $admin_pool_id = $_SESSION['pool_id'] ?? '';
                     $kasArray = [];
                     $q_str = "SELECT c.*, b.nama_cabang as nama_kolam, u.username as nama_admin 
                               FROM cash_flows c 
-                              LEFT JOIN cabang b ON c.pool_id = b.id 
+                              LEFT JOIN cabang b ON c.cabang_id = b.id 
                               LEFT JOIN users u ON c.user_id = u.id ";
                     if(!empty($admin_pool_id)) {
-                        $q_str .= " WHERE c.pool_id = '$admin_pool_id'";
+                        $q_str .= " WHERE c.cabang_id = '$admin_pool_id'";
                     }
                     $q_str .= " ORDER BY c.transaction_date DESC, c.id DESC";
                     
@@ -149,7 +149,7 @@ $admin_pool_id = $_SESSION['pool_id'] ?? '';
             <form action="proses_arus_kas.php" method="POST" class="p-6 text-left">
                 <div class="mb-4">
                     <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Cabang Kolam</label>
-                    <select name="pool_id" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                    <select name="cabang_id" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
                         <?php
                         $q_kolam = mysqli_query($koneksi, "SELECT * FROM cabang");
                         if($q_kolam) {
