@@ -13,7 +13,7 @@ $coach_id = $_SESSION['user_id'] ?? 0;
 $coach_name = $_SESSION['name'] ?? 'Pelatih';
 ?>
 
-<div class="p-4 sm:ml-64">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
     <div class="p-4 rounded-lg mt-14 max-w-4xl mx-auto">
         
         <?php 
@@ -33,7 +33,7 @@ $coach_name = $_SESSION['name'] ?? 'Pelatih';
 
         <div class="flex justify-between items-center mb-6">
             <div>
-                <h1 class="text-2xl font-bold text-gray-800">Jurnal & Program Latihan</h1>
+                <h1 class="text-xl font-bold text-algolia-navy">Jurnal & Program Latihan</h1>
                 <p class="text-sm text-gray-500">Catat dan pantau menu latihan harian.</p>
             </div>
             <button data-modal-target="modalTambahProgram" data-modal-toggle="modalTambahProgram" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-all shadow-md">+ Buat Jurnal Baru</button>

@@ -11,8 +11,8 @@ include '../includes/koneksi.php';
 $admin_pool_id = $_SESSION['pool_id'] ?? '';
 ?>
 
-<div class="p-4 sm:ml-64">
-    <div class="p-4 rounded-lg mt-14">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
+    <div class="p-4 lg:p-8 page-content">
         
         <?php 
         if(isset($_GET['pesan'])){
@@ -29,7 +29,7 @@ $admin_pool_id = $_SESSION['pool_id'] ?? '';
         ?>
 
         <div class="mb-6 border-b pb-4">
-            <h1 class="text-2xl font-bold text-gray-800">Manajemen Member Cabang</h1>
+            <h1 class="text-xl font-bold text-algolia-navy">Manajemen Member Cabang</h1>
             <p class="text-sm text-gray-500">Kelola pendaftaran baru dan data atlet aktif untuk cabang Anda.</p>
         </div>
 
@@ -47,9 +47,9 @@ $admin_pool_id = $_SESSION['pool_id'] ?? '';
         <div id="myTabContent">
             <!-- TAB 1: Pendaftar Baru (Pending Members) -->
             <div class="p-4 rounded-lg bg-gray-50" id="pending" role="tabpanel" aria-labelledby="pending-tab">
-                <div class="relative overflow-x-auto shadow-md sm:rounded-xl bg-white border border-gray-100">
+                <div class="card overflow-hidden">
                     <table class="w-full text-sm text-left text-gray-500">
-                        <thead class="text-xs text-white uppercase bg-slate-800">
+                        <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
                             <tr>
                                 <th class="px-6 py-4">Tanggal Daftar</th>
                                 <th class="px-6 py-4">Nama Lengkap</th>
@@ -107,9 +107,9 @@ $admin_pool_id = $_SESSION['pool_id'] ?? '';
 
             <!-- TAB 2: Data Member Aktif (Atlet) -->
             <div class="hidden p-4 rounded-lg bg-gray-50" id="active" role="tabpanel" aria-labelledby="active-tab">
-                <div class="relative overflow-x-auto shadow-md sm:rounded-xl bg-white border border-gray-100">
+                <div class="card overflow-hidden">
                     <table class="w-full text-sm text-left text-gray-500">
-                        <thead class="text-xs text-white uppercase bg-slate-800">
+                        <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
                             <tr>
                                 <th class="px-6 py-4">NIA / ID</th>
                                 <th class="px-6 py-4">Nama Atlet</th>

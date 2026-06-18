@@ -23,10 +23,10 @@ if($q_perf) {
 }
 ?>
 
-<div class="p-4 sm:ml-64">
-    <div class="p-4 rounded-lg mt-14">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
+    <div class="p-4 lg:p-8 page-content">
         <div class="mb-8">
-            <h1 class="text-3xl font-extrabold text-gray-800 tracking-tight">Selamat Datang, Pelatih <?= htmlspecialchars($_SESSION['name']); ?>! 👋</h1>
+            <h1 class="text-2xl font-bold text-algolia-navy tracking-tight">Selamat Datang, Pelatih <?= htmlspecialchars($_SESSION['name']); ?>! 👋</h1>
             <p class="text-base text-gray-500 mt-1">Jangan lupa cek jadwal hari ini dan isi kehadiran atlet Anda.</p>
         </div>
 

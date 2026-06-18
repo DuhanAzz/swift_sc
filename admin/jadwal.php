@@ -6,11 +6,11 @@ include '../includes/sidebar.php';
 include '../includes/koneksi.php';
 ?>
 
-<div class="p-4 sm:ml-64">
-    <div class="p-4 rounded-lg mt-14">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
+    <div class="p-4 lg:p-8 page-content">
         
         <div class="mb-6">
-            <h1 class="text-2xl font-bold text-gray-800">Jadwal Latihan</h1>
+            <h1 class="text-xl font-bold text-algolia-navy">Jadwal Latihan</h1>
             <p class="text-sm text-gray-500">Atur agenda dan program latihan mingguan</p>
         </div>
 
@@ -64,7 +64,7 @@ include '../includes/koneksi.php';
             <div class="md:col-span-2">
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                     <table class="w-full text-sm text-left text-gray-500">
-                        <thead class="text-xs text-white uppercase bg-slate-800">
+                        <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
                             <tr>
                                 <th class="px-6 py-4">Hari & Waktu</th>
                                 <th class="px-6 py-4">Lokasi</th>

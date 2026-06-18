@@ -8,11 +8,11 @@ include '../includes/header.php';
 include '../includes/sidebar.php';
 ?>
 
-<div class="p-4 sm:ml-64">
-    <div class="p-4 rounded-lg mt-14">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
+    <div class="p-4 lg:p-8 page-content">
         
         <div class="mb-8">
-            <h1 class="text-3xl font-extrabold text-gray-800 tracking-tight">CMS Command Hub</h1>
+            <h1 class="text-2xl font-bold text-algolia-navy tracking-tight">CMS Command Hub</h1>
             <p class="text-base text-gray-500 mt-1">Pusat kendali konten untuk halaman publik (Landing Page).</p>
         </div>
 

@@ -9,8 +9,8 @@ $tanggal_absensi = isset($_GET['tanggal']) ? $_GET['tanggal'] : date('Y-m-d');
 $admin_pool_id = $_SESSION['pool_id'] ?? '';
 ?>
 
-<div class="p-4 sm:ml-64">
-    <div class="p-4 rounded-lg mt-14">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
+    <div class="p-4 lg:p-8 page-content">
         
         <?php 
         if(isset($_GET['pesan']) && $_GET['pesan'] == "sukses_simpan"){
@@ -20,7 +20,7 @@ $admin_pool_id = $_SESSION['pool_id'] ?? '';
 
         <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-gray-800 tracking-tight">Data Entry Presensi</h1>
+                <h1 class="text-xl font-bold text-algolia-navy tracking-tight">Data Entry Presensi</h1>
                 <p class="text-sm text-gray-500">Mode Spreadsheet - Isi data layaknya Microsoft Excel</p>
             </div>
             <form action="presensi.php" method="GET" class="flex items-center gap-2">

@@ -9,8 +9,8 @@ include '../includes/sidebar.php';
 include '../includes/koneksi.php';
 ?>
 
-<div class="p-4 sm:ml-64">
-    <div class="p-4 rounded-lg mt-14">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
+    <div class="p-4 lg:p-8 page-content">
         
         <?php 
         if(isset($_GET['pesan'])){
@@ -28,7 +28,7 @@ include '../includes/koneksi.php';
 
         <div class="flex justify-between items-center mb-6 border-b pb-4">
             <div>
-                <h1 class="text-2xl font-bold text-gray-800">Highlight Profil Pelatih</h1>
+                <h1 class="text-xl font-bold text-algolia-navy">Highlight Profil Pelatih</h1>
                 <p class="text-sm text-gray-500">Pilih pelatih unggulan yang akan ditampilkan pada halaman depan (Landing Page).</p>
             </div>
             <a href="ceo_cms_web.php" class="bg-gray-100 text-gray-700 hover:bg-gray-200 font-bold py-2 px-4 rounded-lg text-sm transition-all">&larr; Kembali</a>

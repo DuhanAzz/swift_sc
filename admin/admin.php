@@ -6,8 +6,8 @@ include '../includes/sidebar.php';
 include '../includes/koneksi.php';
 ?>
 
-<div class="p-4 sm:ml-64">
-    <div class="p-4 rounded-lg mt-14">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
+    <div class="p-4 lg:p-8 page-content">
         
         <?php 
         if(isset($_GET['pesan'])){
@@ -23,7 +23,7 @@ include '../includes/koneksi.php';
 
         <div class="flex items-center justify-between mb-6">
             <div>
-                <h1 class="text-2xl font-bold text-gray-800">Manajemen Admin & Pengguna</h1>
+                <h1 class="text-xl font-bold text-algolia-navy">Manajemen Admin & Pengguna</h1>
                 <p class="text-sm text-gray-500">Kelola hak akses pengguna sistem Swift Swimming Club</p>
             </div>
             <button data-modal-target="modalTambahAdmin" data-modal-toggle="modalTambahAdmin" class="text-white bg-slate-800 hover:bg-slate-900 font-medium rounded-lg text-sm px-5 py-2.5 transition-all shadow-md">
@@ -31,9 +31,9 @@ include '../includes/koneksi.php';
             </button>
         </div>
 
-        <div class="relative overflow-x-auto shadow-md sm:rounded-xl bg-white border border-gray-100">
+        <div class="card overflow-hidden">
             <table class="w-full text-sm text-left text-gray-500">
-                <thead class="text-xs text-white uppercase bg-slate-800">
+                <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
                     <tr>
                         <th class="px-6 py-4">No</th>
                         <th class="px-6 py-4">Nama Lengkap</th>
@@ -62,7 +62,7 @@ include '../includes/koneksi.php';
                             
                             $akses_kolam = empty($data['cabang_id']) ? '<span class="text-gray-400 italic">Semua Cabang</span>' : htmlspecialchars($data['nama_kolam'] ?? '');
                     ?>
-                    <tr class="bg-white border-b hover:bg-slate-50 transition-colors">
+                    <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
                         <td class="px-6 py-4 font-medium text-gray-900"><?= $no++; ?></td>
                         <td class="px-6 py-4 font-bold text-gray-800"><?= htmlspecialchars($data['username']); ?></td>
                         <td class="px-6 py-4"><?= htmlspecialchars($data['email']); ?></td>

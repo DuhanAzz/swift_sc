@@ -16,12 +16,12 @@ $nama_bulan = [
 $admin_pool_id = $_SESSION['pool_id'] ?? '';
 ?>
 
-<div class="p-4 sm:ml-64">
-    <div class="p-4 rounded-lg mt-14">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
+    <div class="p-4 lg:p-8 page-content">
         
         <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-gray-800">Manajemen Iuran / SPP</h1>
+                <h1 class="text-xl font-bold text-algolia-navy">Manajemen Iuran / SPP</h1>
                 <p class="text-sm text-gray-500">Pantau dan catat pembayaran bulanan atlet</p>
             </div>
             

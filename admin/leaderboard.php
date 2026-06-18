@@ -11,11 +11,11 @@ $filter_distance = isset($_GET['distance']) ? $_GET['distance'] : '50';
 $filter_pool = isset($_GET['pool']) ? $_GET['pool'] : '50m';
 ?>
 
-<div class="p-4 sm:ml-64">
-    <div class="p-4 rounded-lg mt-14">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
+    <div class="p-4 lg:p-8 page-content">
         
         <div class="mb-6">
-            <h1 class="text-2xl font-bold text-gray-800">Papan Peringkat (Leaderboard)</h1>
+            <h1 class="text-xl font-bold text-algolia-navy">Papan Peringkat (Leaderboard)</h1>
             <p class="text-sm text-gray-500">Pantau waktu tercepat atlet berdasarkan gaya dan jarak renang</p>
         </div>
 
@@ -50,7 +50,7 @@ $filter_pool = isset($_GET['pool']) ? $_GET['pool'] : '50m';
             </form>
         </div>
 
-        <div class="relative overflow-x-auto shadow-md sm:rounded-xl bg-white border border-gray-100">
+        <div class="card overflow-hidden">
             <div class="p-4 bg-slate-800 border-b border-slate-700">
                 <h2 class="text-white font-bold text-lg text-center tracking-wide">
                     👑 TOP RECORD: <?= strtoupper($filter_style); ?> <?= $filter_distance; ?>M (<?= strtoupper($filter_pool); ?>)

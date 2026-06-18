@@ -51,12 +51,12 @@ if (isset($_POST['simpan_cms'])) {
 }
 ?>
 
-<div class="p-4 sm:ml-64">
-    <div class="p-4 rounded-lg mt-14">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
+    <div class="p-4 lg:p-8 page-content">
         
         <div class="mb-6 flex justify-between items-center border-b pb-4">
             <div>
-                <h1 class="text-2xl font-bold text-gray-800">Teks Banner & Profil Klub</h1>
+                <h1 class="text-xl font-bold text-algolia-navy">Teks Banner & Profil Klub</h1>
                 <p class="text-sm text-gray-500">Edit teks yang tampil pada bagian atas halaman depan publik (index.php).</p>
             </div>
             <a href="ceo_cms_web.php" class="bg-gray-100 text-gray-700 hover:bg-gray-200 font-bold py-2 px-4 rounded-lg text-sm transition-all">&larr; Kembali ke CMS Hub</a>
@@ -88,7 +88,7 @@ if (isset($_POST['simpan_cms'])) {
                         <textarea name="about_text" rows="4" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required><?= htmlspecialchars($cmsData['about_text']); ?></textarea>
                     </div>
 
-                    <button type="submit" name="simpan_cms" class="w-full text-white bg-indigo-600 hover:bg-indigo-700 font-bold rounded-xl text-sm px-5 py-3 shadow-md">Simpan Perubahan Konten</button>
+                    <button type="submit" name="simpan_cms" class="w-full text-white bg-algolia-blue hover:bg-algolia-darkblue font-bold rounded-xl text-sm px-5 py-3 shadow-md">Simpan Perubahan Konten</button>
                 </form>
             </div>
 

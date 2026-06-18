@@ -9,8 +9,8 @@ include '../includes/sidebar.php';
 include '../includes/koneksi.php';
 ?>
 
-<div class="p-4 sm:ml-64">
-    <div class="p-4 rounded-lg mt-14">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
+    <div class="p-4 lg:p-8 page-content">
         
         <?php 
         if(isset($_GET['pesan'])){
@@ -30,7 +30,7 @@ include '../includes/koneksi.php';
         ?>
 
         <div class="mb-6">
-            <h1 class="text-2xl font-bold text-gray-800">Manajemen Akun Global</h1>
+            <h1 class="text-xl font-bold text-algolia-navy">Manajemen Akun Global</h1>
             <p class="text-sm text-gray-500">Pusat kendali untuk menambah, mengedit, dan menghapus Admin/Manajer serta Pelatih.</p>
         </div>
 
@@ -50,11 +50,11 @@ include '../includes/koneksi.php';
             <div class="hidden p-4 rounded-lg bg-gray-50" id="admin" role="tabpanel" aria-labelledby="admin-tab">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-lg font-bold">Daftar Admin</h2>
-                    <button data-modal-target="modalTambahAdmin" data-modal-toggle="modalTambahAdmin" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-all">+ Tambah Admin</button>
+                    <button data-modal-target="modalTambahAdmin" data-modal-toggle="modalTambahAdmin" class="bg-algolia-blue hover:bg-algolia-darkblue text-white font-bold py-2 px-4 rounded-lg text-sm transition-all">+ Tambah Admin</button>
                 </div>
-                <div class="relative overflow-x-auto shadow-md sm:rounded-xl bg-white border border-gray-100">
+                <div class="card overflow-hidden">
                     <table class="w-full text-sm text-left text-gray-500">
-                        <thead class="text-xs text-white uppercase bg-slate-800">
+                        <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
                             <tr>
                                 <th class="px-6 py-4">Nama</th>
                                 <th class="px-6 py-4">Email</th>
@@ -134,11 +134,11 @@ include '../includes/koneksi.php';
             <div class="hidden p-4 rounded-lg bg-gray-50" id="pelatih" role="tabpanel" aria-labelledby="pelatih-tab">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-lg font-bold">Daftar Pelatih</h2>
-                    <button data-modal-target="modalTambahPelatih" data-modal-toggle="modalTambahPelatih" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-all">+ Tambah Pelatih</button>
+                    <button data-modal-target="modalTambahPelatih" data-modal-toggle="modalTambahPelatih" class="bg-algolia-blue hover:bg-algolia-darkblue text-white font-bold py-2 px-4 rounded-lg text-sm transition-all">+ Tambah Pelatih</button>
                 </div>
-                <div class="relative overflow-x-auto shadow-md sm:rounded-xl bg-white border border-gray-100">
+                <div class="card overflow-hidden">
                     <table class="w-full text-sm text-left text-gray-500">
-                        <thead class="text-xs text-white uppercase bg-slate-800">
+                        <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
                             <tr>
                                 <th class="px-6 py-4">Nama Pelatih</th>
                                 <th class="px-6 py-4">Lisensi</th>

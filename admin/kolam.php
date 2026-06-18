@@ -6,8 +6,8 @@ include '../includes/sidebar.php';
 include '../includes/koneksi.php';
 ?>
 
-<div class="p-4 sm:ml-64">
-    <div class="p-4 rounded-lg mt-14">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
+    <div class="p-4 lg:p-8 page-content">
         
         <?php 
         if(isset($_GET['pesan'])){
@@ -28,18 +28,18 @@ include '../includes/koneksi.php';
         ?>
         <div class="flex items-center justify-between mb-6">
             <div>
-                <h1 class="text-2xl font-bold text-gray-800">Manajemen Cabang Kolam</h1>
+                <h1 class="text-xl font-bold text-algolia-navy">Manajemen Cabang Kolam</h1>
                 <p class="text-sm text-gray-500">Kelola lokasi latihan Swift Swimming Club</p>
             </div>
-            <button data-modal-target="modalTambah" data-modal-toggle="modalTambah" class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center transition-all shadow-lg">
+            <button data-modal-target="modalTambah" data-modal-toggle="modalTambah" class="text-white bg-algolia-blue hover:bg-algolia-darkblue focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center transition-all shadow-lg">
                 <svg class="w-4 h-4 me-2" fill="currentColor" viewBox="0 0 20 20"><path d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"/></svg>
                 Tambah Kolam
             </button>
         </div>
 
-        <div class="relative overflow-x-auto shadow-md sm:rounded-xl bg-white border border-gray-100">
+        <div class="card overflow-hidden">
             <table class="w-full text-sm text-left text-gray-500">
-                <thead class="text-xs text-white uppercase bg-primary-800">
+                <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
                     <tr>
                         <th class="px-6 py-4">No</th>
                         <th class="px-6 py-4">Nama Cabang</th>
@@ -60,7 +60,7 @@ include '../includes/koneksi.php';
 
                     foreach($poolsArray as $data) {
                     ?>
-                    <tr class="bg-white border-b hover:bg-blue-50 transition-colors">
+                    <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
                         <td class="px-6 py-4 font-medium text-gray-900"><?= $no++; ?></td>
                         <td class="px-6 py-4 font-bold text-primary-700"><?= htmlspecialchars($data['nama_cabang']); ?></td>
                         <td class="px-6 py-4 italic"><?= htmlspecialchars($data['lokasi']); ?></td>
@@ -83,11 +83,11 @@ include '../includes/koneksi.php';
                                     <input type="hidden" name="id" value="<?= $data['id']; ?>">
                                     <div class="mb-4 text-left">
                                         <label class="block mb-2 text-sm font-medium text-gray-900">Nama Kolam</label>
-                                        <input type="text" name="name" value="<?= htmlspecialchars($data['nama_cabang']); ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" required>
+                                        <input type="text" name="name" value="<?= htmlspecialchars($data['nama_cabang']); ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-algolia-blue focus:border-algolia-blue block w-full p-2.5" required>
                                     </div>
                                     <div class="mb-4 text-left">
                                         <label class="block mb-2 text-sm font-medium text-gray-900">Alamat</label>
-                                        <textarea name="address" rows="3" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" required><?= htmlspecialchars($data['lokasi']); ?></textarea>
+                                        <textarea name="address" rows="3" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-algolia-blue focus:border-algolia-blue block w-full p-2.5" required><?= htmlspecialchars($data['lokasi']); ?></textarea>
                                     </div>
                                     <button type="submit" name="edit" class="w-full text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5">Simpan Perubahan</button>
                                 </form>
@@ -119,7 +119,7 @@ include '../includes/koneksi.php';
                     <label class="block mb-2 text-sm font-medium text-gray-900 text-left">Alamat Lengkap</label>
                     <textarea name="address" rows="3" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Masukkan alamat..." required></textarea>
                 </div>
-                <button type="submit" name="tambah" class="w-full text-white bg-primary-600 hover:bg-primary-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-all">Simpan Data</button>
+                <button type="submit" name="tambah" class="w-full text-white bg-algolia-blue hover:bg-algolia-darkblue font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-all">Simpan Data</button>
             </form>
         </div>
     </div>

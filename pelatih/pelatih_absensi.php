@@ -30,7 +30,7 @@ if($q_presensi) {
 }
 ?>
 
-<div class="p-4 sm:ml-64">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
     <div class="p-4 rounded-lg mt-14 max-w-2xl mx-auto">
         
         <?php 

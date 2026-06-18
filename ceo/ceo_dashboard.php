@@ -25,12 +25,12 @@ if($q3 && $r = mysqli_fetch_assoc($q3)) $total_kas = floatval($r['total_saldo'])
 
 ?>
 
-<div class="p-4 sm:ml-64">
-    <div class="p-4 rounded-lg mt-14">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
+    <div class="p-4 lg:p-8 page-content">
         
         <div class="mb-8 flex justify-between items-center border-b border-gray-200 pb-4">
             <div>
-                <h1 class="text-3xl font-extrabold text-gray-800 tracking-tight">Super Admin Dashboard</h1>
+                <h1 class="text-2xl font-bold text-algolia-navy tracking-tight">Super Admin Dashboard</h1>
                 <p class="text-base text-gray-500 mt-1">Ringkasan operasional global seluruh cabang Swift SC.</p>
             </div>
             <div class="text-right">

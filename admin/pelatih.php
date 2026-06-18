@@ -6,8 +6,8 @@ include '../includes/sidebar.php';
 include '../includes/koneksi.php';
 ?>
 
-<div class="p-4 sm:ml-64">
-    <div class="p-4 rounded-lg mt-14">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
+    <div class="p-4 lg:p-8 page-content">
         
         <?php 
         if(isset($_GET['pesan'])){
@@ -29,18 +29,18 @@ include '../includes/koneksi.php';
         
         <div class="flex items-center justify-between mb-6">
             <div>
-                <h1 class="text-2xl font-bold text-gray-800">Manajemen Pelatih</h1>
+                <h1 class="text-xl font-bold text-algolia-navy">Manajemen Pelatih</h1>
                 <p class="text-sm text-gray-500">Kelola data instruktur dan pelatih Swift Swimming Club</p>
             </div>
-            <button data-modal-target="modalTambahPelatih" data-modal-toggle="modalTambahPelatih" class="text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center transition-all shadow-lg">
+            <button data-modal-target="modalTambahPelatih" data-modal-toggle="modalTambahPelatih" class="text-white bg-algolia-blue hover:bg-algolia-darkblue focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center transition-all shadow-lg">
                 <svg class="w-4 h-4 me-2" fill="currentColor" viewBox="0 0 20 20"><path d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"/></svg>
                 Tambah Pelatih
             </button>
         </div>
 
-        <div class="relative overflow-x-auto shadow-md sm:rounded-xl bg-white border border-gray-100">
+        <div class="card overflow-hidden">
             <table class="w-full text-sm text-left text-gray-500">
-                <thead class="text-xs text-white uppercase bg-indigo-800">
+                <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
                     <tr>
                         <th class="px-6 py-4">No</th>
                         <th class="px-6 py-4">Nama Pelatih</th>
@@ -64,7 +64,7 @@ include '../includes/koneksi.php';
                     if(count($coachesArray) > 0) {
                         foreach($coachesArray as $data) {
                     ?>
-                    <tr class="bg-white border-b hover:bg-indigo-50 transition-colors">
+                    <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
                         <td class="px-6 py-4 font-medium text-gray-900"><?= $no++; ?></td>
                         <td class="px-6 py-4 font-bold text-gray-800"><?= htmlspecialchars($data['nama']); ?></td>
                         <td class="px-6 py-4"><span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded border border-indigo-400"><?= htmlspecialchars($data['sertifikasi']); ?></span></td>
@@ -78,7 +78,7 @@ include '../includes/koneksi.php';
 
                     <div id="modalEditPelatih<?= $data['id']; ?>" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
                         <div class="relative p-4 w-full max-w-md max-h-full">
-                            <div class="relative bg-white rounded-2xl shadow-2xl border border-gray-100">
+                            <div class="relative bg-white rounded-xl shadow-lg border border-panel-border">
                                 <div class="flex items-center justify-between p-5 border-b border-gray-100">
                                     <h3 class="text-xl font-extrabold text-gray-800 tracking-tight">Edit Data Pelatih</h3>
                                     <button type="button" class="text-gray-400 bg-gray-50 hover:bg-red-50 hover:text-red-600 rounded-xl text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-toggle="modalEditPelatih<?= $data['id']; ?>">
@@ -89,11 +89,11 @@ include '../includes/koneksi.php';
                                     <input type="hidden" name="id" value="<?= $data['id']; ?>">
                                     <div class="mb-5">
                                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Nama Pelatih</label>
-                                        <input type="text" name="nama_pelatih" value="<?= htmlspecialchars($data['nama']); ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-medium rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3 shadow-sm" required>
+                                        <input type="text" name="nama_pelatih" value="<?= htmlspecialchars($data['nama']); ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm" required>
                                     </div>
                                     <div class="mb-5">
                                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Lisensi</label>
-                                        <select name="lisensi" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-medium rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3 shadow-sm" required>
+                                        <select name="lisensi" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm" required>
                                             <option value="Lisensi D" <?= ($data['sertifikasi'] == 'Lisensi D') ? 'selected' : '' ?>>Lisensi D (Pemula)</option>
                                             <option value="Lisensi C" <?= ($data['sertifikasi'] == 'Lisensi C') ? 'selected' : '' ?>>Lisensi C (Menengah)</option>
                                             <option value="Lisensi B" <?= ($data['sertifikasi'] == 'Lisensi B') ? 'selected' : '' ?>>Lisensi B (Lanjutan)</option>
@@ -102,11 +102,11 @@ include '../includes/koneksi.php';
                                     </div>
                                     <div class="mb-5">
                                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">No. HP</label>
-                                        <input type="text" name="no_hp" value="<?= htmlspecialchars($data['jabatan']); ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-medium rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3 shadow-sm" required>
+                                        <input type="text" name="no_hp" value="<?= htmlspecialchars($data['jabatan']); ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm" required>
                                     </div>
                                     <div class="mb-6">
                                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Lokasi Melatih</label>
-                                        <select name="id_kolam" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-medium rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3 shadow-sm" required>
+                                        <select name="id_kolam" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm" required>
                                             <?php
                                             $q_kolam = mysqli_query($koneksi, "SELECT * FROM cabang");
                                             if($q_kolam) {
@@ -119,7 +119,7 @@ include '../includes/koneksi.php';
                                             ?>
                                         </select>
                                     </div>
-                                    <button type="submit" name="edit" class="w-full text-white bg-indigo-600 hover:bg-indigo-700 font-bold rounded-xl text-sm px-5 py-3 shadow-md transition-all">Update Data Pelatih</button>
+                                    <button type="submit" name="edit" class="w-full text-white bg-algolia-blue hover:bg-algolia-darkblue font-bold rounded-xl text-sm px-5 py-3 shadow-md transition-all">Update Data Pelatih</button>
                                 </form>
                             </div>
                         </div>
@@ -138,7 +138,7 @@ include '../includes/koneksi.php';
 
 <div id="modalTambahPelatih" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
     <div class="relative p-4 w-full max-w-md max-h-full">
-        <div class="relative bg-white rounded-2xl shadow-2xl border border-gray-100">
+        <div class="relative bg-white rounded-xl shadow-lg border border-panel-border">
             <div class="flex items-center justify-between p-5 border-b border-gray-100">
                 <h3 class="text-xl font-extrabold text-gray-800 tracking-tight">Pendaftaran Pelatih Baru</h3>
                 <button type="button" class="text-gray-400 bg-gray-50 hover:bg-red-50 hover:text-red-600 rounded-xl text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-toggle="modalTambahPelatih">
@@ -179,7 +179,7 @@ include '../includes/koneksi.php';
                         ?>
                     </select>
                 </div>
-                <button type="submit" name="tambah" class="w-full text-white bg-indigo-600 hover:bg-indigo-700 font-bold rounded-xl text-sm px-5 py-3 shadow-md transition-all">Simpan Data Pelatih</button>
+                <button type="submit" name="tambah" class="w-full text-white bg-algolia-blue hover:bg-algolia-darkblue font-bold rounded-xl text-sm px-5 py-3 shadow-md transition-all">Simpan Data Pelatih</button>
             </form>
         </div>
     </div>

@@ -16,11 +16,11 @@ $nama_bulan = [
 ];
 ?>
 
-<div class="p-4 sm:ml-64">
-    <div class="p-4 rounded-lg mt-14">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
+    <div class="p-4 lg:p-8 page-content">
         
         <div class="mb-6">
-            <h1 class="text-2xl font-bold text-gray-800">Rekap Presensi Bulanan</h1>
+            <h1 class="text-xl font-bold text-algolia-navy">Rekap Presensi Bulanan</h1>
             <p class="text-sm text-gray-500">Laporan statistik kehadiran atlet per periode</p>
         </div>
 

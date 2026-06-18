@@ -39,11 +39,11 @@ if($q_perf) {
 }
 ?>
 
-<div class="p-4 sm:ml-64">
-    <div class="p-4 rounded-lg mt-14">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
+    <div class="p-4 lg:p-8 page-content">
         
         <div class="mb-6">
-            <h1 class="text-2xl font-bold text-gray-800">Laporan & Analitik Global</h1>
+            <h1 class="text-xl font-bold text-algolia-navy">Laporan & Analitik Global</h1>
             <p class="text-sm text-gray-500">Melihat pergerakan arus kas dari seluruh cabang dan performa atlet secara global.</p>
         </div>
 
@@ -82,9 +82,9 @@ if($q_perf) {
         <div id="myTabContent">
             <!-- TAB CASHFLOW -->
             <div class="hidden p-4 rounded-lg bg-gray-50" id="cashflow" role="tabpanel" aria-labelledby="cashflow-tab">
-                <div class="relative overflow-x-auto shadow-md sm:rounded-xl bg-white border border-gray-100">
+                <div class="card overflow-hidden">
                     <table class="w-full text-sm text-left text-gray-500">
-                        <thead class="text-xs text-white uppercase bg-slate-800">
+                        <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
                             <tr>
                                 <th class="px-6 py-4">Tanggal</th>
                                 <th class="px-6 py-4">Cabang / Kolam</th>
@@ -112,9 +112,9 @@ if($q_perf) {
 
             <!-- TAB LEADERBOARD -->
             <div class="hidden p-4 rounded-lg bg-gray-50" id="leaderboard" role="tabpanel" aria-labelledby="leaderboard-tab">
-                <div class="relative overflow-x-auto shadow-md sm:rounded-xl bg-white border border-gray-100">
+                <div class="card overflow-hidden">
                     <table class="w-full text-sm text-left text-gray-500">
-                        <thead class="text-xs text-white uppercase bg-slate-800">
+                        <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
                             <tr>
                                 <th class="px-6 py-4">Rank</th>
                                 <th class="px-6 py-4">Atlet</th>

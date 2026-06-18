@@ -10,8 +10,8 @@ $user_id_login = $_SESSION['user_id'] ?? 0;
 $admin_pool_id = $_SESSION['pool_id'] ?? '';
 ?>
 
-<div class="p-4 sm:ml-64">
-    <div class="p-4 rounded-lg mt-14">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
+    <div class="p-4 lg:p-8 page-content">
         
         <?php 
         if(isset($_GET['pesan'])){
@@ -27,7 +27,7 @@ $admin_pool_id = $_SESSION['pool_id'] ?? '';
 
         <div class="flex items-center justify-between mb-6">
             <div>
-                <h1 class="text-2xl font-bold text-gray-800">Arus Kas & Keuangan</h1>
+                <h1 class="text-xl font-bold text-algolia-navy">Arus Kas & Keuangan</h1>
                 <p class="text-sm text-gray-500">Pencatatan Pemasukan dan Pengeluaran Kolam</p>
             </div>
             <button data-modal-target="modalTambahKas" data-modal-toggle="modalTambahKas" class="text-white bg-slate-800 hover:bg-slate-900 font-medium rounded-lg text-sm px-5 py-2.5 transition-all shadow-md">
@@ -35,9 +35,9 @@ $admin_pool_id = $_SESSION['pool_id'] ?? '';
             </button>
         </div>
 
-        <div class="relative overflow-x-auto shadow-md sm:rounded-xl bg-white border border-gray-100">
+        <div class="card overflow-hidden">
             <table class="w-full text-sm text-left text-gray-500">
-                <thead class="text-xs text-white uppercase bg-slate-800">
+                <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
                     <tr>
                         <th class="px-6 py-4">Tanggal</th>
                         <th class="px-6 py-4">Tipe</th>
@@ -72,7 +72,7 @@ $admin_pool_id = $_SESSION['pool_id'] ?? '';
                             $type_bg = ($data['type'] == 'Pemasukan') ? 'bg-green-100 text-green-800 border-green-400' : 'bg-red-100 text-red-800 border-red-400';
                             $text_color = ($data['type'] == 'Pemasukan') ? 'text-green-600' : 'text-red-600';
                     ?>
-                    <tr class="bg-white border-b hover:bg-slate-50 transition-colors">
+                    <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
                         <td class="px-6 py-4 font-medium text-gray-900"><?= date('d M Y', strtotime($data['transaction_date'])); ?></td>
                         <td class="px-6 py-4"><span class="text-xs font-medium px-2.5 py-0.5 rounded border <?= $type_bg; ?>"><?= htmlspecialchars($data['type']); ?></span></td>
                         <td class="px-6 py-4 font-semibold text-gray-700"><?= htmlspecialchars($data['category']); ?></td>

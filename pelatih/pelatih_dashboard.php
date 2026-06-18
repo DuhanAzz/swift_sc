@@ -39,7 +39,7 @@ if($q_perf) {
 }
 ?>
 
-<div class="p-4 sm:ml-64">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
     <div class="p-4 rounded-lg mt-14 max-w-2xl mx-auto"> <!-- Optimized for mobile width -->
         
         <div class="mb-6 bg-slate-900 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden">
