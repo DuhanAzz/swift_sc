@@ -5,6 +5,9 @@ include '../includes/koneksi.php';
 if (isset($_POST['tambah'])) {
     $nama = mysqli_real_escape_string($koneksi, $_POST['nama']);
     $jenis_kelamin = mysqli_real_escape_string($koneksi, $_POST['jenis_kelamin']);
+    // Normalize jenis_kelamin to match enum('L','P')
+    if($jenis_kelamin == 'Laki-laki' || strtolower($jenis_kelamin) == 'laki-laki') $jenis_kelamin = 'L';
+    if($jenis_kelamin == 'Perempuan' || strtolower($jenis_kelamin) == 'perempuan') $jenis_kelamin = 'P';
     $no_hp = mysqli_real_escape_string($koneksi, $_POST['no_hp']);
     $id_kolam = mysqli_real_escape_string($koneksi, $_POST['id_kolam']);
     $tanggal_lahir = mysqli_real_escape_string($koneksi, $_POST['tanggal_lahir'] ?? date('Y-m-d'));
@@ -32,6 +35,8 @@ if (isset($_POST['edit'])) {
     $id = mysqli_real_escape_string($koneksi, $_POST['id']);
     $nama = mysqli_real_escape_string($koneksi, $_POST['nama']);
     $jenis_kelamin = mysqli_real_escape_string($koneksi, $_POST['jenis_kelamin']);
+    if($jenis_kelamin == 'Laki-laki' || strtolower($jenis_kelamin) == 'laki-laki') $jenis_kelamin = 'L';
+    if($jenis_kelamin == 'Perempuan' || strtolower($jenis_kelamin) == 'perempuan') $jenis_kelamin = 'P';
     $no_hp = mysqli_real_escape_string($koneksi, $_POST['no_hp']);
     $id_kolam = mysqli_real_escape_string($koneksi, $_POST['id_kolam']);
 
