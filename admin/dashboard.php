@@ -5,42 +5,36 @@ include '../includes/header.php';
 include '../includes/sidebar.php';
 include '../includes/koneksi.php';
 
-// Gunakan Firestore database dari koneksi.php
 // 1. Mengambil Total Atlet
 $total_atlet = 0;
-try {
-    $atletSnapshot = $database->getDocuments('atlet');
-    $total_atlet = count($atletSnapshot);
-} catch (\Exception $e) { }
+$q_atlet = mysqli_query($koneksi, "SELECT COUNT(id) as total FROM member WHERE role='Atlet'");
+if($q_atlet) {
+    $total_atlet = mysqli_fetch_assoc($q_atlet)['total'] ?? 0;
+}
 
 // 2. Mengambil Total Kehadiran Hari Ini
 $hari_ini = date('Y-m-d');
 $hadir_hari_ini = 0;
-try {
-    $presensiSnapshot = $database->getDocuments('presensi');
-    foreach ($presensiSnapshot as $doc) {
-        if (($doc['tanggal'] ?? '') === $hari_ini && ($doc['status'] ?? '') === 'Hadir') {
-            $hadir_hari_ini++;
-        }
-    }
-} catch (\Exception $e) { }
+$q_presensi = mysqli_query($koneksi, "SELECT COUNT(id) as hadir FROM presensi WHERE tanggal='$hari_ini' AND status='Hadir'");
+if($q_presensi) {
+    $hadir_hari_ini = mysqli_fetch_assoc($q_presensi)['hadir'] ?? 0;
+}
 
 // 3. Mengambil Total Rekor Performa
 $total_rekor = 0;
 $recent_performances = [];
-try {
-    $performaSnapshot = $database->getDocuments('performances');
-    $total_rekor = count($performaSnapshot);
-    $recent_performances = $performaSnapshot;
-    
-    // Urutkan DESC berdasarkan tanggal/id (simulasi ORDER BY id DESC)
-    usort($recent_performances, function($a, $b) {
-        return strcmp($b['id'] ?? '', $a['id'] ?? ''); 
-    });
-    
-    // Ambil 5 terbaru
-    $recent_performances = array_slice($recent_performances, 0, 5);
-} catch (\Exception $e) { }
+
+$q_perf_count = mysqli_query($koneksi, "SELECT COUNT(id) as total FROM performa");
+if($q_perf_count) {
+    $total_rekor = mysqli_fetch_assoc($q_perf_count)['total'] ?? 0;
+}
+
+$q_perf = mysqli_query($koneksi, "SELECT p.*, m.nama as nama_atlet FROM performa p LEFT JOIN member m ON p.member_id = m.id ORDER BY p.tanggal_rekor DESC, p.id DESC LIMIT 5");
+if($q_perf) {
+    while($row = mysqli_fetch_assoc($q_perf)) {
+        $recent_performances[] = $row;
+    }
+}
 ?>
 
 <div class="p-4 sm:ml-64">
@@ -109,22 +103,13 @@ try {
                         <?php
                         if(count($recent_performances) > 0) {
                             foreach($recent_performances as $d) {
-                                // Cari nama atlet dari collection 'atlet'
-                                $nama_atlet = 'Unknown';
-                                if(isset($d['member_id'])) {
-                                    try {
-                                        $atletDoc = $database->getDocument('atlet', $d['member_id']);
-                                        if($atletDoc) {
-                                            $nama_atlet = $atletDoc['nama'] ?? 'Unknown';
-                                        }
-                                    } catch (\Exception $e) {}
-                                }
+                                $nama_atlet = $d['nama_atlet'] ?? 'Unknown';
                         ?>
                         <tr class="border-b hover:bg-gray-50">
                             <td class="px-6 py-4 font-bold text-gray-800"><?= htmlspecialchars($nama_atlet); ?></td>
-                            <td class="px-6 py-4 text-blue-600 font-medium"><?= htmlspecialchars($d['swim_style'] ?? '-'); ?> - <?= htmlspecialchars($d['distance'] ?? '-'); ?>m</td>
-                            <td class="px-6 py-4 text-center font-bold text-slate-700"><?= htmlspecialchars($d['time_formatted'] ?? '-'); ?></td>
-                            <td class="px-6 py-4 text-gray-400"><?= isset($d['record_date']) ? date('d M Y', strtotime($d['record_date'])) : '-'; ?></td>
+                            <td class="px-6 py-4 text-blue-600 font-medium"><?= htmlspecialchars($d['gaya_renang'] ?? '-'); ?> - <?= htmlspecialchars($d['jarak'] ?? '-'); ?>m</td>
+                            <td class="px-6 py-4 text-center font-bold text-slate-700"><?= htmlspecialchars($d['waktu_formatted'] ?? '-'); ?></td>
+                            <td class="px-6 py-4 text-gray-400"><?= isset($d['tanggal_rekor']) ? date('d M Y', strtotime($d['tanggal_rekor'])) : '-'; ?></td>
                         </tr>
                         <?php 
                             }
