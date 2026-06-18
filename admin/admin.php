@@ -47,36 +47,24 @@ include '../includes/koneksi.php';
                     <?php
                     $no = 1;
                     $usersArray = [];
-                    try {
-                        $documents = $database->getDocuments('users');
-                        foreach ($documents as $data) {
-                            // Hanya tampilkan yang role_id 1 atau 2 (Admin) atau role ceo/admin
-                            if ((isset($data['role_id']) && in_array($data['role_id'], [1, 2])) || (isset($data['role']) && in_array($data['role'], ['ceo', 'admin']))) {
-                                $data['nama_kolam'] = '-';
-                                if (!empty($data['pool_id'])) {
-                                    try {
-                                        $poolDoc = $database->getDocument('pools', $data['pool_id']);
-                                        if ($poolDoc) {
-                                            $data['nama_kolam'] = $poolDoc['name'];
-                                        }
-                                    } catch (\Exception $e) {}
-                                }
-                                $usersArray[] = $data;
-                            }
+                    $q_users = mysqli_query($koneksi, "SELECT u.*, c.nama_cabang as nama_kolam FROM users u LEFT JOIN cabang c ON u.cabang_id = c.id WHERE u.role IN ('CEO', 'Admin') ORDER BY u.role, u.username ASC");
+                    if($q_users) {
+                        while($row = mysqli_fetch_assoc($q_users)) {
+                            $usersArray[] = $row;
                         }
-                    } catch (\Exception $e) {}
+                    }
 
                     if(count($usersArray) > 0) {
                         foreach($usersArray as $data) {
-                            $role_id = $data['role_id'] ?? ($data['role'] == 'ceo' ? 1 : 2);
-                            $nama_role = ($role_id == 1) ? 'Super Admin' : 'Manajer Kolam';
-                            $role_color = ($role_id == 1) ? 'bg-purple-100 text-purple-800 border-purple-400' : 'bg-green-100 text-green-800 border-green-400';
+                            $role = $data['role'];
+                            $nama_role = ($role == 'CEO') ? 'Super Admin' : 'Manajer Kolam';
+                            $role_color = ($role == 'CEO') ? 'bg-purple-100 text-purple-800 border-purple-400' : 'bg-green-100 text-green-800 border-green-400';
                             
-                            $akses_kolam = empty($data['pool_id']) ? '<span class="text-gray-400 italic">Semua Cabang</span>' : htmlspecialchars($data['nama_kolam']);
+                            $akses_kolam = empty($data['cabang_id']) ? '<span class="text-gray-400 italic">Semua Cabang</span>' : htmlspecialchars($data['nama_kolam'] ?? '');
                     ?>
                     <tr class="bg-white border-b hover:bg-slate-50 transition-colors">
                         <td class="px-6 py-4 font-medium text-gray-900"><?= $no++; ?></td>
-                        <td class="px-6 py-4 font-bold text-gray-800"><?= htmlspecialchars($data['name']); ?></td>
+                        <td class="px-6 py-4 font-bold text-gray-800"><?= htmlspecialchars($data['username']); ?></td>
                         <td class="px-6 py-4"><?= htmlspecialchars($data['email']); ?></td>
                         <td class="px-6 py-4"><span class="text-xs font-medium px-2.5 py-0.5 rounded border <?= $role_color; ?>"><?= $nama_role; ?></span></td>
                         <td class="px-6 py-4 font-medium"><?= $akses_kolam; ?></td>
@@ -97,34 +85,34 @@ include '../includes/koneksi.php';
                                     <input type="hidden" name="id" value="<?= $data['id']; ?>">
                                     <div class="mb-4">
                                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Nama Lengkap</label>
-                                        <input type="text" name="name" value="<?= $data['name']; ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                                        <input type="text" name="name" value="<?= htmlspecialchars($data['username']); ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
                                     </div>
                                     <div class="mb-4">
                                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Email</label>
-                                        <input type="email" name="email" value="<?= $data['email']; ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                                        <input type="email" name="email" value="<?= htmlspecialchars($data['email']); ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
                                     </div>
                                     
                                     <div class="grid grid-cols-2 gap-4 mb-4">
                                         <div>
                                             <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Role</label>
-                                            <select name="role_id" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
-                                                <option value="1" <?= ($role_id == 1) ? 'selected' : '' ?>>Super Admin</option>
-                                                <option value="2" <?= ($role_id == 2) ? 'selected' : '' ?>>Manajer Kolam</option>
+                                            <select name="role" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                                                <option value="CEO" <?= ($role == 'CEO') ? 'selected' : '' ?>>Super Admin (CEO)</option>
+                                                <option value="Admin" <?= ($role == 'Admin') ? 'selected' : '' ?>>Manajer Kolam (Admin)</option>
                                             </select>
                                         </div>
                                         <div>
                                             <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Akses Kolam</label>
-                                            <select name="pool_id" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3">
+                                            <select name="cabang_id" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3">
                                                 <option value="">-- Semua Cabang --</option>
                                                 <?php
-                                                try {
-                                                    $q_kolam = $database->getDocuments('pools');
-                                                    foreach($q_kolam as $k) {
+                                                $q_kolam = mysqli_query($koneksi, "SELECT * FROM cabang");
+                                                if($q_kolam) {
+                                                    while($k = mysqli_fetch_assoc($q_kolam)) {
                                                         $k_id = $k['id'];
-                                                        $select = ($k_id == ($data['pool_id'] ?? '')) ? 'selected' : '';
-                                                        echo "<option value='".$k_id."' $select>".htmlspecialchars($k['name'])."</option>";
+                                                        $select = ($k_id == ($data['cabang_id'] ?? '')) ? 'selected' : '';
+                                                        echo "<option value='".$k_id."' $select>".htmlspecialchars($k['nama_cabang'])."</option>";
                                                     }
-                                                } catch (\Exception $e) {}
+                                                }
                                                 ?>
                                             </select>
                                         </div>
@@ -175,23 +163,22 @@ include '../includes/koneksi.php';
                 <div class="grid grid-cols-2 gap-4 mb-6">
                     <div>
                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Role</label>
-                        <select name="role_id" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
-                            <option value="1">Super Admin</option>
-                            <option value="2">Manajer Kolam</option>
+                        <select name="role" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                            <option value="CEO">Super Admin (CEO)</option>
+                            <option value="Admin">Manajer Kolam (Admin)</option>
                         </select>
                     </div>
                     <div>
                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Penempatan Kolam</label>
-                        <select name="pool_id" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3">
+                        <select name="cabang_id" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3">
                             <option value="">-- Kosongkan Jika Admin --</option>
                             <?php
-                            try {
-                                $q_kolam2 = $database->getDocuments('pools');
-                                foreach($q_kolam2 as $k2) {
-                                    $k_id2 = $k2['id'];
-                                    echo "<option value='".$k_id2."'>".htmlspecialchars($k2['name'])."</option>";
+                            $q_kolam2 = mysqli_query($koneksi, "SELECT * FROM cabang");
+                            if($q_kolam2) {
+                                while($k2 = mysqli_fetch_assoc($q_kolam2)) {
+                                    echo "<option value='".$k2['id']."'>".htmlspecialchars($k2['nama_cabang'])."</option>";
                                 }
-                            } catch (\Exception $e) {}
+                            }
                             ?>
                         </select>
                     </div>

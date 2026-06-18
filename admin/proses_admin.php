@@ -3,75 +3,42 @@ include '../includes/koneksi.php';
 
 // PROSES TAMBAH PENGGUNA BARU
 if(isset($_POST['tambah'])){
-    $name     = $_POST['name'];
-    $email    = $_POST['email'];
-    $role_id  = $_POST['role_id'];
+    $username = mysqli_real_escape_string($koneksi, $_POST['name']);
+    $email    = mysqli_real_escape_string($koneksi, $_POST['email']);
+    $role     = mysqli_real_escape_string($koneksi, $_POST['role']);
     $password = $_POST['password'];
-    $pool_id  = empty($_POST['pool_id']) ? null : $_POST['pool_id'];
+    $cabang_id= empty($_POST['cabang_id']) ? "NULL" : "'".mysqli_real_escape_string($koneksi, $_POST['cabang_id'])."'";
 
-    $role_str = ($role_id == 1) ? 'ceo' : 'admin';
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-    try {
-        // Buat user di Firebase Auth
-        $userProperties = [
-            'email' => $email,
-            'emailVerified' => false,
-            'password' => $password,
-            'displayName' => $name,
-        ];
-        $createdUser = $auth->createUser($userProperties);
-        $uid = $createdUser->uid;
-
-        // Simpan data tambahan di Firestore
-        $database->setDocument('users', $uid, [
-            'name' => $name,
-            'email' => $email,
-            'role' => $role_str,
-            'role_id' => $role_id,
-            'pool_id' => $pool_id,
-            'created_at' => date('Y-m-d H:i:s')
-        ]);
-        
+    $q = mysqli_query($koneksi, "INSERT INTO users (username, email, password, role, cabang_id) VALUES ('$username', '$email', '$hashed_password', '$role', $cabang_id)");
+    if($q) {
         header("location:admin.php?pesan=sukses_tambah");
-    } catch (\Exception $e) {
-        echo "Gagal membuat pengguna: " . $e->getMessage();
+    } else {
+        echo "Gagal membuat pengguna: " . mysqli_error($koneksi);
     }
 }
 
 // PROSES EDIT DATA PENGGUNA
 if(isset($_POST['edit'])){
-    $id       = $_POST['id']; // Firestore Document ID / Auth UID
-    $name     = $_POST['name'];
-    $email    = $_POST['email'];
-    $role_id  = $_POST['role_id'];
+    $id       = mysqli_real_escape_string($koneksi, $_POST['id']);
+    $username = mysqli_real_escape_string($koneksi, $_POST['name']);
+    $email    = mysqli_real_escape_string($koneksi, $_POST['email']);
+    $role     = mysqli_real_escape_string($koneksi, $_POST['role']);
     $password = $_POST['password'];
-    $pool_id  = empty($_POST['pool_id']) ? null : $_POST['pool_id'];
+    $cabang_id= empty($_POST['cabang_id']) ? "NULL" : "'".mysqli_real_escape_string($koneksi, $_POST['cabang_id'])."'";
 
-    $role_str = ($role_id == 1) ? 'ceo' : 'admin';
+    if(!empty($password)){
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        $q = mysqli_query($koneksi, "UPDATE users SET username='$username', email='$email', role='$role', cabang_id=$cabang_id, password='$hashed_password' WHERE id='$id'");
+    } else {
+        $q = mysqli_query($koneksi, "UPDATE users SET username='$username', email='$email', role='$role', cabang_id=$cabang_id WHERE id='$id'");
+    }
 
-    try {
-        // Update user di Firebase Auth
-        $userProperties = [
-            'email' => $email,
-            'displayName' => $name,
-        ];
-        if(!empty($password)){
-            $userProperties['password'] = $password;
-        }
-        $auth->updateUser($id, $userProperties);
-
-        // Update document di Firestore
-        $database->setDocument('users', $id, [
-            'name' => $name,
-            'email' => $email,
-            'role' => $role_str,
-            'role_id' => $role_id,
-            'pool_id' => $pool_id
-        ]);
-        
+    if($q) {
         header("location:admin.php?pesan=sukses_edit");
-    } catch (\Exception $e) {
-        echo "Gagal update pengguna: " . $e->getMessage();
+    } else {
+        echo "Gagal update pengguna: " . mysqli_error($koneksi);
     }
 }
 ?>
