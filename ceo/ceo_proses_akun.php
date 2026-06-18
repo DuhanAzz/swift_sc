@@ -8,7 +8,7 @@ if(isset($_POST['tambah_admin'])){
     $email    = mysqli_real_escape_string($koneksi, $_POST['email']);
     $role_id  = $_POST['role_id'];
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-    $pool_id  = empty($_POST['pool_id']) ? "NULL" : "'".mysqli_real_escape_string($koneksi, $_POST['pool_id'])."'";
+    $pool_id  = empty($_POST['cabang_id']) ? "NULL" : "'".mysqli_real_escape_string($koneksi, $_POST['cabang_id'])."'";
     $role_str = ($role_id == 1) ? 'CEO' : 'Admin';
 
     $q = mysqli_query($koneksi, "INSERT INTO users (username, email, password, role, cabang_id) VALUES ('$name', '$email', '$password', '$role_str', $pool_id)");
@@ -21,7 +21,7 @@ if(isset($_POST['edit_admin'])){
     $name     = mysqli_real_escape_string($koneksi, $_POST['name']);
     $email    = mysqli_real_escape_string($koneksi, $_POST['email']);
     $role_id  = $_POST['role_id'];
-    $pool_id  = empty($_POST['pool_id']) ? "NULL" : "'".mysqli_real_escape_string($koneksi, $_POST['pool_id'])."'";
+    $pool_id  = empty($_POST['cabang_id']) ? "NULL" : "'".mysqli_real_escape_string($koneksi, $_POST['cabang_id'])."'";
     $role_str = ($role_id == 1) ? 'CEO' : 'Admin';
     $password = $_POST['password'];
 

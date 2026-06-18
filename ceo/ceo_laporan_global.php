@@ -13,7 +13,7 @@ $cash_flows = [];
 $total_masuk = 0;
 $total_keluar = 0;
 
-$q_cf = mysqli_query($koneksi, "SELECT cash_flows.*, cabang.nama_cabang FROM cash_flows LEFT JOIN cabang ON cash_flows.pool_id = cabang.id ORDER BY transaction_date DESC");
+$q_cf = mysqli_query($koneksi, "SELECT cash_flows.*, cabang.nama_cabang FROM cash_flows LEFT JOIN cabang ON cash_flows.cabang_id = cabang.id ORDER BY transaction_date DESC");
 if($q_cf) {
     while($row = mysqli_fetch_assoc($q_cf)) {
         $row['nama_kolam'] = $row['nama_cabang'] ?? 'Pusat';

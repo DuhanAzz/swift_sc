@@ -97,12 +97,6 @@ $admin_pool_id = $_SESSION['pool_id'] ?? '';
                                 $abs_row = mysqli_fetch_assoc($q_abs);
                                 $jumlah_absensi = intval($abs_row['total']);
                             }
-                            // Also check absensi_performa table
-                            $q_abs2 = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM absensi_performa WHERE member_id='$atlet_id' AND status_absensi='Hadir' AND MONTH(tanggal)='$filter_bulan' AND YEAR(tanggal)='$filter_tahun'");
-                            if ($q_abs2) {
-                                $abs_row2 = mysqli_fetch_assoc($q_abs2);
-                                $jumlah_absensi += intval($abs_row2['total']);
-                            }
                             
                             $status = 'Belum Bayar';
                             $jumlah = '';

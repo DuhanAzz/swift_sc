@@ -107,7 +107,7 @@ include '../includes/koneksi.php';
                                             <option value="1" <?= $role_id==1 ? 'selected' : '' ?>>Super Admin</option>
                                             <option value="2" <?= $role_id==2 ? 'selected' : '' ?>>Manajer Kolam</option>
                                         </select>
-                                        <select name="pool_id" class="w-full mb-3 p-2 border rounded">
+                                        <select name="cabang_id" class="w-full mb-3 p-2 border rounded">
                                             <option value="">-- Semua Cabang --</option>
                                             <?php
                                             try {
@@ -225,7 +225,7 @@ include '../includes/koneksi.php';
                 <option value="1">Super Admin</option>
                 <option value="2">Manajer Kolam</option>
             </select>
-            <select name="pool_id" class="w-full mb-4 p-2 border rounded">
+            <select name="cabang_id" class="w-full mb-4 p-2 border rounded">
                 <option value="">-- Semua Cabang --</option>
                 <?php
                 try {
