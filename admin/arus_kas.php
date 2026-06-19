@@ -1,13 +1,78 @@
 <?php
 session_start();
-if ($_SESSION['status'] != "sudah_login") { header("location:../login.php?pesan=belum_login"); exit; }
+if (!isset($_SESSION['status']) || $_SESSION['status'] != "sudah_login" || $_SESSION['role'] != 'admin') { 
+    header("location:../login.php"); 
+    exit; 
+}
 include '../includes/header.php';
 include '../includes/sidebar.php';
 include '../includes/koneksi.php';
 
-// Cek ID User yang sedang login
-$user_id_login = $_SESSION['user_id'] ?? 0;
-$admin_pool_id = $_SESSION['pool_id'] ?? '';
+$admin_pool_id = intval($_SESSION['pool_id'] ?? 0);
+if(empty($admin_pool_id)) {
+    echo '<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen"><div class="p-8"><p class="text-red-500 font-bold">Akses ditolak: Anda belum terhubung ke cabang manapun.</p></div></div>';
+    include '../includes/footer.php';
+    exit;
+}
+
+$tgl_mulai = isset($_GET['tgl_mulai']) ? $_GET['tgl_mulai'] : date('Y-m-01');
+$tgl_akhir = isset($_GET['tgl_akhir']) ? $_GET['tgl_akhir'] : date('Y-m-t');
+
+// Proses Tambah Pengeluaran Manual
+if(isset($_POST['simpan_pengeluaran'])){
+    $nominal = (float) $_POST['nominal'];
+    $keterangan = mysqli_real_escape_string($koneksi, $_POST['keterangan']);
+    $tanggal = mysqli_real_escape_string($koneksi, $_POST['tanggal']);
+    $user_id = intval($_SESSION['user_id'] ?? 0);
+    
+    if($nominal > 0 && !empty($keterangan) && !empty($tanggal)){
+        $q_insert = mysqli_query($koneksi, "INSERT INTO arus_kas (cabang_id, jenis, nominal, keterangan, tanggal, user_id) 
+                                            VALUES ('$admin_pool_id', 'Pengeluaran', '$nominal', '$keterangan', '$tanggal', '$user_id')");
+        if($q_insert) {
+            header("location:arus_kas.php?tgl_mulai=$tgl_mulai&tgl_akhir=$tgl_akhir&pesan=sukses");
+            exit;
+        } else {
+            header("location:arus_kas.php?tgl_mulai=$tgl_mulai&tgl_akhir=$tgl_akhir&pesan=gagal");
+            exit;
+        }
+    }
+}
+
+// Hapus Transaksi (Hanya jika dibutuhkan, tapi untuk ledger baiknya ada pembatasan. Kita sediakan endpoint hapusnya)
+if(isset($_GET['hapus'])){
+    $id_hapus = intval($_GET['hapus']);
+    mysqli_query($koneksi, "DELETE FROM arus_kas WHERE id='$id_hapus' AND cabang_id='$admin_pool_id'");
+    header("location:arus_kas.php?tgl_mulai=$tgl_mulai&tgl_akhir=$tgl_akhir&pesan=hapus_sukses");
+    exit;
+}
+
+// Kalkulasi Statistik berdasar Filter Tanggal
+$total_pemasukan = 0;
+$total_pengeluaran = 0;
+
+$q_stat = mysqli_query($koneksi, "SELECT jenis, SUM(nominal) as total FROM arus_kas 
+                                  WHERE cabang_id='$admin_pool_id' AND tanggal >= '$tgl_mulai' AND tanggal <= '$tgl_akhir' 
+                                  GROUP BY jenis");
+if($q_stat){
+    while($r = mysqli_fetch_assoc($q_stat)){
+        if($r['jenis'] == 'Pemasukan') $total_pemasukan = $r['total'];
+        if($r['jenis'] == 'Pengeluaran') $total_pengeluaran = $r['total'];
+    }
+}
+$saldo_akhir = $total_pemasukan - $total_pengeluaran;
+
+// Mengambil Data Tabel
+$transaksi = [];
+$q_tabel = mysqli_query($koneksi, "SELECT a.*, u.name as nama_admin 
+                                   FROM arus_kas a 
+                                   LEFT JOIN users u ON a.user_id = u.id 
+                                   WHERE a.cabang_id='$admin_pool_id' AND a.tanggal >= '$tgl_mulai' AND a.tanggal <= '$tgl_akhir' 
+                                   ORDER BY a.tanggal DESC, a.id DESC");
+if($q_tabel) {
+    while($row = mysqli_fetch_assoc($q_tabel)) {
+        $transaksi[] = $row;
+    }
+}
 ?>
 
 <div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
@@ -15,182 +80,167 @@ $admin_pool_id = $_SESSION['pool_id'] ?? '';
         
         <?php 
         if(isset($_GET['pesan'])){
-            if($_GET['pesan'] == "sukses_tambah"){
-                echo '<div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 border border-green-200">Transaksi berhasil dicatat!</div>';
-            } else if($_GET['pesan'] == "sukses_edit"){
-                echo '<div class="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 border border-blue-200">Transaksi berhasil diupdate!</div>';
-            } else if($_GET['pesan'] == "sukses_hapus"){
-                echo '<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200">Transaksi berhasil dihapus!</div>';
-            }
+            $pesan = $_GET['pesan'];
+            if($pesan == "sukses") echo '<div class="p-3 mb-4 text-sm text-green-800 rounded-lg bg-green-50 border border-green-200 font-medium">✅ Transaksi pengeluaran berhasil dicatat!</div>';
+            if($pesan == "hapus_sukses") echo '<div class="p-3 mb-4 text-sm text-amber-800 rounded-lg bg-amber-50 border border-amber-200 font-medium">🗑️ Transaksi berhasil dihapus.</div>';
+            if($pesan == "gagal") echo '<div class="p-3 mb-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200 font-medium">❌ Terjadi kesalahan saat menyimpan transaksi.</div>';
         }
         ?>
 
-        <div class="flex items-center justify-between mb-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
             <div>
-                <h1 class="text-xl font-bold text-algolia-navy">Arus Kas & Keuangan</h1>
-                <p class="text-sm text-gray-500">Pencatatan Pemasukan dan Pengeluaran Kolam</p>
+                <h1 class="text-xl font-bold text-algolia-navy">Arus Kas (Buku Besar)</h1>
+                <p class="text-sm text-gray-500">Laporan pemasukan dan pengeluaran cabang</p>
             </div>
-            <button data-modal-target="modalTambahKas" data-modal-toggle="modalTambahKas" class="text-white bg-slate-800 hover:bg-slate-900 font-medium rounded-lg text-sm px-5 py-2.5 transition-all shadow-md">
-                + Catat Transaksi
-            </button>
+            
+            <div class="flex items-center gap-2">
+                <a href="export_arus_kas.php?tgl_mulai=<?= $tgl_mulai ?>&tgl_akhir=<?= $tgl_akhir ?>" target="_blank" class="bg-white border border-[#E8E8EF] text-gray-700 px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-gray-50 transition-colors">
+                    <span>📊</span> Export Excel
+                </a>
+                <button data-modal-target="modalPengeluaran" data-modal-toggle="modalPengeluaran" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors shadow-sm">
+                    - Input Pengeluaran
+                </button>
+            </div>
         </div>
 
-        <div class="card overflow-hidden">
-            <table class="table-algolia">
-                <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
-                    <tr>
-                        <th class="px-6 py-4">Tanggal</th>
-                        <th class="px-6 py-4">Tipe</th>
-                        <th class="px-6 py-4">Kategori</th>
-                        <th class="px-6 py-4">Keterangan</th>
-                        <th class="px-6 py-4 text-right">Nominal (Rp)</th>
-                        <th class="px-6 py-4">Lokasi & Admin</th>
-                        <th class="px-6 py-4 text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $kasArray = [];
-                    $q_str = "SELECT c.*, b.nama_cabang as nama_kolam, u.username as nama_admin 
-                              FROM cash_flows c 
-                              LEFT JOIN cabang b ON c.cabang_id = b.id 
-                              LEFT JOIN users u ON c.user_id = u.id ";
-                    if(!empty($admin_pool_id)) {
-                        $q_str .= " WHERE c.cabang_id = '$admin_pool_id'";
-                    }
-                    $q_str .= " ORDER BY c.transaction_date DESC, c.id DESC";
-                    
-                    $q_kas = mysqli_query($koneksi, $q_str);
-                    if($q_kas) {
-                        while($row = mysqli_fetch_assoc($q_kas)) {
-                            $kasArray[] = $row;
-                        }
-                    }
+        <!-- Filter Bar -->
+        <div class="card p-4 mb-6 flex flex-wrap items-end gap-4">
+            <form action="arus_kas.php" method="GET" class="flex flex-wrap items-center gap-3">
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Mulai Tanggal</label>
+                    <input type="date" name="tgl_mulai" value="<?= $tgl_mulai ?>" class="bg-gray-50 border border-[#E8E8EF] text-sm rounded-lg p-2 focus:ring-algolia-blue">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Sampai Tanggal</label>
+                    <input type="date" name="tgl_akhir" value="<?= $tgl_akhir ?>" class="bg-gray-50 border border-[#E8E8EF] text-sm rounded-lg p-2 focus:ring-algolia-blue">
+                </div>
+                <div class="pb-0.5">
+                    <button type="submit" class="bg-algolia-blue text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-algolia-darkblue transition-colors">Tampilkan</button>
+                </div>
+            </form>
+        </div>
 
-                    if(count($kasArray) > 0) {
-                        foreach($kasArray as $data) {
-                            $type_bg = ($data['type'] == 'Pemasukan') ? 'bg-green-100 text-green-800 border-green-400' : 'bg-red-100 text-red-800 border-red-400';
-                            $text_color = ($data['type'] == 'Pemasukan') ? 'text-green-600' : 'text-red-600';
-                    ?>
-                    <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
-                        <td class="px-6 py-4 font-medium text-gray-900"><?= date('d M Y', strtotime($data['transaction_date'])); ?></td>
-                        <td class="px-6 py-4"><span class="text-xs font-medium px-2.5 py-0.5 rounded border <?= $type_bg; ?>"><?= htmlspecialchars($data['type']); ?></span></td>
-                        <td class="px-6 py-4 font-semibold text-gray-700"><?= htmlspecialchars($data['category']); ?></td>
-                        <td class="px-6 py-4 truncate max-w-xs"><?= htmlspecialchars($data['description']); ?></td>
-                        <td class="px-6 py-4 font-bold text-right <?= $text_color; ?>"><?= number_format($data['amount'], 0, ',', '.'); ?></td>
-                        <td class="px-6 py-4 text-xs">
-                            <div class="font-bold text-slate-700"><?= htmlspecialchars($data['nama_kolam'] ?? '-'); ?></div>
-                            <div class="text-gray-400">Oleh: <?= htmlspecialchars($data['nama_admin'] ?? '-'); ?></div>
-                        </td>
-                        <td class="px-6 py-4 text-center space-x-3">
-                            <button data-modal-target="modalEditKas<?= $data['id']; ?>" data-modal-toggle="modalEditKas<?= $data['id']; ?>" class="font-medium text-blue-600 hover:underline">Edit</button>
-                            <a href="hapus_arus_kas.php?id=<?= $data['id']; ?>" onclick="return confirm('Yakin hapus transaksi ini?')" class="font-medium text-red-600 hover:underline">Hapus</a>
-                        </td>
-                    </tr>
-
-                    <div id="modalEditKas<?= $data['id']; ?>" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-                        <div class="relative p-4 w-full max-w-md max-h-full">
-                            <div class="relative bg-white rounded-2xl shadow-xl border border-gray-100">
-                                <div class="flex items-center justify-between p-5 border-b">
-                                    <h3 class="text-lg font-bold text-gray-800">Edit Transaksi</h3>
-                                    <button type="button" class="text-gray-400 bg-gray-50 hover:bg-red-50 hover:text-red-600 rounded-xl text-sm w-8 h-8 ms-auto" data-modal-toggle="modalEditKas<?= $data['id']; ?>">✖</button>
-                                </div>
-                                <form action="proses_arus_kas.php" method="POST" class="p-6 text-left">
-                                    <input type="hidden" name="id" value="<?= $data['id']; ?>">
-                                    <div class="grid grid-cols-2 gap-4 mb-4">
-                                        <div>
-                                            <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Tanggal</label>
-                                            <input type="date" name="transaction_date" value="<?= $data['transaction_date']; ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
-                                        </div>
-                                        <div>
-                                            <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Tipe</label>
-                                            <select name="type" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
-                                                <option value="Pemasukan" <?= ($data['type'] == 'Pemasukan') ? 'selected' : '' ?>>Pemasukan</option>
-                                                <option value="Pengeluaran" <?= ($data['type'] == 'Pengeluaran') ? 'selected' : '' ?>>Pengeluaran</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="mb-4">
-                                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Kategori</label>
-                                        <input type="text" name="category" value="<?= $data['category']; ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required placeholder="Cth: SPP Bulanan, Gaji">
-                                    </div>
-                                    <div class="mb-4">
-                                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Nominal (Rp)</label>
-                                        <input type="number" name="amount" value="<?= $data['amount']; ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
-                                    </div>
-                                    <div class="mb-6">
-                                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Keterangan</label>
-                                        <textarea name="description" rows="3" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3"><?= htmlspecialchars($data['description']); ?></textarea>
-                                    </div>
-                                    <button type="submit" name="edit" class="w-full text-white bg-slate-800 hover:bg-slate-900 font-bold rounded-xl text-sm px-5 py-3">Update Transaksi</button>
-                                </form>
-                            </div>
-                        </div>
+        <!-- Statistik Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div class="card p-5 border-b-4 border-green-500">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Total Pemasukan</p>
+                        <h3 class="text-2xl font-black text-green-600">Rp <?= number_format($total_pemasukan, 0, ',', '.') ?></h3>
                     </div>
-                    <?php 
-                        } 
-                    } else {
-                        echo '<tr><td colspan="7" class="px-6 py-4 text-center text-gray-500 py-6">Belum ada data transaksi keuangan.</td></tr>';
-                    }
-                    ?>
-                </tbody>
-            </table>
+                    <div class="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center text-green-500">📈</div>
+                </div>
+            </div>
+            <div class="card p-5 border-b-4 border-red-500">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Total Pengeluaran</p>
+                        <h3 class="text-2xl font-black text-red-500">Rp <?= number_format($total_pengeluaran, 0, ',', '.') ?></h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-red-500">📉</div>
+                </div>
+            </div>
+            <div class="card p-5 border-b-4 <?= $saldo_akhir >= 0 ? 'border-blue-500' : 'border-red-600' ?>">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Saldo Akhir</p>
+                        <h3 class="text-2xl font-black <?= $saldo_akhir >= 0 ? 'text-blue-600' : 'text-red-600' ?>">Rp <?= number_format($saldo_akhir, 0, ',', '.') ?></h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-full <?= $saldo_akhir >= 0 ? 'bg-blue-50 text-blue-500' : 'bg-red-50 text-red-600' ?> flex items-center justify-center">💰</div>
+                </div>
+            </div>
         </div>
+
+        <!-- Transaction Table -->
+        <div class="card overflow-hidden">
+            <div class="px-5 py-4 border-b border-[#E8E8EF]">
+                <h2 class="text-sm font-bold text-algolia-navy">Riwayat Transaksi</h2>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="table-algolia w-full text-left border-collapse">
+                    <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
+                        <tr>
+                            <th class="px-5 py-3 border-b border-[#E8E8EF]">Tanggal</th>
+                            <th class="px-5 py-3 border-b border-[#E8E8EF]">Jenis</th>
+                            <th class="px-5 py-3 border-b border-[#E8E8EF]">Keterangan</th>
+                            <th class="px-5 py-3 border-b border-[#E8E8EF]">Pencatat</th>
+                            <th class="px-5 py-3 border-b border-[#E8E8EF] text-right">Nominal</th>
+                            <th class="px-5 py-3 border-b border-[#E8E8EF] text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if(count($transaksi) > 0): ?>
+                            <?php foreach($transaksi as $t): 
+                                $is_in = ($t['jenis'] == 'Pemasukan');
+                                $color_cls = $is_in ? 'text-green-600' : 'text-red-500';
+                                $bg_cls = $is_in ? 'bg-green-50' : 'bg-red-50';
+                            ?>
+                            <tr class="hover:bg-gray-50/50 border-b border-gray-100 last:border-0 transition-colors">
+                                <td class="px-5 py-3 text-sm text-gray-600 whitespace-nowrap"><?= date('d M Y', strtotime($t['tanggal'])) ?></td>
+                                <td class="px-5 py-3">
+                                    <span class="inline-flex px-2 py-1 rounded-md text-[10px] font-bold <?= $color_cls . ' ' . $bg_cls ?>">
+                                        <?= $is_in ? '▲ Pemasukan' : '▼ Pengeluaran' ?>
+                                    </span>
+                                </td>
+                                <td class="px-5 py-3 text-sm font-medium text-gray-800"><?= htmlspecialchars($t['keterangan']) ?></td>
+                                <td class="px-5 py-3 text-xs text-gray-500"><?= htmlspecialchars($t['nama_admin'] ?? 'Sistem') ?></td>
+                                <td class="px-5 py-3 text-sm font-bold <?= $color_cls ?> text-right whitespace-nowrap">
+                                    <?= $is_in ? '+' : '-' ?> Rp <?= number_format($t['nominal'], 0, ',', '.') ?>
+                                </td>
+                                <td class="px-5 py-3 text-center">
+                                    <a href="arus_kas.php?hapus=<?= $t['id'] ?>&tgl_mulai=<?= $tgl_mulai ?>&tgl_akhir=<?= $tgl_akhir ?>" onclick="return confirm('Yakin ingin menghapus transaksi ini?')" class="text-red-500 hover:bg-red-50 px-2 py-1 rounded text-xs font-bold transition-colors">
+                                        Hapus
+                                    </a>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="6" class="px-5 py-10 text-center text-gray-400 italic text-sm">Tidak ada transaksi pada rentang tanggal ini.</td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
 </div>
 
-<div id="modalTambahKas" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+<!-- Modal Input Pengeluaran -->
+<div id="modalPengeluaran" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
     <div class="relative p-4 w-full max-w-md max-h-full">
-        <div class="relative bg-white rounded-2xl shadow-xl border border-gray-100">
-            <div class="flex items-center justify-between p-5 border-b">
-                <h3 class="text-lg font-bold text-gray-800">Catat Transaksi Baru</h3>
-                <button type="button" class="text-gray-400 bg-gray-50 hover:bg-red-50 hover:text-red-600 rounded-xl text-sm w-8 h-8 ms-auto" data-modal-toggle="modalTambahKas">✖</button>
+        <div class="relative bg-white rounded-xl shadow-lg border border-panel-border">
+            <div class="flex items-center justify-between p-4 border-b">
+                <h3 class="text-base font-bold text-algolia-navy">Input Pengeluaran Manual</h3>
+                <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-toggle="modalPengeluaran">
+                    <svg class="w-3 h-3" fill="none" viewBox="0 0 14 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/></svg>
+                </button>
             </div>
-            <form action="proses_arus_kas.php" method="POST" class="p-6 text-left">
+            <form action="arus_kas.php" method="POST" class="p-5">
+                <input type="hidden" name="tgl_mulai" value="<?= $tgl_mulai ?>">
+                <input type="hidden" name="tgl_akhir" value="<?= $tgl_akhir ?>">
+                
                 <div class="mb-4">
-                    <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Cabang Kolam</label>
-                    <select name="cabang_id" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
-                        <?php
-                        $q_kolam = mysqli_query($koneksi, "SELECT * FROM cabang");
-                        if($q_kolam) {
-                            while($k = mysqli_fetch_assoc($q_kolam)) {
-                                $k_id = $k['id'];
-                                $sel = ($k_id == $admin_pool_id) ? 'selected' : '';
-                                echo "<option value='".$k_id."' $sel>".htmlspecialchars($k['nama_cabang'])."</option>";
-                            }
-                        }
-                        ?>
-                    </select>
-                </div>
-                <div class="grid grid-cols-2 gap-4 mb-4">
-                    <div>
-                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Tanggal</label>
-                        <input type="date" name="transaction_date" value="<?= date('Y-m-d'); ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
-                    </div>
-                    <div>
-                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Tipe</label>
-                        <select name="type" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
-                            <option value="Pemasukan">Pemasukan</option>
-                            <option value="Pengeluaran">Pengeluaran</option>
-                        </select>
-                    </div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Tanggal</label>
+                    <input type="date" name="tanggal" value="<?= date('Y-m-d') ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-lg focus:ring-algolia-blue block w-full p-2.5" required>
                 </div>
                 <div class="mb-4">
-                    <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Kategori</label>
-                    <input type="text" name="category" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" placeholder="Contoh: SPP Bulanan, Operasional" required>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Nominal (Rp)</label>
+                    <input type="number" name="nominal" placeholder="Contoh: 150000" min="1" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-lg focus:ring-algolia-blue block w-full p-2.5" required>
                 </div>
-                <div class="mb-4">
-                    <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Nominal (Rp)</label>
-                    <input type="number" name="amount" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" placeholder="Contoh: 150000" required>
+                <div class="mb-5">
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Keterangan / Tujuan Pengeluaran</label>
+                    <textarea name="keterangan" rows="3" placeholder="Contoh: Beli alat kebersihan kolam..." class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-lg focus:ring-algolia-blue block w-full p-2.5" required></textarea>
                 </div>
-                <div class="mb-6">
-                    <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Keterangan Tambahan</label>
-                    <textarea name="description" rows="2" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" placeholder="Detail transaksi..."></textarea>
-                </div>
-                <button type="submit" name="tambah" class="w-full text-white bg-slate-800 hover:bg-slate-900 font-bold rounded-xl text-sm px-5 py-3">Simpan Transaksi</button>
+                
+                <button type="submit" name="simpan_pengeluaran" class="w-full text-white bg-red-500 hover:bg-red-600 font-bold rounded-lg text-sm px-5 py-3 transition-colors shadow-sm">
+                    Simpan Pengeluaran
+                </button>
             </form>
         </div>
     </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
 <?php include '../includes/footer.php'; ?>

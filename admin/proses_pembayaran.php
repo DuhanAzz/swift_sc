@@ -53,6 +53,24 @@ if(isset($_POST['simpan_bayar'])){
         // Mark attendances as Paid
         if($is_newly_lunas) {
             mysqli_query($koneksi, "UPDATE absensi SET status_bayar='Paid' WHERE member_id='$atlet_id' AND status_bayar='Unpaid' AND tanggal >= '$tgl_mulai' AND tanggal <= '$tgl_akhir'");
+            
+            // Otomatisasi Pemasukan SPP ke Arus Kas
+            $admin_id = intval($_SESSION['user_id'] ?? 0);
+            $cabang_id = intval($_SESSION['pool_id'] ?? 0);
+            $nominal_spp = $jml; // Menggunakan nominal yang diisi admin
+            
+            if($nominal_spp > 0 && $cabang_id > 0) {
+                // Ambil nama atlet
+                $nama_atlet = "Atlet";
+                $q_nama = mysqli_query($koneksi, "SELECT nama FROM member WHERE id='$atlet_id'");
+                if($q_nama && $r_nama = mysqli_fetch_assoc($q_nama)) $nama_atlet = $r_nama['nama'];
+                
+                $ket_kas = "Pembayaran SPP a/n " . mysqli_real_escape_string($koneksi, $nama_atlet);
+                $tgl_sekarang = date('Y-m-d');
+                
+                mysqli_query($koneksi, "INSERT INTO arus_kas (cabang_id, jenis, nominal, keterangan, tanggal, user_id) 
+                                        VALUES ('$cabang_id', 'Pemasukan', '$nominal_spp', '$ket_kas', '$tgl_sekarang', '$admin_id')");
+            }
         }
     }
     
