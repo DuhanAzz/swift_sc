@@ -102,10 +102,22 @@ try {
             </div>
 
             <!-- Hamburger Button for Mobile -->
-            <button class="md:hidden text-slate-300 hover:text-white ml-4">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            <button id="mobileMenuBtn" class="md:hidden text-slate-300 hover:text-white ml-4 focus:outline-none">
+                <svg id="menuIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                <svg id="closeIcon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
             
+        </div>
+        
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobileMenu" class="hidden md:hidden absolute top-full left-0 w-full bg-slate-900/95 backdrop-blur-xl border-b border-slate-700/50 shadow-2xl flex flex-col transition-all duration-300 transform origin-top">
+            <a href="#tentang" class="mobile-link block px-6 py-4 text-slate-300 hover:text-cyan-400 hover:bg-slate-800/50 font-semibold border-b border-slate-800/50">Profil</a>
+            <a href="#program" class="mobile-link block px-6 py-4 text-slate-300 hover:text-cyan-400 hover:bg-slate-800/50 font-semibold border-b border-slate-800/50">Program & Sertifikasi</a>
+            <a href="#jadwal" class="mobile-link block px-6 py-4 text-slate-300 hover:text-cyan-400 hover:bg-slate-800/50 font-semibold border-b border-slate-800/50">Jadwal & Biaya</a>
+            <a href="#pelatih" class="mobile-link block px-6 py-4 text-slate-300 hover:text-cyan-400 hover:bg-slate-800/50 font-semibold border-b border-slate-800/50">Pelatih</a>
+            <div class="p-6">
+                <a href="login.php" class="block text-center bg-cyan-500/20 border border-cyan-500/50 text-cyan-400 px-5 py-3 rounded-full font-bold hover:bg-cyan-500 hover:text-white transition-all shadow-lg hover:shadow-cyan-500/25">Login Portal</a>
+            </div>
         </div>
     </nav>
 
@@ -433,6 +445,27 @@ try {
 
     <!-- Scripts -->
     <script>
+        // Mobile Menu Toggle Logic
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuIcon = document.getElementById('menuIcon');
+        const closeIcon = document.getElementById('closeIcon');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            menuIcon.classList.toggle('hidden');
+            closeIcon.classList.toggle('hidden');
+        });
+
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                menuIcon.classList.remove('hidden');
+                closeIcon.classList.add('hidden');
+            });
+        });
+
         // Dynamic Split-Screen Slider Logic
         const heroBanners = <?= json_encode($banners) ?>;
         const heroLeftBg = document.getElementById('heroLeftBg');
