@@ -70,10 +70,10 @@ try {
             from { opacity: 0.7; transform: scale(1); }
             to { opacity: 1; transform: scale(1.05); }
         }
-        .badge-orange {
-            background-color: #f97316;
+        .badge-cyan {
+            background-color: #06b6d4;
             color: #ffffff;
-            box-shadow: 0 4px 14px 0 rgba(249, 115, 22, 0.39);
+            box-shadow: 0 4px 14px 0 rgba(6, 182, 212, 0.39);
         }
     </style>
 </head>
@@ -87,18 +87,19 @@ try {
             
             <!-- Logo (Left Side) -->
             <a href="index.php" class="flex items-center gap-3 group">
-                <div class="bg-white p-1.5 rounded-full shadow-lg shadow-teal-900/20">
-                    <img src="assets/logo.png" alt="Swift SC Logo" class="h-10 w-10 object-contain transition-transform group-hover:scale-105" onerror="this.onerror=null; this.outerHTML='<span class=\'text-2xl font-black italic tracking-tighter text-slate-900 px-2\'>SWIFT<span class=\'text-orange-500\'>_SC</span></span>';">
+                <div class="bg-white p-2 w-12 h-12 flex items-center justify-center rounded-full shadow-lg shadow-cyan-900/20">
+                    <img src="assets/logo.png" alt="Swift SC Logo" class="w-full h-full object-contain transition-transform group-hover:scale-105" onerror="this.onerror=null; this.outerHTML='<span class=\'text-xs font-black italic tracking-tighter text-slate-900\'>SWIFT<span class=\'text-cyan-500\'>_SC</span></span>';">
                 </div>
+                <span class="font-black italic tracking-tighter text-xl hidden sm:block">SWIFT<span class="text-cyan-400">_SC</span></span>
             </a>
 
             <!-- Navigation Links (Right Side) -->
             <div class="hidden md:flex gap-6 font-semibold text-sm items-center ml-auto">
-                <a href="#tentang" class="text-slate-300 hover:text-orange-400 transition-colors">Profil</a>
-                <a href="#program" class="text-slate-300 hover:text-orange-400 transition-colors">Program & Sertifikasi</a>
-                <a href="#jadwal" class="text-slate-300 hover:text-orange-400 transition-colors">Jadwal & Biaya</a>
-                <a href="#pelatih" class="text-slate-300 hover:text-orange-400 transition-colors">Pelatih</a>
-                <a href="login.php" class="bg-orange-500/20 border border-orange-500/50 text-orange-400 px-5 py-2 rounded-full font-bold hover:bg-orange-500 hover:text-white transition-all shadow-lg hover:shadow-orange-500/25 ml-4">Login Portal</a>
+                <a href="#tentang" class="text-slate-300 hover:text-cyan-400 transition-colors">Profil</a>
+                <a href="#program" class="text-slate-300 hover:text-cyan-400 transition-colors">Program & Sertifikasi</a>
+                <a href="#jadwal" class="text-slate-300 hover:text-cyan-400 transition-colors">Jadwal & Biaya</a>
+                <a href="#pelatih" class="text-slate-300 hover:text-cyan-400 transition-colors">Pelatih</a>
+                <a href="login.php" class="bg-cyan-500/20 border border-cyan-500/50 text-cyan-400 px-5 py-2 rounded-full font-bold hover:bg-cyan-500 hover:text-white transition-all shadow-lg hover:shadow-cyan-500/25 ml-4">Login Portal</a>
             </div>
 
             <!-- Hamburger Button for Mobile -->
@@ -109,27 +110,45 @@ try {
         </div>
     </nav>
 
-    <!-- Dynamic Hero Slider -->
-    <header class="relative py-24 px-4 text-center overflow-hidden" id="heroHeader">
-        <?php if (file_exists('admin/uploads/hero_bg.jpg') && count($banners) == 0): ?>
-            <div id="heroBgImg" class="absolute inset-0 bg-cover bg-center bg-no-repeat -z-20 transition-all duration-1000 ease-in-out" style="background-image: url('admin/uploads/hero_bg.jpg?v=<?= time() ?>');"></div>
-            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px] -z-10 mix-blend-multiply"></div>
-        <?php else: ?>
-            <?php $first_bg = count($banners) > 0 ? "admin/uploads/".$banners[0]['gambar'] : "https://images.unsplash.com/photo-1572334057861-6d72dbb688d2?auto=format&fit=crop&w=1920&q=80"; ?>
-            <div id="heroBgImg" class="absolute inset-0 bg-cover bg-center bg-no-repeat -z-20 transition-all duration-1000 ease-in-out" style="background-image: url('<?= htmlspecialchars($first_bg) ?>');"></div>
-            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px] -z-10 mix-blend-multiply"></div>
-        <?php endif; ?>
+    <!-- Hero Section Split (Kiri Teks, Kanan Slider) -->
+    <header class="relative pt-32 pb-24 px-4 overflow-hidden min-h-[90vh] flex items-center">
+        <!-- Static BG behind everything -->
+        <div class="absolute inset-0 bg-gradient-to-br from-[#0b162c] via-[#0b162c] to-teal-900/30 -z-30"></div>
         
-        <h2 id="heroTitle" class="font-cursive text-5xl md:text-7xl mb-2 text-white drop-shadow-lg tracking-wide transform -rotate-2 transition-opacity duration-1000 ease-in-out">
-            <?= htmlspecialchars(count($banners) > 0 ? $banners[0]['judul'] : $cmsData['hero_title']) ?>
-        </h2>
-        <h1 class="text-6xl md:text-8xl font-black mb-8 uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-white to-orange-400 drop-shadow-2xl">
-            <?= htmlspecialchars($cmsData['hero_subtitle']) ?>
-        </h1>
-        <p id="heroSubtitle" class="text-lg md:text-xl text-slate-300 max-w-3xl mx-auto font-medium mb-10 drop-shadow transition-opacity duration-1000 ease-in-out">
-            <?= htmlspecialchars(count($banners) > 0 ? $banners[0]['subjudul'] : $cmsData['hero_desc']) ?>
-        </p>
-        <a href="pendaftaran.php" class="badge-orange hover:bg-orange-600 px-10 py-4 rounded-full font-black text-xl transition-all inline-block transform hover:-translate-y-1 hover:scale-105 border border-orange-400">DAFTAR SEKARANG</a>
+        <div class="container mx-auto max-w-7xl relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            
+            <!-- Left Side: Teks & CTA (Glassmorphism) -->
+            <div class="glass-panel p-8 md:p-12 rounded-3xl shadow-2xl border border-white/10 text-left relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-40 h-40 bg-cyan-500/10 rounded-full filter blur-[40px] -z-10 transition-colors duration-700"></div>
+                <h2 class="font-cursive text-4xl md:text-6xl mb-3 text-cyan-300 drop-shadow-lg tracking-wide transform -rotate-2">
+                    Jump in. let's swim!
+                </h2>
+                <h1 class="text-5xl md:text-7xl font-black mb-6 uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-white to-cyan-400 drop-shadow-2xl leading-tight">
+                    SWIFT SC
+                </h1>
+                <p class="text-base md:text-lg text-slate-300 font-medium mb-8 drop-shadow leading-relaxed">
+                    Klub renang resmi dan tersertifikasi dengan fasilitas pelatih berlisensi nasional & internasional.
+                </p>
+                <a href="pendaftaran.php" class="badge-cyan hover:bg-cyan-600 px-8 py-4 rounded-full font-black text-lg transition-all inline-block transform hover:-translate-y-1 hover:scale-105 border border-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.4)]">DAFTAR SEKARANG</a>
+            </div>
+
+            <!-- Right Side: Dynamic Image Slider (Fade-Slide) -->
+            <div class="relative w-full aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border border-white/10 group">
+                <!-- Fallback/Base Image -->
+                <?php $first_bg = count($banners) > 0 ? "admin/uploads/".$banners[0]['gambar'] : "https://images.unsplash.com/photo-1572334057861-6d72dbb688d2?auto=format&fit=crop&w=1000&q=80"; ?>
+                <div id="heroBgImg" class="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-[6000ms] ease-linear transform scale-110 -translate-x-4" style="background-image: url('<?= htmlspecialchars($first_bg) ?>');"></div>
+                
+                <!-- Overlay gradient -->
+                <div class="absolute inset-0 bg-gradient-to-t from-[#0b162c]/90 via-[#0b162c]/20 to-transparent"></div>
+                
+                <!-- Dynamic text overlay inside the image slider -->
+                <div class="absolute bottom-0 left-0 p-8 w-full transition-opacity duration-1000" id="heroTextContainer">
+                    <h3 id="heroSlideTitle" class="text-2xl font-bold text-white mb-1 drop-shadow-lg"><?= htmlspecialchars(count($banners) > 0 ? $banners[0]['judul'] : '') ?></h3>
+                    <p id="heroSlideSubtitle" class="text-sm text-cyan-300 font-medium drop-shadow-md"><?= htmlspecialchars(count($banners) > 0 ? $banners[0]['subjudul'] : '') ?></p>
+                </div>
+            </div>
+
+        </div>
     </header>
 
     <main class="container mx-auto py-16 px-4 space-y-24 max-w-6xl relative z-10">
@@ -402,32 +421,40 @@ try {
 
     <!-- Scripts -->
     <script>
-        // Dynamic Hero Slider Logic
+        // Dynamic Hero Slider Logic (Fade & Slide Effect)
         const heroBanners = <?= json_encode($banners) ?>;
         if(heroBanners && heroBanners.length > 1) {
             let currentHeroIndex = 0;
             const heroBg = document.getElementById('heroBgImg');
-            const heroTitle = document.getElementById('heroTitle');
-            const heroSub = document.getElementById('heroSubtitle');
+            const heroTitle = document.getElementById('heroSlideTitle');
+            const heroSub = document.getElementById('heroSlideSubtitle');
+            const textContainer = document.getElementById('heroTextContainer');
 
             setInterval(() => {
-                // Fade out
+                // Fade out text and image
                 heroBg.style.opacity = '0';
-                heroTitle.style.opacity = '0';
-                heroSub.style.opacity = '0';
+                textContainer.style.opacity = '0';
 
                 setTimeout(() => {
                     currentHeroIndex = (currentHeroIndex + 1) % heroBanners.length;
                     const banner = heroBanners[currentHeroIndex];
                     
-                    heroBg.style.backgroundImage = `url('admin/uploads/${banner.gambar}')`;
-                    heroTitle.textContent = banner.judul;
-                    heroSub.textContent = banner.subjudul;
+                    // Reset transform before showing new image so it slides from right to left
+                    heroBg.style.transition = 'none';
+                    heroBg.style.transform = 'scale(1.1) translateX(4%)';
                     
-                    // Fade in
-                    heroBg.style.opacity = '0.3'; // Keeping it dark/blended as per original design
-                    heroTitle.style.opacity = '1';
-                    heroSub.style.opacity = '1';
+                    setTimeout(() => {
+                        heroBg.style.backgroundImage = `url('admin/uploads/${banner.gambar}')`;
+                        heroTitle.textContent = banner.judul;
+                        heroSub.textContent = banner.subjudul;
+                        
+                        // Fade in and slide to left
+                        heroBg.style.transition = 'opacity 1s ease, transform 6s linear';
+                        heroBg.style.opacity = '1';
+                        heroBg.style.transform = 'scale(1.1) translateX(-4%)';
+                        textContainer.style.opacity = '1';
+                    }, 50);
+
                 }, 1000); // 1s fade-out duration
             }, 6000); // Change slide every 6s
         }
