@@ -14,28 +14,7 @@ try {
     }
 } catch (\Exception $e) {}
 
-// 2. Logika memproses form saat tombol daftar diklik
-if (isset($_POST['daftar'])) {
-    $nama          = bersihkan_input($_POST['nama']);
-    $jenis_kelamin = bersihkan_input($_POST['jenis_kelamin']);
-    $no_hp         = bersihkan_input($_POST['no_hp']);
-    $tanggal_lahir = bersihkan_input($_POST['tanggal_lahir']);
-    $id_kolam      = bersihkan_input($_POST['id_kolam']);
-    $tgl_gabung    = date('Y-m-d');
-
-    try {
-        $query = "INSERT INTO calon_member (nama, jenis_kelamin, no_hp, tanggal_lahir, cabang_id, tanggal_daftar, payment_status, status_approval) 
-                  VALUES ('$nama', '$jenis_kelamin', '$no_hp', '$tanggal_lahir', '$id_kolam', '$tgl_gabung', 'Unpaid', 'Pending')";
-        
-        if (mysqli_query($koneksi, $query)) {
-            $pesan = "sukses";
-        } else {
-            $pesan = "gagal";
-        }
-    } catch (\Exception $e) {
-        $pesan = "gagal";
-    }
-}
+// 2. Logika memproses form saat tombol daftar diklik telah dipindahkan ke api/proses_daftar.php
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -73,22 +52,15 @@ if (isset($_POST['daftar'])) {
             <p class="text-sm text-[#6B6F8D] mt-1">Gabung Swift Swimming Club sekarang</p>
         </div>
 
-        <!-- Alert messages -->
-        <?php if($pesan == "sukses"): ?>
-            <div class="mb-4 px-4 py-3 rounded-lg border text-sm bg-green-50 border-green-200 text-green-700">
-                <p class="font-semibold">Pendaftaran Berhasil!</p>
-                <p class="text-xs mt-0.5">Data Anda sudah terkirim. Admin kami akan segera menghubungi Anda.</p>
-            </div>
-        <?php elseif($pesan == "gagal"): ?>
-            <div class="mb-4 px-4 py-3 rounded-lg border text-sm bg-red-50 border-red-200 text-red-700">
-                <p class="font-semibold">Terjadi Kesalahan</p>
-                <p class="text-xs mt-0.5">Pendaftaran gagal. Silakan coba lagi nanti.</p>
-            </div>
-        <?php endif; ?>
+        <!-- Alert messages (Dynamic) -->
+        <div id="alert-container" class="hidden mb-4 px-4 py-3 rounded-lg border text-sm">
+            <p id="alert-title" class="font-semibold"></p>
+            <p id="alert-message" class="text-xs mt-0.5"></p>
+        </div>
 
         <!-- Form Card -->
         <div class="bg-white rounded-xl border border-[#E8E8EF] p-6 shadow-sm">
-            <form action="" method="POST" class="space-y-4">
+            <form id="form-pendaftaran" class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-[#6B6F8D] uppercase tracking-wider mb-1.5">Nama Lengkap</label>
                     <input type="text" name="nama" required placeholder="Contoh: Budi Santoso"
@@ -132,9 +104,9 @@ if (isset($_POST['daftar'])) {
                     </select>
                 </div>
 
-                <button type="submit" name="daftar"
-                    class="w-full bg-[#5468FF] hover:bg-[#3A4DC7] text-white font-semibold py-2.5 px-4 rounded-lg text-sm transition-colors mt-2">
-                    Daftar Sekarang
+                <button type="submit" id="btn-submit"
+                    class="w-full bg-[#5468FF] hover:bg-[#3A4DC7] text-white font-semibold py-2.5 px-4 rounded-lg text-sm transition-colors mt-2 flex justify-center items-center gap-2">
+                    <span>Daftar Sekarang</span>
                 </button>
             </form>
         </div>
@@ -147,5 +119,59 @@ if (isset($_POST['daftar'])) {
             <a href="index.php" class="text-sm text-[#6B6F8D] hover:text-[#5468FF] transition-colors">&larr; Kembali ke Halaman Utama</a>
         </div>
     </div>
+
+    <script>
+        document.getElementById('form-pendaftaran').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const form = this;
+            const btnSubmit = document.getElementById('btn-submit');
+            const alertContainer = document.getElementById('alert-container');
+            const alertTitle = document.getElementById('alert-title');
+            const alertMessage = document.getElementById('alert-message');
+            
+            // Loading state
+            btnSubmit.disabled = true;
+            btnSubmit.classList.add('opacity-75', 'cursor-not-allowed');
+            const originalText = btnSubmit.innerHTML;
+            btnSubmit.innerHTML = `<svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> <span>Memproses...</span>`;
+            
+            alertContainer.classList.add('hidden');
+            
+            const formData = new FormData(form);
+            
+            fetch('api/proses_daftar.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                alertContainer.classList.remove('hidden', 'bg-green-50', 'border-green-200', 'text-green-700', 'bg-red-50', 'border-red-200', 'text-red-700');
+                
+                if (data.status === 'sukses') {
+                    alertContainer.classList.add('bg-green-50', 'border-green-200', 'text-green-700');
+                    alertTitle.textContent = 'Pendaftaran Berhasil!';
+                    alertMessage.textContent = data.message;
+                    form.reset();
+                } else {
+                    alertContainer.classList.add('bg-red-50', 'border-red-200', 'text-red-700');
+                    alertTitle.textContent = 'Terjadi Kesalahan';
+                    alertMessage.textContent = data.message;
+                }
+            })
+            .catch(error => {
+                alertContainer.classList.remove('hidden');
+                alertContainer.classList.add('bg-red-50', 'border-red-200', 'text-red-700');
+                alertTitle.textContent = 'Terjadi Kesalahan';
+                alertMessage.textContent = 'Koneksi ke server gagal. Silakan coba lagi.';
+            })
+            .finally(() => {
+                // Reset button state
+                btnSubmit.disabled = false;
+                btnSubmit.classList.remove('opacity-75', 'cursor-not-allowed');
+                btnSubmit.innerHTML = originalText;
+            });
+        });
+    </script>
 </body>
 </html>

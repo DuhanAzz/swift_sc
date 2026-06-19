@@ -74,7 +74,7 @@ if (isset($_SESSION['status']) && $_SESSION['status'] == "sudah_login") {
 
         <!-- Login Card -->
         <div class="bg-white rounded-xl border border-[#E8E8EF] p-6 shadow-sm">
-            <form action="proses_login.php" method="post" class="space-y-4">
+            <form action="actions/proses_login.php" method="post" class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-[#6B6F8D] uppercase tracking-wider mb-1.5" for="email">Email</label>
                     <input class="w-full bg-white border border-[#E8E8EF] rounded-lg py-2.5 px-3 text-sm text-[#21243D] focus:outline-none focus:border-[#5468FF] focus:ring-2 focus:ring-[#5468FF]/10 transition placeholder-gray-400" 
