@@ -16,7 +16,7 @@ header("Content-Disposition: attachment; filename=\"$filename\"");
 header("Cache-Control: max-age=0");
 
 $transaksi = [];
-$q_tabel = mysqli_query($koneksi, "SELECT a.*, u.name as nama_admin 
+$q_tabel = mysqli_query($koneksi, "SELECT a.*, u.username as nama_admin 
                                    FROM arus_kas a 
                                    LEFT JOIN users u ON a.user_id = u.id 
                                    WHERE a.cabang_id='$admin_pool_id' AND a.tanggal >= '$tgl_mulai' AND a.tanggal <= '$tgl_akhir' 
