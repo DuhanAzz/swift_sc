@@ -23,33 +23,35 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pendaftaran — Swift SC</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: {
-                        algolia: { blue: '#5468FF', darkblue: '#3A4DC7', navy: '#21243D' },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
     <style>
-        body { font-family: 'Inter', system-ui, sans-serif; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
     </style>
 </head>
-<body class="bg-[#F5F5FA] min-h-screen flex items-center justify-center antialiased p-4">
+<body class="bg-slate-50 min-h-screen flex items-center justify-center antialiased p-4">
 
-    <div class="w-full max-w-md">
+    <div class="w-full max-w-2xl">
         <!-- Logo -->
-        <div class="text-center mb-6">
-            <a href="index.php" class="inline-flex items-center gap-2 mb-4">
-                <img src="assets/logo.png" alt="Swift SC" class="h-9 w-9 object-contain rounded-lg" onerror="this.onerror=null; this.outerHTML='<div class=\'w-9 h-9 rounded-lg bg-[#5468FF] flex items-center justify-center\'><svg class=\'w-4 h-4 text-white\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2.5\' d=\'M13 10V3L4 14h7v7l9-11h-7z\'></path></svg></div>';">
-                <span class="font-bold text-[15px] text-[#21243D]">Swift<span class="text-[#5468FF]">SC</span></span>
+        <div class="text-center mb-6 flex flex-col items-center">
+            <a href="index.php" class="inline-flex items-center gap-3 mb-4">
+                <div class="bg-white p-2 rounded-full shadow-md w-14 h-14 flex items-center justify-center">
+                    <img src="assets/logo.png" alt="Swift SC" class="h-10 w-10 object-contain" onerror="this.onerror=null; this.outerHTML='<div class=\'w-10 h-10 rounded-full bg-cyan-600 flex items-center justify-center\'><svg class=\'w-5 h-5 text-white\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2.5\' d=\'M13 10V3L4 14h7v7l9-11h-7z\'></path></svg></div>';">
+                </div>
+                <span class="font-black italic tracking-tighter text-xl text-slate-900">Swift<span class="text-cyan-500">SC</span></span>
             </a>
-            <h1 class="text-xl font-bold text-[#21243D]">Formulir Pendaftaran</h1>
-            <p class="text-sm text-[#6B6F8D] mt-1">Gabung Swift Swimming Club sekarang</p>
+            <h1 class="text-2xl font-bold text-slate-900">Formulir Pendaftaran</h1>
+            <p class="text-sm text-slate-500 mt-1">Gabung Swift Swimming Club sekarang</p>
         </div>
 
         <!-- Alert messages (Dynamic) -->
@@ -59,64 +61,96 @@ try {
         </div>
 
         <!-- Form Card -->
-        <div class="bg-white rounded-xl border border-[#E8E8EF] p-6 shadow-sm">
-            <form id="form-pendaftaran" class="space-y-4">
+        <div class="bg-white rounded-xl border border-slate-200 p-6 md:p-8 shadow-sm mb-6">
+            <form id="form-pendaftaran" class="space-y-6">
+                
+                <!-- Data Pribadi Section -->
                 <div>
-                    <label class="block text-xs font-semibold text-[#6B6F8D] uppercase tracking-wider mb-1.5">Nama Lengkap</label>
-                    <input type="text" name="nama" required placeholder="Contoh: Budi Santoso"
-                        class="w-full bg-white border border-[#E8E8EF] rounded-lg py-2.5 px-3 text-sm text-[#21243D] focus:outline-none focus:border-[#5468FF] focus:ring-2 focus:ring-[#5468FF]/10 transition placeholder-[#9CA0B8]">
-                </div>
+                    <h2 class="text-sm font-bold text-slate-700 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">Informasi Pribadi</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Nama Lengkap</label>
+                            <input type="text" name="nama" required placeholder="Contoh: Budi Santoso"
+                                class="w-full bg-white border border-slate-200 rounded-lg py-2.5 px-3 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition placeholder-slate-400">
+                        </div>
 
-                <div>
-                    <label class="block text-xs font-semibold text-[#6B6F8D] uppercase tracking-wider mb-1.5">Jenis Kelamin</label>
-                    <div class="flex gap-4">
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="jenis_kelamin" value="L" required class="w-4 h-4 text-[#5468FF] border-[#E8E8EF] focus:ring-[#5468FF]">
-                            <span class="text-sm text-[#4A4F6A]">Laki-laki</span>
-                        </label>
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="jenis_kelamin" value="P" required class="w-4 h-4 text-[#5468FF] border-[#E8E8EF] focus:ring-[#5468FF]">
-                            <span class="text-sm text-[#4A4F6A]">Perempuan</span>
-                        </label>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Tanggal Lahir</label>
+                            <input type="date" name="tanggal_lahir" required
+                                class="w-full bg-white border border-slate-200 rounded-lg py-2.5 px-3 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Jenis Kelamin</label>
+                            <div class="flex gap-4 pt-1">
+                                <label class="flex items-center gap-2 cursor-pointer bg-slate-50 px-3 py-2 rounded-lg border border-slate-200 flex-1 hover:bg-slate-100 transition-colors">
+                                    <input type="radio" name="jenis_kelamin" value="L" required class="w-4 h-4 text-cyan-600 border-slate-300 focus:ring-cyan-500">
+                                    <span class="text-sm text-slate-700 font-medium">Laki-laki</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer bg-slate-50 px-3 py-2 rounded-lg border border-slate-200 flex-1 hover:bg-slate-100 transition-colors">
+                                    <input type="radio" name="jenis_kelamin" value="P" required class="w-4 h-4 text-cyan-600 border-slate-300 focus:ring-cyan-500">
+                                    <span class="text-sm text-slate-700 font-medium">Perempuan</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">No. WhatsApp</label>
+                            <input type="number" name="no_hp" required placeholder="08123456789"
+                                class="w-full bg-white border border-slate-200 rounded-lg py-2.5 px-3 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition placeholder-slate-400">
+                        </div>
                     </div>
                 </div>
 
+                <!-- Cabang & Domisili Section -->
                 <div>
-                    <label class="block text-xs font-semibold text-[#6B6F8D] uppercase tracking-wider mb-1.5">No. WhatsApp</label>
-                    <input type="number" name="no_hp" required placeholder="08123456789"
-                        class="w-full bg-white border border-[#E8E8EF] rounded-lg py-2.5 px-3 text-sm text-[#21243D] focus:outline-none focus:border-[#5468FF] focus:ring-2 focus:ring-[#5468FF]/10 transition placeholder-[#9CA0B8]">
+                    <h2 class="text-sm font-bold text-slate-700 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2 mt-2">Domisili & Lokasi Latihan</h2>
+                    <div class="space-y-5">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Cabang Kolam Renang Tujuan</label>
+                            <select name="id_kolam" required
+                                class="w-full bg-slate-50 border border-slate-200 rounded-lg py-3 px-3 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition appearance-auto font-medium">
+                                <option value="">— Pilih Cabang Terdekat —</option>
+                                <?php foreach($kolamList as $k): ?>
+                                    <option value="<?= $k['id'] ?>"><?= htmlspecialchars($k['nama_cabang']) ?> (<?= htmlspecialchars($k['lokasi']) ?>)</option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Alamat Domisili</label>
+                            <textarea name="alamat" rows="2" required placeholder="Tuliskan alamat domisili lengkap..."
+                                class="w-full bg-white border border-slate-200 rounded-lg py-2.5 px-3 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition placeholder-slate-400"></textarea>
+                        </div>
+                    </div>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-semibold text-[#6B6F8D] uppercase tracking-wider mb-1.5">Tanggal Lahir</label>
-                    <input type="date" name="tanggal_lahir" required
-                        class="w-full bg-white border border-[#E8E8EF] rounded-lg py-2.5 px-3 text-sm text-[#21243D] focus:outline-none focus:border-[#5468FF] focus:ring-2 focus:ring-[#5468FF]/10 transition">
+                <!-- Bagian Checkbox Persetujuan -->
+                <div class="mt-4 pt-4 border-t border-slate-200">
+                    <label class="flex items-start gap-3 cursor-pointer group">
+                        <div class="flex-shrink-0 mt-0.5">
+                            <input type="checkbox" required
+                                class="w-4 h-4 text-cyan-600 border-slate-300 rounded focus:ring-cyan-500 cursor-pointer">
+                        </div>
+                        <div class="text-xs text-slate-500 leading-relaxed group-hover:text-slate-700 transition-colors">
+                            Saya menyatakan bahwa seluruh data yang diisi adalah benar, dan saya bersedia mematuhi seluruh <a href="#" class="text-cyan-600 font-semibold hover:underline">Syarat & Ketentuan</a> serta peraturan tata tertib yang berlaku di Swift Swimming Club.
+                        </div>
+                    </label>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-semibold text-[#6B6F8D] uppercase tracking-wider mb-1.5">Cabang Kolam Renang</label>
-                    <select name="id_kolam" required
-                        class="w-full bg-white border border-[#E8E8EF] rounded-lg py-2.5 px-3 text-sm text-[#21243D] focus:outline-none focus:border-[#5468FF] focus:ring-2 focus:ring-[#5468FF]/10 transition appearance-auto">
-                        <option value="">— Pilih Cabang Terdekat —</option>
-                        <?php foreach($kolamList as $row): ?>
-                            <option value="<?= htmlspecialchars($row['id'] ?? ''); ?>"><?= htmlspecialchars($row['nama_cabang'] ?? ''); ?> - <?= htmlspecialchars($row['lokasi'] ?? ''); ?></option>
-                        <?php endforeach; ?>
-                    </select>
+                <div class="pt-4">
+                    <button id="btn-submit" type="submit"
+                        class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3.5 px-4 rounded-xl text-base transition-all shadow-lg shadow-cyan-600/30 flex items-center justify-center gap-2 transform hover:-translate-y-0.5">
+                        <span>Kirim Formulir Pendaftaran</span>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </button>
                 </div>
-
-                <button type="submit" id="btn-submit"
-                    class="w-full bg-[#5468FF] hover:bg-[#3A4DC7] text-white font-semibold py-2.5 px-4 rounded-lg text-sm transition-colors mt-2 flex justify-center items-center gap-2">
-                    <span>Daftar Sekarang</span>
-                </button>
             </form>
         </div>
 
-        <div class="mt-5 text-center">
-            <p class="text-xs text-[#9CA0B8]">Sudah menjadi member? <a href="login.php" class="text-[#5468FF] font-semibold hover:underline">Masuk ke Dashboard</a></p>
-        </div>
-
-        <div class="mt-3 text-center">
-            <a href="index.php" class="text-sm text-[#6B6F8D] hover:text-[#5468FF] transition-colors">&larr; Kembali ke Halaman Utama</a>
+        <div class="text-center pb-8 space-y-3">
+            <p class="text-sm text-slate-500">Sudah menjadi member? <a href="login.php" class="text-cyan-600 font-bold hover:underline">Masuk ke Dashboard</a></p>
+            <p class="text-sm text-slate-500"><a href="index.php" class="hover:text-cyan-600 transition-colors">&larr; Kembali ke Beranda Utama</a></p>
         </div>
     </div>
 
