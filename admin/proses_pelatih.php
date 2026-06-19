@@ -48,6 +48,15 @@ if(isset($_POST['edit'])){
     $q_c = mysqli_query($koneksi, "SELECT nama_cabang FROM cabang WHERE id=$pool_id");
     $nama_c = ($q_c && $r = mysqli_fetch_assoc($q_c)) ? $r['nama_cabang'] : 'Pusat';
 
+    // Get old name for fallback
+    $old_nama = '';
+    if(!$user_id) {
+        $q_old = mysqli_query($koneksi, "SELECT nama FROM pelatih WHERE id='$id'");
+        if($q_old && $row = mysqli_fetch_assoc($q_old)) {
+            $old_nama = mysqli_real_escape_string($koneksi, $row['nama']);
+        }
+    }
+
     // 1. Update Pelatih
     $q1 = mysqli_query($koneksi, "UPDATE pelatih SET nama='$nama_pelatih', sertifikasi='$lisensi', jabatan='$no_hp', id_kolam=$pool_id, cabang='$nama_c' WHERE id='$id'");
     
@@ -59,12 +68,22 @@ if(isset($_POST['edit'])){
         } else {
             $q2 = mysqli_query($koneksi, "UPDATE users SET username='$nama_pelatih', email='$email' WHERE id='$user_id'");
         }
-    } else {
+    } else if($old_nama) {
         if(!empty($password_baru)) {
             $hash = password_hash($password_baru, PASSWORD_DEFAULT);
-            mysqli_query($koneksi, "UPDATE users SET username='$nama_pelatih', email='$email', password='$hash' WHERE username=(SELECT nama FROM pelatih WHERE id='$id') AND role='Pelatih'");
+            mysqli_query($koneksi, "UPDATE users SET username='$nama_pelatih', email='$email', password='$hash' WHERE username='$old_nama' AND role='Pelatih'");
         } else {
-            mysqli_query($koneksi, "UPDATE users SET username='$nama_pelatih', email='$email' WHERE username=(SELECT nama FROM pelatih WHERE id='$id') AND role='Pelatih'");
+            mysqli_query($koneksi, "UPDATE users SET username='$nama_pelatih', email='$email' WHERE username='$old_nama' AND role='Pelatih'");
+        }
+        
+        // If no user was updated (meaning this legacy coach never had an account), create one!
+        if(mysqli_affected_rows($koneksi) == 0 && !empty($email) && !empty($password_baru)) {
+            $hash = password_hash($password_baru, PASSWORD_DEFAULT);
+            $q_insert = mysqli_query($koneksi, "INSERT INTO users (username, email, password, role, cabang_id) VALUES ('$nama_pelatih', '$email', '$hash', 'Pelatih', $pool_id)");
+            if($q_insert) {
+                $new_user_id = mysqli_insert_id($koneksi);
+                mysqli_query($koneksi, "UPDATE pelatih SET user_id='$new_user_id' WHERE id='$id'");
+            }
         }
     }
 

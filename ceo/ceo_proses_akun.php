@@ -157,6 +157,16 @@ if(isset($_POST['edit_pelatih'])){
         } else {
             mysqli_query($koneksi, "UPDATE users SET username='$nama_pelatih', email='$email' WHERE username='$old_nama' AND role='Pelatih'");
         }
+        
+        // If no user was updated (meaning this legacy coach never had an account), create one!
+        if(mysqli_affected_rows($koneksi) == 0 && !empty($email) && !empty($password_baru)) {
+            $hash = password_hash($password_baru, PASSWORD_DEFAULT);
+            $q_insert = mysqli_query($koneksi, "INSERT INTO users (username, email, password, role, cabang_id) VALUES ('$nama_pelatih', '$email', '$hash', 'Pelatih', $id_kolam_val)");
+            if($q_insert) {
+                $new_user_id = mysqli_insert_id($koneksi);
+                mysqli_query($koneksi, "UPDATE pelatih SET user_id='$new_user_id' WHERE id='$id'");
+            }
+        }
     }
 
     if($q1) { header("location:ceo_manage_akun.php?pesan=sukses_pelatih"); }
