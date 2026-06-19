@@ -38,77 +38,110 @@ if($q_perf) {
     }
 }
 ?>
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
+    
+    <!-- Top Bar (Desktop) -->
+    <div class="topbar hidden lg:flex items-center justify-between h-14 px-6 sticky top-0 z-30">
+        <div>
+            <span class="text-sm font-medium text-algolia-navy">Dashboard</span>
+            <span class="text-sm text-gray-400 mx-2">/</span>
+            <span class="text-sm text-gray-400">Pelatih</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <span class="badge badge-green">Pelatih</span>
+            <div class="w-8 h-8 rounded-full bg-algolia-blue flex items-center justify-center">
+                <span class="text-white text-xs font-bold"><?= strtoupper(substr($coach_name, 0, 1)) ?></span>
+            </div>
+        </div>
+    </div>
 
-<div class="p-4 sm:ml-64">
-    <div class="p-4 rounded-lg mt-14 max-w-2xl mx-auto"> <!-- Optimized for mobile width -->
+    <div class="p-4 lg:p-8 page-content">
         
-        <div class="mb-6 bg-slate-900 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden">
-            <div class="absolute -right-10 -top-10 bg-orange-500 w-32 h-32 rounded-full opacity-20 blur-2xl"></div>
-            <div class="absolute -left-10 -bottom-10 bg-teal-500 w-32 h-32 rounded-full opacity-20 blur-2xl"></div>
-            
-            <p class="text-sm text-slate-300 font-medium mb-1">Selamat Datang, Pelatih</p>
-            <h1 class="text-3xl font-black tracking-tight mb-4"><?= htmlspecialchars($coach_name); ?> 👋</h1>
-            
-            <div class="grid grid-cols-2 gap-4 mt-6">
-                <div class="bg-white/10 backdrop-blur border border-white/20 p-4 rounded-2xl">
-                    <p class="text-xs text-slate-300 uppercase font-bold mb-1">Atlet Cabang</p>
-                    <p class="text-3xl font-black"><?= $total_atlet ?></p>
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold text-algolia-navy">Halo, <?= htmlspecialchars($coach_name); ?>!</h1>
+            <p class="text-sm text-gray-500 mt-1">Ringkasan aktivitas latihan cabang Anda</p>
+        </div>
+
+        <!-- Stat Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+            <div class="card p-5">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="stat-label">Atlet Cabang</span>
+                    <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-algolia-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    </div>
                 </div>
-                <div class="bg-white/10 backdrop-blur border border-white/20 p-4 rounded-2xl">
-                    <p class="text-xs text-slate-300 uppercase font-bold mb-1">Hadir Hari Ini</p>
-                    <p class="text-3xl font-black text-orange-400"><?= $hadir_hari_ini ?></p>
+                <div class="stat-number"><?= $total_atlet ?></div>
+                <p class="text-xs text-gray-400 mt-1">Atlet terdaftar</p>
+            </div>
+
+            <div class="card p-5">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="stat-label">Hadir Hari Ini</span>
+                    <div class="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
                 </div>
+                <div class="stat-number"><?= $hadir_hari_ini ?></div>
+                <p class="text-xs text-gray-400 mt-1">Atlet hadir latihan</p>
             </div>
         </div>
 
-        <!-- Quick Actions (Mobile Friendly Grid) -->
-        <div class="grid grid-cols-2 gap-4 mb-8">
-            <a href="pelatih_absensi.php" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow">
-                <div class="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-3">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                </div>
-                <span class="font-bold text-gray-800 text-sm">Input Presensi</span>
-            </a>
-            <a href="pelatih_performa.php" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow">
-                <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-3">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                </div>
-                <span class="font-bold text-gray-800 text-sm">Catat Performa</span>
-            </a>
-            <a href="pelatih_program.php" class="col-span-2 bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 hover:shadow-md transition-shadow">
-                <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+        <!-- Quick Actions -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+            <a href="pelatih_absensi.php" class="card p-5 flex items-center gap-3 hover:border-green-300 transition-colors group">
+                <div class="w-9 h-9 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0 group-hover:bg-green-100 transition-colors">
+                    <svg class="w-4.5 h-4.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 </div>
                 <div>
-                    <span class="font-bold text-gray-800 block">Jurnal & Program Latihan</span>
-                    <span class="text-xs text-gray-500">Catat menu latihan hari ini</span>
+                    <span class="text-sm font-semibold text-algolia-navy block">Input Presensi</span>
+                    <span class="text-[11px] text-gray-400">Catat kehadiran atlet</span>
+                </div>
+            </a>
+            <a href="pelatih_performa.php" class="card p-5 flex items-center gap-3 hover:border-blue-300 transition-colors group">
+                <div class="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-100 transition-colors">
+                    <svg class="w-4.5 h-4.5 text-algolia-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                </div>
+                <div>
+                    <span class="text-sm font-semibold text-algolia-navy block">Catat Performa</span>
+                    <span class="text-[11px] text-gray-400">Input waktu renang</span>
+                </div>
+            </a>
+            <a href="pelatih_program.php" class="card p-5 flex items-center gap-3 hover:border-purple-300 transition-colors group">
+                <div class="w-9 h-9 rounded-lg bg-purple-50 flex items-center justify-center flex-shrink-0 group-hover:bg-purple-100 transition-colors">
+                    <svg class="w-4.5 h-4.5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                </div>
+                <div>
+                    <span class="text-sm font-semibold text-algolia-navy block">Jurnal Latihan</span>
+                    <span class="text-[11px] text-gray-400">Program & catatan</span>
                 </div>
             </a>
         </div>
 
-        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden mb-8">
-            <div class="p-5 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
-                <h2 class="font-bold text-gray-800">Catatan Waktu Terakhir Anda</h2>
-                <a href="pelatih_performa.php" class="text-xs font-bold text-blue-600">Semua &rarr;</a>
+        <!-- Recent Performance -->
+        <div class="card overflow-hidden">
+            <div class="px-5 py-4 border-b border-panel-border flex justify-between items-center">
+                <h2 class="text-sm font-semibold text-algolia-navy">Catatan Waktu Terakhir Anda</h2>
+                <a href="pelatih_performa.php" class="text-xs font-medium text-algolia-blue hover:underline">Semua &rarr;</a>
             </div>
             
-            <div class="divide-y divide-gray-100">
+            <div class="divide-y divide-gray-50">
                 <?php
                 if(count($recent_performances) > 0) {
                     foreach($recent_performances as $d) {
                         $nama_atlet = $d['nama_atlet'] ?? 'Unknown';
                 ?>
-                <div class="p-4 flex justify-between items-center hover:bg-slate-50 transition-colors">
+                <div class="px-5 py-3.5 flex justify-between items-center hover:bg-gray-50/50 transition-colors">
                     <div>
-                        <p class="font-bold text-gray-800"><?= htmlspecialchars($nama_atlet); ?></p>
-                        <p class="text-xs text-gray-500"><?= htmlspecialchars($d['gaya_renang'] ?? '-'); ?> - <?= htmlspecialchars($d['jarak'] ?? '-'); ?>m</p>
+                        <p class="text-sm font-semibold text-algolia-navy"><?= htmlspecialchars($nama_atlet); ?></p>
+                        <p class="text-xs text-gray-400"><?= htmlspecialchars($d['gaya_renang'] ?? '-'); ?> — <?= htmlspecialchars($d['jarak'] ?? '-'); ?>m</p>
                     </div>
                     <div class="text-right">
-                        <span class="bg-slate-800 text-white font-mono text-sm font-bold px-3 py-1 rounded-lg inline-block mb-1 shadow-sm"><?= htmlspecialchars($d['time_formatted'] ?? '-'); ?></span>
+                        <span class="font-mono text-sm font-bold text-algolia-navy"><?= htmlspecialchars($d['time_formatted'] ?? '-'); ?></span>
                         <p class="text-[10px] text-gray-400"><?= isset($d['tanggal_rekor']) ? date('d M Y', strtotime($d['tanggal_rekor'])) : '-'; ?></p>
                     </div>
                 </div>
-                <?php } } else { echo '<div class="p-8 text-center text-sm text-gray-500 italic">Belum ada rekor yang Anda catat.</div>'; } ?>
+                <?php } } else { echo '<div class="px-5 py-10 text-center text-sm text-gray-400">Belum ada rekor yang Anda catat.</div>'; } ?>
             </div>
         </div>
 
@@ -116,3 +149,4 @@ if($q_perf) {
 </div>
 
 <?php include '../includes/footer.php'; ?>
+

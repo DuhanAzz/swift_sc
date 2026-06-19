@@ -1,23 +1,280 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Swift Swimming Club - Admin</title>
+    <title>Swift Swimming Club</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <script>
-        // Konfigurasi Warna Khas Klub Renang
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        primary: {"50":"#eff6ff","100":"#dbeafe","200":"#bfdbfe","300":"#93c5fd","400":"#60a5fa","500":"#3b82f6","600":"#2563eb","700":"#1d4ed8","800":"#1e40af","900":"#1e3a8a","950":"#172554"}
-                    }
+                        // Algolia Dashboard palette
+                        algolia: {
+                            blue: '#5468FF',
+                            darkblue: '#3A4DC7',
+                            navy: '#21243D',
+                            sidebar: '#1B1D2E',
+                            hover: '#5468FF',
+                        },
+                        panel: {
+                            bg: '#FFFFFF',
+                            surface: '#F5F5FA',
+                            border: '#E8E8EF',
+                            hover: '#FAFAFE',
+                        }
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                    },
                 }
             }
         }
     </script>
+    
+    <style>
+        body { 
+            font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+            background: #F5F5FA;
+            color: #21243D;
+        }
+        
+        /* Sidebar */
+        .sidebar-nav {
+            background: #21243D;
+        }
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #9CA0B8;
+            border-radius: 6px;
+            transition: all 0.15s ease;
+            text-decoration: none;
+            position: relative;
+            margin: 1px 0;
+        }
+        .sidebar-link:hover {
+            color: #FFFFFF;
+            background: rgba(255,255,255,0.06);
+        }
+        .sidebar-link.active {
+            color: #5468FF;
+            background: rgba(84,104,255,0.08);
+        }
+        .sidebar-link.active::before {
+            content: '';
+            position: absolute;
+            left: -12px;
+            top: 4px;
+            bottom: 4px;
+            width: 3px;
+            background: #5468FF;
+            border-radius: 0 3px 3px 0;
+        }
+        .sidebar-section-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #6B6F8D;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 8px 16px 4px;
+            margin-top: 16px;
+        }
+        
+        /* Cards */
+        .card {
+            background: #FFFFFF;
+            border: 1px solid #E8E8EF;
+            border-radius: 12px;
+        }
+        .card-hover:hover {
+            border-color: #D1D5DB;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        
+        /* Topbar */
+        .topbar {
+            background: #FFFFFF;
+            border-bottom: 1px solid #E8E8EF;
+        }
+        
+        /* Search box (Algolia style) */
+        .search-box {
+            background: #F5F5FA;
+            border: 1px solid #E8E8EF;
+            border-radius: 8px;
+            padding: 8px 14px;
+            font-size: 13px;
+            color: #9CA0B8;
+            transition: all 0.15s ease;
+        }
+        .search-box:focus {
+            border-color: #5468FF;
+            box-shadow: 0 0 0 3px rgba(84,104,255,0.1);
+            outline: none;
+            color: #21243D;
+        }
+        
+        /* Buttons */
+        .btn-primary {
+            background: #5468FF;
+            color: #FFFFFF;
+            font-weight: 600;
+            font-size: 13px;
+            padding: 8px 18px;
+            border-radius: 6px;
+            transition: all 0.15s ease;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-primary:hover {
+            background: #3A4DC7;
+        }
+        .btn-outline {
+            background: #FFFFFF;
+            color: #21243D;
+            font-weight: 500;
+            font-size: 13px;
+            padding: 8px 18px;
+            border-radius: 6px;
+            border: 1px solid #E8E8EF;
+            transition: all 0.15s ease;
+            cursor: pointer;
+        }
+        .btn-outline:hover {
+            border-color: #D1D5DB;
+            background: #FAFAFE;
+        }
+        
+        /* Table */
+        .table-algolia { width: 100%; border-collapse: collapse; }
+        .table-algolia thead th {
+            font-size: 11px;
+            font-weight: 600;
+            color: #6B6F8D;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 12px 16px;
+            border-bottom: 1px solid #E8E8EF;
+            text-align: left;
+            background: #FAFAFE;
+        }
+        .table-algolia tbody td {
+            font-size: 13px;
+            padding: 12px 16px;
+            border-bottom: 1px solid #F0F0F5;
+            color: #4A4F6A;
+        }
+        .table-algolia tbody tr:hover {
+            background: #FAFAFE;
+        }
+        .table-algolia tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        /* Badge */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        .badge-blue { background: #EEF0FF; color: #5468FF; }
+        .badge-green { background: #ECFDF5; color: #059669; }
+        .badge-red { background: #FEF2F2; color: #DC2626; }
+        .badge-yellow { background: #FFFBEB; color: #D97706; }
+        .badge-gray { background: #F3F4F6; color: #6B7280; }
+        
+        /* Stat card number */
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #21243D;
+            line-height: 1;
+        }
+        .stat-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: #6B6F8D;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #9CA3AF; }
+        
+        /* Mobile overlay */
+        .sidebar-overlay {
+            background: rgba(0,0,0,0.4);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.25s ease;
+        }
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Form input (Algolia style) */
+        .input-algolia {
+            background: #FFFFFF;
+            border: 1px solid #E8E8EF;
+            border-radius: 6px;
+            padding: 9px 12px;
+            font-size: 13px;
+            color: #21243D;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+            width: 100%;
+        }
+        .input-algolia:focus {
+            border-color: #5468FF;
+            box-shadow: 0 0 0 3px rgba(84,104,255,0.1);
+            outline: none;
+        }
+        .input-algolia::placeholder {
+            color: #9CA0B8;
+        }
+        
+        /* Select */
+        .select-algolia {
+            background: #FFFFFF;
+            border: 1px solid #E8E8EF;
+            border-radius: 6px;
+            padding: 9px 12px;
+            font-size: 13px;
+            color: #21243D;
+            transition: border-color 0.15s ease;
+            width: 100%;
+            appearance: auto;
+        }
+        .select-algolia:focus {
+            border-color: #5468FF;
+            box-shadow: 0 0 0 3px rgba(84,104,255,0.1);
+            outline: none;
+        }
+        
+        /* Smooth page load */
+        .page-content { animation: fadeUp 0.3s ease-out; }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Modal dark overlay */
+        .modal-overlay { background: rgba(33, 36, 61, 0.5); }
+    </style>
 </head>
-<body class="bg-gray-50 text-gray-900">
+<body class="bg-panel-surface text-algolia-navy font-inter antialiased min-h-screen">

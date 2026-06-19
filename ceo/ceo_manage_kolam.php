@@ -9,8 +9,8 @@ include '../includes/sidebar.php';
 include '../includes/koneksi.php';
 ?>
 
-<div class="p-4 sm:ml-64">
-    <div class="p-4 rounded-lg mt-14">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
+    <div class="p-4 lg:p-8 page-content">
         
         <?php 
         if(isset($_GET['pesan'])){
@@ -30,17 +30,17 @@ include '../includes/koneksi.php';
 
         <div class="flex justify-between items-center mb-6 border-b pb-4">
             <div>
-                <h1 class="text-2xl font-bold text-gray-800">Manajemen Cabang Kolam (Pools)</h1>
+                <h1 class="text-xl font-bold text-algolia-navy">Manajemen Cabang Kolam (Pools)</h1>
                 <p class="text-sm text-gray-500">Kelola daftar cabang kolam renang Swift SC.</p>
             </div>
-            <button data-modal-target="modalTambahKolam" data-modal-toggle="modalTambahKolam" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-all shadow-md">+ Tambah Kolam</button>
+            <button data-modal-target="modalTambahKolam" data-modal-toggle="modalTambahKolam" class="bg-algolia-blue hover:bg-algolia-darkblue text-white font-bold py-2 px-4 rounded-lg text-sm transition-all shadow-md">+ Tambah Kolam</button>
         </div>
 
-        <div class="relative overflow-x-auto shadow-md sm:rounded-xl bg-white border border-gray-100">
-            <table class="w-full text-sm text-left text-gray-500">
-                <thead class="text-xs text-white uppercase bg-slate-800">
+        <div class="card overflow-hidden">
+            <table class="table-algolia">
+                <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
                     <tr>
-                        <th class="px-6 py-4">Nama Kolam</th>
+                        <th class="px-6 py-4">Nama Cabang</th>
                         <th class="px-6 py-4">Lokasi / Alamat Lengkap</th>
                         <th class="px-6 py-4 text-center">Aksi</th>
                     </tr>
@@ -63,7 +63,7 @@ include '../includes/koneksi.php';
                         <td class="px-6 py-4 text-slate-600"><?= htmlspecialchars($data['lokasi']); ?></td>
                         <td class="px-6 py-4 text-center space-x-2">
                             <button data-modal-target="modalEditKolam<?= $data['id']; ?>" data-modal-toggle="modalEditKolam<?= $data['id']; ?>" class="font-medium text-blue-600 hover:underline">Edit</button>
-                            <a href="ceo_kolam_proses.php?hapus=<?= $data['id']; ?>" onclick="return confirm('Yakin ingin menghapus kolam ini?')" class="font-medium text-red-600 hover:underline">Hapus</a>
+                            <a href="ceo_kolam_proses.php?hapus=<?= $data['id']; ?>" onclick="return confirm('Yakin ingin menghapus cabang ini?')" class="font-medium text-red-600 hover:underline">Hapus</a>
                         </td>
                     </tr>
 
@@ -71,20 +71,20 @@ include '../includes/koneksi.php';
                     <div id="modalEditKolam<?= $data['id']; ?>" tabindex="-1" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                         <div class="bg-white rounded-xl shadow-lg w-full max-w-md p-6">
                             <div class="flex justify-between items-center border-b pb-3 mb-4">
-                                <h3 class="text-lg font-bold">Edit Data Kolam</h3>
+                                <h3 class="text-lg font-bold">Edit Cabang</h3>
                                 <button data-modal-toggle="modalEditKolam<?= $data['id']; ?>" class="text-gray-400 hover:text-gray-900">✖</button>
                             </div>
                             <form action="ceo_kolam_proses.php" method="POST">
                                 <input type="hidden" name="id" value="<?= $data['id']; ?>">
                                 <div class="mb-4">
-                                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Nama Kolam</label>
-                                    <input type="text" name="name" value="<?= htmlspecialchars($data['nama_cabang']); ?>" class="w-full p-2 border rounded-lg focus:ring-indigo-500" required>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Nama Cabang</label>
+                                    <input type="text" name="nama_cabang" value="<?= htmlspecialchars($data['nama_cabang']); ?>" class="w-full p-2 border rounded-lg focus:ring-indigo-500" required>
                                 </div>
                                 <div class="mb-6">
                                     <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Lokasi / Alamat</label>
-                                    <textarea name="location" rows="3" class="w-full p-2 border rounded-lg focus:ring-indigo-500" required><?= htmlspecialchars($data['lokasi']); ?></textarea>
+                                    <textarea name="lokasi" rows="3" class="w-full p-2 border rounded-lg focus:ring-indigo-500" required><?= htmlspecialchars($data['lokasi']); ?></textarea>
                                 </div>
-                                <button type="submit" name="edit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg">Simpan Perubahan</button>
+                                <button type="submit" name="edit" class="w-full bg-algolia-blue hover:bg-algolia-darkblue text-white font-bold py-2 rounded-lg">Simpan Perubahan</button>
                             </form>
                         </div>
                     </div>
@@ -100,19 +100,19 @@ include '../includes/koneksi.php';
 <div id="modalTambahKolam" tabindex="-1" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
     <div class="bg-white rounded-xl shadow-lg w-full max-w-md p-6">
         <div class="flex justify-between items-center border-b pb-3 mb-4">
-            <h3 class="text-lg font-bold">Tambah Cabang Kolam Baru</h3>
+            <h3 class="text-lg font-bold">Tambah Cabang Baru</h3>
             <button data-modal-toggle="modalTambahKolam" class="text-gray-400 hover:text-gray-900">✖</button>
         </div>
         <form action="ceo_kolam_proses.php" method="POST">
             <div class="mb-4">
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Nama Kolam</label>
-                <input type="text" name="name" placeholder="Contoh: Ledhok Pereng" class="w-full p-2 border rounded-lg focus:ring-indigo-500" required>
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Nama Cabang</label>
+                <input type="text" name="nama_cabang" placeholder="Contoh: Ledhok Pereng" class="w-full p-2 border rounded-lg focus:ring-indigo-500" required>
             </div>
             <div class="mb-6">
                 <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Lokasi / Alamat Lengkap</label>
-                <textarea name="location" rows="3" placeholder="Contoh: Jl. Magelang Km 10..." class="w-full p-2 border rounded-lg focus:ring-indigo-500" required></textarea>
+                <textarea name="lokasi" rows="3" placeholder="Contoh: Jl. Magelang Km 10..." class="w-full p-2 border rounded-lg focus:ring-indigo-500" required></textarea>
             </div>
-            <button type="submit" name="tambah" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg">Simpan Kolam</button>
+            <button type="submit" name="tambah" class="w-full bg-algolia-blue hover:bg-algolia-darkblue text-white font-bold py-2 rounded-lg">Simpan Cabang</button>
         </form>
     </div>
 </div>

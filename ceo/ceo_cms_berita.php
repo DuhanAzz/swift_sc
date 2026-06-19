@@ -9,8 +9,8 @@ include '../includes/sidebar.php';
 include '../includes/koneksi.php';
 ?>
 
-<div class="p-4 sm:ml-64">
-    <div class="p-4 rounded-lg mt-14">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
+    <div class="p-4 lg:p-8 page-content">
         
         <?php 
         if(isset($_GET['pesan'])){
@@ -30,7 +30,7 @@ include '../includes/koneksi.php';
 
         <div class="flex justify-between items-center mb-6 border-b pb-4">
             <div>
-                <h1 class="text-2xl font-bold text-gray-800">CMS Berita & Pengumuman</h1>
+                <h1 class="text-xl font-bold text-algolia-navy">CMS Berita & Pengumuman</h1>
                 <p class="text-sm text-gray-500">Tulis artikel atau berita prestasi yang akan tampil di halaman depan.</p>
             </div>
             <div class="space-x-2">
@@ -55,7 +55,7 @@ include '../includes/koneksi.php';
                 foreach($beritaArray as $data) {
                     $foto = (!empty($data['gambar']) && file_exists("../admin/" . $data['gambar'])) ? "../admin/" . $data['gambar'] : "https://images.unsplash.com/photo-1572334057861-6d72dbb688d2?auto=format&fit=crop&w=800&q=80";
             ?>
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+            <div class="card overflow-hidden flex flex-col">
                 <div class="h-48 bg-cover bg-center" style="background-image: url('<?= $foto ?>');"></div>
                 <div class="p-5 flex-1 flex flex-col">
                     <div class="flex justify-between items-center mb-2">
@@ -114,7 +114,7 @@ include '../includes/koneksi.php';
                 </div>
             </div>
 
-            <?php } } else { echo "<div class='col-span-3 text-center py-12 text-gray-500 bg-white rounded-xl border border-dashed border-gray-300'>Belum ada berita. Klik tombol Tulis Berita Baru.</div>"; } ?>
+            <?php } } else { echo "<div class='col-span-3 text-center py-12 text-gray-500 bg-white rounded-xl border border-dashed border-[#E8E8EF]'>Belum ada berita. Klik tombol Tulis Berita Baru.</div>"; } ?>
         </div>
 
     </div>

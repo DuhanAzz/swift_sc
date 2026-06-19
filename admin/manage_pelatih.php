@@ -96,13 +96,13 @@ if (isset($_GET['hapus'])) {
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 
                 <div class="lg:col-span-1">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 sticky top-24">
+                    <div class="bg-white p-6 rounded-2xl card-hover sticky top-24">
                         <h3 class="text-xl font-bold mb-4 border-b pb-2">Tambah Pelatih Baru</h3>
                         <form action="" method="POST" enctype="multipart/form-data" class="space-y-4">
                             <?php if ($user_role === 'admin'): ?>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Cabang / Pool</label>
-                                <select name="cabang" required class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                <select name="cabang" required class="w-full border border-[#E8E8EF] rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
                                     <option value="Pusat">Pusat</option>
                                     <option value="Cabang Utara">Cabang Utara</option>
                                     <option value="Cabang Selatan">Cabang Selatan</option>
@@ -111,19 +111,19 @@ if (isset($_GET['hapus'])) {
                             <?php endif; ?>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Lengkap</label>
-                                <input type="text" name="nama" required class="w-full border border-gray-300 rounded-lg p-2 flex-1 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                <input type="text" name="nama" required class="w-full border border-[#E8E8EF] rounded-lg p-2 flex-1 focus:ring-2 focus:ring-blue-500 focus:outline-none">
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Jabatan / Posisi</label>
-                                <input type="text" name="jabatan" required placeholder="Contoh: Head Coach" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500">
+                                <input type="text" name="jabatan" required placeholder="Contoh: Head Coach" class="w-full border border-[#E8E8EF] rounded-lg p-2 focus:ring-2 focus:ring-blue-500">
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Foto Pelatih</label>
-                                <input type="file" name="foto" accept=".jpg,.jpeg,.png,.webp" class="w-full border border-gray-300 rounded-lg p-2 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+                                <input type="file" name="foto" accept=".jpg,.jpeg,.png,.webp" class="w-full border border-[#E8E8EF] rounded-lg p-2 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Sertifikasi & Deskripsi</label>
-                                <textarea name="sertifikasi" rows="4" required class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500"></textarea>
+                                <textarea name="sertifikasi" rows="4" required class="w-full border border-[#E8E8EF] rounded-lg p-2 focus:ring-2 focus:ring-blue-500"></textarea>
                             </div>
                             <button type="submit" name="tambah" class="w-full bg-blue-600 text-white font-bold py-2 rounded-lg hover:bg-blue-700 transition-all duration-200">Simpan Pelatih</button>
                         </form>
@@ -131,7 +131,7 @@ if (isset($_GET['hapus'])) {
                 </div>
 
                 <div class="lg:col-span-2">
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="card overflow-hidden">
                         <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead class="bg-slate-800 text-white text-sm uppercase">
@@ -185,7 +185,7 @@ if (isset($_GET['hapus'])) {
                                                 <?php if ($user_role === 'admin'): ?>
                                                 <div>
                                                     <label class="block text-sm font-semibold text-gray-700 mb-1">Cabang / Pool</label>
-                                                    <select name="cabang" required class="w-full border border-gray-300 rounded-lg p-2">
+                                                    <select name="cabang" required class="w-full border border-[#E8E8EF] rounded-lg p-2">
                                                         <option value="Pusat" <?= $row['cabang'] == 'Pusat' ? 'selected' : '' ?>>Pusat</option>
                                                         <option value="Cabang Utara" <?= $row['cabang'] == 'Cabang Utara' ? 'selected' : '' ?>>Cabang Utara</option>
                                                         <option value="Cabang Selatan" <?= $row['cabang'] == 'Cabang Selatan' ? 'selected' : '' ?>>Cabang Selatan</option>
@@ -197,19 +197,19 @@ if (isset($_GET['hapus'])) {
                                                 
                                                 <div>
                                                     <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Lengkap</label>
-                                                    <input type="text" name="nama" value="<?= $row['nama']; ?>" required class="w-full border border-gray-300 rounded-lg p-2">
+                                                    <input type="text" name="nama" value="<?= $row['nama']; ?>" required class="w-full border border-[#E8E8EF] rounded-lg p-2">
                                                 </div>
                                                 <div>
                                                     <label class="block text-sm font-semibold text-gray-700 mb-1">Jabatan / Posisi</label>
-                                                    <input type="text" name="jabatan" value="<?= $row['jabatan']; ?>" required class="w-full border border-gray-300 rounded-lg p-2">
+                                                    <input type="text" name="jabatan" value="<?= $row['jabatan']; ?>" required class="w-full border border-[#E8E8EF] rounded-lg p-2">
                                                 </div>
                                                 <div>
                                                     <label class="block text-sm font-semibold text-gray-700 mb-1">Ganti Foto <span class="text-xs font-normal text-slate-400">(Biarkan kosong jika tidak diganti)</span></label>
-                                                    <input type="file" name="foto" accept=".jpg,.jpeg,.png,.webp" class="w-full border border-gray-300 rounded-lg p-2 file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+                                                    <input type="file" name="foto" accept=".jpg,.jpeg,.png,.webp" class="w-full border border-[#E8E8EF] rounded-lg p-2 file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
                                                 </div>
                                                 <div>
                                                     <label class="block text-sm font-semibold text-gray-700 mb-1">Sertifikasi</label>
-                                                    <textarea name="sertifikasi" rows="4" required class="w-full border border-gray-300 rounded-lg p-2"><?= htmlspecialchars($row['sertifikasi']); ?></textarea>
+                                                    <textarea name="sertifikasi" rows="4" required class="w-full border border-[#E8E8EF] rounded-lg p-2"><?= htmlspecialchars($row['sertifikasi']); ?></textarea>
                                                 </div>
                                                 
                                                 <div class="pt-3 flex justify-end gap-3">

@@ -30,8 +30,8 @@ if($q_presensi) {
 }
 ?>
 
-<div class="p-4 sm:ml-64">
-    <div class="p-4 rounded-lg mt-14 max-w-2xl mx-auto">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
+    <div class="p-4 lg:p-8 page-content">
         
         <?php 
         if(isset($_GET['pesan'])){
@@ -67,7 +67,7 @@ if($q_presensi) {
                         $mId = $atlet['id'];
                         $current_status = $presensi_hari_ini[$mId] ?? 'Hadir'; // Default Hadir
                 ?>
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
+                <div class="card p-4">
                     <div class="flex items-center gap-3 mb-3">
                         <div class="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 font-bold uppercase">
                             <?= substr($atlet['nama'], 0, 1) ?>
@@ -81,19 +81,19 @@ if($q_presensi) {
                     <div class="grid grid-cols-4 gap-2">
                         <label class="cursor-pointer">
                             <input type="radio" name="status[<?= $mId ?>]" value="Hadir" class="peer sr-only" <?= $current_status == 'Hadir' ? 'checked' : '' ?>>
-                            <div class="text-center text-xs font-bold py-2 rounded-lg border border-gray-200 text-gray-500 peer-checked:bg-green-500 peer-checked:text-white peer-checked:border-green-500 transition-colors">Hadir</div>
+                            <div class="text-center text-xs font-bold py-2 rounded-lg border border-[#E8E8EF] text-gray-500 peer-checked:bg-green-500 peer-checked:text-white peer-checked:border-green-500 transition-colors">Hadir</div>
                         </label>
                         <label class="cursor-pointer">
                             <input type="radio" name="status[<?= $mId ?>]" value="Izin" class="peer sr-only" <?= $current_status == 'Izin' ? 'checked' : '' ?>>
-                            <div class="text-center text-xs font-bold py-2 rounded-lg border border-gray-200 text-gray-500 peer-checked:bg-blue-500 peer-checked:text-white peer-checked:border-blue-500 transition-colors">Izin</div>
+                            <div class="text-center text-xs font-bold py-2 rounded-lg border border-[#E8E8EF] text-gray-500 peer-checked:bg-blue-500 peer-checked:text-white peer-checked:border-blue-500 transition-colors">Izin</div>
                         </label>
                         <label class="cursor-pointer">
                             <input type="radio" name="status[<?= $mId ?>]" value="Sakit" class="peer sr-only" <?= $current_status == 'Sakit' ? 'checked' : '' ?>>
-                            <div class="text-center text-xs font-bold py-2 rounded-lg border border-gray-200 text-gray-500 peer-checked:bg-yellow-500 peer-checked:text-white peer-checked:border-yellow-500 transition-colors">Sakit</div>
+                            <div class="text-center text-xs font-bold py-2 rounded-lg border border-[#E8E8EF] text-gray-500 peer-checked:bg-yellow-500 peer-checked:text-white peer-checked:border-yellow-500 transition-colors">Sakit</div>
                         </label>
                         <label class="cursor-pointer">
                             <input type="radio" name="status[<?= $mId ?>]" value="Alpa" class="peer sr-only" <?= $current_status == 'Alpa' ? 'checked' : '' ?>>
-                            <div class="text-center text-xs font-bold py-2 rounded-lg border border-gray-200 text-gray-500 peer-checked:bg-red-500 peer-checked:text-white peer-checked:border-red-500 transition-colors">Alpa</div>
+                            <div class="text-center text-xs font-bold py-2 rounded-lg border border-[#E8E8EF] text-gray-500 peer-checked:bg-red-500 peer-checked:text-white peer-checked:border-red-500 transition-colors">Alpa</div>
                         </label>
                     </div>
                 </div>

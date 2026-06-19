@@ -58,14 +58,14 @@ if (isset($_POST['upload_hero'])) {
                     <h1 class="text-3xl font-black text-slate-800 uppercase">Banner Utama</h1>
                     <p class="text-slate-500 mt-1">Ganti gambar latar belakang "Jump in. let's swim!" di halaman utama.</p>
                 </div>
-                <a href="../index.php" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-all shadow-md">Lihat Halaman Utama</a>
+                <a href="../index.php" target="_blank" class="bg-algolia-blue hover:bg-algolia-darkblue text-white font-bold py-2 px-4 rounded-lg text-sm transition-all shadow-md">Lihat Halaman Utama</a>
             </div>
 
             <?= $pesan; ?>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <!-- Preview -->
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="card overflow-hidden">
                     <div class="p-4 border-b">
                         <h3 class="font-bold text-slate-800">Preview Aktif</h3>
                     </div>
@@ -86,14 +86,14 @@ if (isset($_POST['upload_hero'])) {
                 </div>
 
                 <!-- Form Upload -->
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="card overflow-hidden">
                     <div class="p-4 border-b">
                         <h3 class="font-bold text-slate-800">Unggah Banner Baru</h3>
                     </div>
                     <form action="" method="POST" enctype="multipart/form-data" class="p-6">
                         <div class="mb-6">
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Pilih File Gambar</label>
-                            <input type="file" name="hero_image" accept=".jpg,.jpeg,.png,.webp" required class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-all duration-200">
+                            <input type="file" name="hero_image" accept=".jpg,.jpeg,.png,.webp" required class="w-full border border-[#E8E8EF] rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-all duration-200">
                             <p class="mt-2 text-xs text-slate-500">Rekomendasi ukuran: 1920x1080px. Format: JPG atau PNG.</p>
                         </div>
                         <button type="submit" name="upload_hero" class="w-full bg-slate-800 text-white font-bold py-3 rounded-xl hover:bg-slate-900 hover:shadow-lg transition-all duration-200 uppercase tracking-widest text-sm">Ganti Banner</button>

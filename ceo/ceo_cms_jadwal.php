@@ -9,8 +9,8 @@ include '../includes/sidebar.php';
 include '../includes/koneksi.php';
 ?>
 
-<div class="p-4 sm:ml-64">
-    <div class="p-4 rounded-lg mt-14">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
+    <div class="p-4 lg:p-8 page-content">
         
         <?php 
         if(isset($_GET['pesan'])){
@@ -30,7 +30,7 @@ include '../includes/koneksi.php';
 
         <div class="flex justify-between items-center mb-6 border-b pb-4">
             <div>
-                <h1 class="text-2xl font-bold text-gray-800">CMS Jadwal Publik</h1>
+                <h1 class="text-xl font-bold text-algolia-navy">CMS Jadwal Publik</h1>
                 <p class="text-sm text-gray-500">Kelola daftar lokasi dan jadwal latihan yang ditampilkan di Landing Page.</p>
             </div>
             <div class="space-x-2">
@@ -39,9 +39,9 @@ include '../includes/koneksi.php';
             </div>
         </div>
 
-        <div class="relative overflow-x-auto shadow-md sm:rounded-xl bg-white border border-gray-100">
-            <table class="w-full text-sm text-left text-gray-500">
-                <thead class="text-xs text-white uppercase bg-slate-800">
+        <div class="card overflow-hidden">
+            <table class="table-algolia">
+                <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
                     <tr>
                         <th class="px-6 py-4">Lokasi Kolam Renang</th>
                         <th class="px-6 py-4">Hari Latihan</th>

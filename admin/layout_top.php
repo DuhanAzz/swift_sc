@@ -38,7 +38,7 @@ $page_title = $page_title ?? "Swift SC - Admin Portal";
         .text-slate-500 { color: #94a3b8 !important; }
         
         .bg-slate-800 { background: rgba(15, 23, 42, 0.6) !important; }
-        .border-gray-100, .border-gray-200 { border-color: rgba(255,255,255,0.05) !important; }
+        .border-gray-100, .border-[#E8E8EF] { border-color: rgba(255,255,255,0.05) !important; }
         .divide-gray-100 > :not([hidden]) ~ :not([hidden]) { border-color: rgba(255,255,255,0.05) !important; }
         
         td, th { border-color: rgba(255,255,255,0.05) !important; color: #e2e8f0 !important; }

@@ -16,19 +16,19 @@ $nama_bulan = [
 ];
 ?>
 
-<div class="p-4 sm:ml-64">
-    <div class="p-4 rounded-lg mt-14">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
+    <div class="p-4 lg:p-8 page-content">
         
         <div class="mb-6">
-            <h1 class="text-2xl font-bold text-gray-800">Rekap Presensi Bulanan</h1>
+            <h1 class="text-xl font-bold text-algolia-navy">Rekap Presensi Bulanan</h1>
             <p class="text-sm text-gray-500">Laporan statistik kehadiran atlet per periode</p>
         </div>
 
-        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6">
+        <div class="bg-white p-4 rounded-xl card-hover mb-6">
             <form action="rekap_presensi.php" method="GET" class="flex flex-wrap gap-4 items-end">
                 <div class="w-full md:w-48">
                     <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Pilih Bulan</label>
-                    <select name="bulan" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg block w-full p-2.5">
+                    <select name="bulan" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-lg block w-full p-2.5">
                         <?php foreach($nama_bulan as $m => $nama) : ?>
                             <option value="<?= $m; ?>" <?= ($filter_bulan == $m) ? 'selected' : ''; ?>><?= $nama; ?></option>
                         <?php endforeach; ?>
@@ -36,7 +36,7 @@ $nama_bulan = [
                 </div>
                 <div class="w-full md:w-32">
                     <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Tahun</label>
-                    <select name="tahun" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg block w-full p-2.5">
+                    <select name="tahun" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-lg block w-full p-2.5">
                         <?php 
                         $thn_skrg = date('Y');
                         for($i = $thn_skrg; $i >= $thn_skrg-2; $i--) {
@@ -45,19 +45,19 @@ $nama_bulan = [
                         ?>
                     </select>
                 </div>
-                <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 font-bold rounded-lg text-sm px-5 py-2.5">
+                <button type="submit" class="text-white bg-algolia-blue hover:bg-algolia-darkblue font-bold rounded-lg text-sm px-5 py-2.5">
                     Tampilkan Rekap
                 </button>
             </form>
         </div>
 
-        <div class="relative overflow-x-auto shadow-md sm:rounded-xl border border-gray-200 bg-white">
-            <div class="p-4 bg-gray-50 border-b border-gray-200">
+        <div class="relative overflow-x-auto shadow-md sm:rounded-xl border border-[#E8E8EF] bg-white">
+            <div class="p-4 bg-gray-50 border-b border-[#E8E8EF]">
                 <h2 class="font-bold text-gray-700 uppercase text-center">
                     LAPORAN KEHADIRAN: <?= strtoupper($nama_bulan[$filter_bulan]); ?> <?= $filter_tahun; ?>
                 </h2>
             </div>
-            <table class="w-full text-sm text-left text-gray-500">
+            <table class="table-algolia">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-100">
                     <tr>
                         <th class="px-4 py-4 text-center border-r">No</th>
@@ -72,20 +72,23 @@ $nama_bulan = [
                 <tbody>
                     <?php
                     // Query sakti untuk menghitung semua status dalam satu kali jalan
+                    $admin_pool_id = $_SESSION['pool_id'] ?? '';
+                    $where_cabang = !empty($admin_pool_id) ? "WHERE m.cabang_id = '$admin_pool_id'" : "";
                     $query = mysqli_query($koneksi, "
                         SELECT 
-                            a.nama,
-                            COUNT(CASE WHEN p.status = 'Hadir' THEN 1 END) as jml_hadir,
-                            COUNT(CASE WHEN p.status = 'Izin' THEN 1 END) as jml_izin,
-                            COUNT(CASE WHEN p.status = 'Sakit' THEN 1 END) as jml_sakit,
-                            COUNT(CASE WHEN p.status = 'Alpa' THEN 1 END) as jml_alpa,
-                            COUNT(p.id) as total_sesi
-                        FROM atlet a
-                        LEFT JOIN presensi p ON a.id = p.atlet_id 
-                            AND MONTH(p.tanggal) = '$filter_bulan' 
-                            AND YEAR(p.tanggal) = '$filter_tahun'
-                        GROUP BY a.id
-                        ORDER BY a.nama ASC
+                            m.nama,
+                            COUNT(CASE WHEN a.status = 'Hadir' THEN 1 END) as jml_hadir,
+                            COUNT(CASE WHEN a.status = 'Izin' THEN 1 END) as jml_izin,
+                            COUNT(CASE WHEN a.status = 'Sakit' THEN 1 END) as jml_sakit,
+                            COUNT(CASE WHEN a.status = 'Alpa' THEN 1 END) as jml_alpa,
+                            COUNT(a.id) as total_sesi
+                        FROM member m
+                        LEFT JOIN absensi a ON m.id = a.member_id 
+                            AND MONTH(a.tanggal) = '$filter_bulan' 
+                            AND YEAR(a.tanggal) = '$filter_tahun'
+                        $where_cabang
+                        GROUP BY m.id
+                        ORDER BY m.nama ASC
                     ");
 
                     $no = 1;

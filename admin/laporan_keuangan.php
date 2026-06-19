@@ -8,24 +8,24 @@ include '../includes/koneksi.php';
 $filter_tahun = isset($_GET['tahun']) ? $_GET['tahun'] : date('Y');
 ?>
 
-<div class="p-4 sm:ml-64">
-    <div class="p-4 rounded-lg mt-14">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
+    <div class="p-4 lg:p-8 page-content">
         
         <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-gray-800">Laporan Pendapatan Iuran</h1>
+                <h1 class="text-xl font-bold text-algolia-navy">Laporan Pendapatan Iuran</h1>
                 <p class="text-sm text-gray-500">Ringkasan total uang iuran yang diterima per bulan</p>
             </div>
             
             <form action="laporan_keuangan.php" method="GET">
-                <select name="tahun" onchange="this.form.submit()" class="bg-white border border-gray-300 text-sm rounded-lg p-2.5 font-bold text-blue-700">
+                <select name="tahun" onchange="this.form.submit()" class="bg-white border border-[#E8E8EF] text-sm rounded-lg p-2.5 font-bold text-blue-700">
                     <?php for($i=date('Y'); $i>=date('Y')-2; $i--) echo "<option value='$i' ".($filter_tahun==$i?'selected':'').">Tahun $i</option>"; ?>
                 </select>
             </form>
         </div>
 
         <div class="grid grid-cols-1 gap-6">
-            <div class="bg-white shadow-sm border border-gray-200 rounded-2xl overflow-hidden">
+            <div class="bg-white shadow-sm border border-[#E8E8EF] rounded-2xl overflow-hidden">
                 <table class="w-full text-sm text-left">
                     <thead class="bg-slate-800 text-white uppercase text-xs">
                         <tr>
@@ -75,7 +75,7 @@ $filter_tahun = isset($_GET['tahun']) ? $_GET['tahun'] : date('Y');
                         </tr>
                         <?php } ?>
                     </tbody>
-                    <tfoot class="bg-gray-50 border-t-2 border-gray-300">
+                    <tfoot class="bg-gray-50 border-t-2 border-[#E8E8EF]">
                         <tr>
                             <td colspan="2" class="p-5 text-right font-bold text-gray-500 uppercase">Total Pendapatan Tahun <?= $filter_tahun; ?>:</td>
                             <td class="p-5 text-right font-black text-2xl text-green-700">
@@ -88,7 +88,7 @@ $filter_tahun = isset($_GET['tahun']) ? $_GET['tahun'] : date('Y');
             </div>
             
             <div class="flex justify-end">
-                <button onclick="window.print()" class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg border border-gray-300 transition-all">
+                <button onclick="window.print()" class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg border border-[#E8E8EF] transition-all">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
                     Cetak Laporan
                 </button>

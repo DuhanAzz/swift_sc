@@ -6,8 +6,8 @@ include '../includes/sidebar.php';
 include '../includes/koneksi.php';
 ?>
 
-<div class="p-4 sm:ml-64">
-    <div class="p-4 rounded-lg mt-14">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
+    <div class="p-4 lg:p-8 page-content">
         
         <?php 
         if(isset($_GET['pesan'])){
@@ -23,17 +23,17 @@ include '../includes/koneksi.php';
 
         <div class="flex items-center justify-between mb-6">
             <div>
-                <h1 class="text-2xl font-bold text-gray-800">Performa & Rekor Atlet</h1>
+                <h1 class="text-xl font-bold text-algolia-navy">Performa & Rekor Atlet</h1>
                 <p class="text-sm text-gray-500">Pencatatan rekor waktu renang untuk monitoring perkembangan</p>
             </div>
-            <button data-modal-target="modalTambahPerforma" data-modal-toggle="modalTambahPerforma" class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 transition-all shadow-md">
+            <button data-modal-target="modalTambahPerforma" data-modal-toggle="modalTambahPerforma" class="text-white bg-algolia-blue hover:bg-algolia-darkblue font-medium rounded-lg text-sm px-5 py-2.5 transition-all shadow-md">
                 + Catat Waktu Baru
             </button>
         </div>
 
-        <div class="relative overflow-x-auto shadow-md sm:rounded-xl bg-white border border-gray-100">
-            <table class="w-full text-sm text-left text-gray-500">
-                <thead class="text-xs text-white uppercase bg-slate-800">
+        <div class="card overflow-hidden">
+            <table class="table-algolia">
+                <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
                     <tr>
                         <th class="px-6 py-4">Tanggal</th>
                         <th class="px-6 py-4">Nama Atlet</th>
@@ -58,7 +58,7 @@ include '../includes/koneksi.php';
                     if(count($performaArray) > 0) {
                         foreach($performaArray as $data) {
                     ?>
-                    <tr class="bg-white border-b hover:bg-slate-50 transition-colors">
+                    <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
                         <td class="px-6 py-4 font-medium text-gray-900"><?= date('d M Y', strtotime($data['tanggal_rekor'])); ?></td>
                         <td class="px-6 py-4 font-bold text-gray-800"><?= htmlspecialchars($data['nama_atlet']); ?></td>
                         <td class="px-6 py-4">
@@ -66,7 +66,7 @@ include '../includes/koneksi.php';
                             <span class="text-gray-500 ml-1"><?= htmlspecialchars($data['jarak']); ?>m</span>
                         </td>
                         <td class="px-6 py-4 text-center">
-                            <span class="text-xs font-medium px-2.5 py-0.5 rounded border bg-gray-100 text-gray-800 border-gray-300"><?= htmlspecialchars($data['tipe_kolam']); ?></span>
+                            <span class="text-xs font-medium px-2.5 py-0.5 rounded border bg-gray-100 text-gray-800 border-[#E8E8EF]"><?= htmlspecialchars($data['tipe_kolam']); ?></span>
                         </td>
                         <td class="px-6 py-4 text-center font-bold text-lg text-slate-800 tracking-wider">
                             <?= htmlspecialchars($data['time_formatted']); ?>
@@ -100,7 +100,7 @@ include '../includes/koneksi.php';
                                     
                                     <div class="mb-4">
                                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Atlet</label>
-                                        <select name="member_id" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                                        <select name="member_id" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
                                             <?php
                                             $q_atlet_edit = mysqli_query($koneksi, "SELECT * FROM member WHERE 1=1 AND cabang_id='$coach_cabang_id' ORDER BY nama ASC");
                                             if($q_atlet_edit) {
@@ -117,11 +117,11 @@ include '../includes/koneksi.php';
                                     <div class="grid grid-cols-2 gap-4 mb-4">
                                         <div>
                                             <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Tanggal Tes</label>
-                                            <input type="date" name="record_date" value="<?= $data['tanggal_rekor']; ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                                            <input type="date" name="record_date" value="<?= $data['tanggal_rekor']; ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
                                         </div>
                                         <div>
                                             <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Tipe Kolam</label>
-                                            <select name="pool_length" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                                            <select name="pool_length" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
                                                 <option value="25m" <?= ($data['tipe_kolam'] == '25m') ? 'selected' : ''; ?>>Short Course (25m)</option>
                                                 <option value="50m" <?= ($data['tipe_kolam'] == '50m') ? 'selected' : ''; ?>>Long Course (50m)</option>
                                             </select>
@@ -131,7 +131,7 @@ include '../includes/koneksi.php';
                                     <div class="grid grid-cols-2 gap-4 mb-4">
                                         <div>
                                             <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Gaya Renang</label>
-                                            <select name="swim_style" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                                            <select name="swim_style" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
                                                 <option value="Bebas" <?= ($data['gaya_renang'] == 'Bebas') ? 'selected' : ''; ?>>Gaya Bebas</option>
                                                 <option value="Dada" <?= ($data['gaya_renang'] == 'Dada') ? 'selected' : ''; ?>>Gaya Dada</option>
                                                 <option value="Punggung" <?= ($data['gaya_renang'] == 'Punggung') ? 'selected' : ''; ?>>Gaya Punggung</option>
@@ -141,7 +141,7 @@ include '../includes/koneksi.php';
                                         </div>
                                         <div>
                                             <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Jarak (Meter)</label>
-                                            <input type="number" name="distance" value="<?= $data['jarak']; ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                                            <input type="number" name="distance" value="<?= $data['jarak']; ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
                                         </div>
                                     </div>
 
@@ -149,15 +149,15 @@ include '../includes/koneksi.php';
                                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Waktu Tempuh</label>
                                         <div class="grid grid-cols-3 gap-2">
                                             <div>
-                                                <input type="number" name="menit" value="<?= $menit_edit; ?>" min="0" max="59" class="bg-gray-50 border border-gray-200 text-gray-900 text-center text-sm rounded-xl block w-full p-3" required>
+                                                <input type="number" name="menit" value="<?= $menit_edit; ?>" min="0" max="59" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-center text-sm rounded-xl block w-full p-3" required>
                                                 <div class="text-[10px] text-gray-400 text-center mt-1">Menit</div>
                                             </div>
                                             <div>
-                                                <input type="number" name="detik" value="<?= $detik_edit; ?>" min="0" max="59" class="bg-gray-50 border border-gray-200 text-gray-900 text-center text-sm rounded-xl block w-full p-3" required>
+                                                <input type="number" name="detik" value="<?= $detik_edit; ?>" min="0" max="59" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-center text-sm rounded-xl block w-full p-3" required>
                                                 <div class="text-[10px] text-gray-400 text-center mt-1">Detik</div>
                                             </div>
                                             <div>
-                                                <input type="number" name="milidetik" value="<?= $ms_edit; ?>" min="0" max="99" class="bg-gray-50 border border-gray-200 text-gray-900 text-center text-sm rounded-xl block w-full p-3" required>
+                                                <input type="number" name="milidetik" value="<?= $ms_edit; ?>" min="0" max="99" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-center text-sm rounded-xl block w-full p-3" required>
                                                 <div class="text-[10px] text-gray-400 text-center mt-1">1/100 dtk</div>
                                             </div>
                                         </div>
@@ -165,9 +165,9 @@ include '../includes/koneksi.php';
 
                                     <div class="mb-6">
                                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Catatan Pelatih</label>
-                                        <textarea name="notes" rows="2" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3"><?= htmlspecialchars($data['catatan'] ?? ''); ?></textarea>
+                                        <textarea name="notes" rows="2" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3"><?= htmlspecialchars($data['catatan'] ?? ''); ?></textarea>
                                     </div>
-                                    <button type="submit" name="edit" class="w-full text-white bg-blue-700 hover:bg-blue-800 font-bold rounded-xl text-sm px-5 py-3 shadow-lg">Update Rekor</button>
+                                    <button type="submit" name="edit" class="w-full text-white bg-algolia-blue hover:bg-algolia-darkblue font-bold rounded-xl text-sm px-5 py-3 shadow-lg">Update Rekor</button>
                                 </form>
                             </div>
                         </div>
@@ -194,7 +194,7 @@ include '../includes/koneksi.php';
             <form action="proses_performa.php" method="POST" class="p-6 text-left">
                 <div class="mb-4">
                     <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Atlet</label>
-                    <select name="member_id" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                    <select name="member_id" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
                         <option value="">-- Pilih Atlet --</option>
                         <?php
                         $q_atlet_add = mysqli_query($koneksi, "SELECT * FROM member WHERE 1=1 AND cabang_id='$coach_cabang_id' ORDER BY nama ASC");
@@ -211,11 +211,11 @@ include '../includes/koneksi.php';
                 <div class="grid grid-cols-2 gap-4 mb-4">
                     <div>
                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Tanggal Tes</label>
-                        <input type="date" name="record_date" value="<?= date('Y-m-d'); ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                        <input type="date" name="record_date" value="<?= date('Y-m-d'); ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
                     </div>
                     <div>
                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Tipe Kolam</label>
-                        <select name="pool_length" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                        <select name="pool_length" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
                             <option value="25m">Short Course (25m)</option>
                             <option value="50m" selected>Long Course (50m)</option>
                         </select>
@@ -225,7 +225,7 @@ include '../includes/koneksi.php';
                 <div class="grid grid-cols-2 gap-4 mb-4">
                     <div>
                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Gaya Renang</label>
-                        <select name="swim_style" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                        <select name="swim_style" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
                             <option value="Bebas">Gaya Bebas</option>
                             <option value="Dada">Gaya Dada</option>
                             <option value="Punggung">Gaya Punggung</option>
@@ -235,7 +235,7 @@ include '../includes/koneksi.php';
                     </div>
                     <div>
                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Jarak (Meter)</label>
-                        <input type="number" name="distance" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" placeholder="Contoh: 50, 100, 200" required>
+                        <input type="number" name="distance" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" placeholder="Contoh: 50, 100, 200" required>
                     </div>
                 </div>
 
@@ -243,15 +243,15 @@ include '../includes/koneksi.php';
                     <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Waktu Tempuh</label>
                     <div class="grid grid-cols-3 gap-2">
                         <div>
-                            <input type="number" name="menit" min="0" max="59" class="bg-gray-50 border border-gray-200 text-gray-900 text-center text-sm rounded-xl block w-full p-3" placeholder="Menit" required>
+                            <input type="number" name="menit" min="0" max="59" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-center text-sm rounded-xl block w-full p-3" placeholder="Menit" required>
                             <div class="text-[10px] text-gray-400 text-center mt-1">Menit</div>
                         </div>
                         <div>
-                            <input type="number" name="detik" min="0" max="59" class="bg-gray-50 border border-gray-200 text-gray-900 text-center text-sm rounded-xl block w-full p-3" placeholder="Detik" required>
+                            <input type="number" name="detik" min="0" max="59" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-center text-sm rounded-xl block w-full p-3" placeholder="Detik" required>
                             <div class="text-[10px] text-gray-400 text-center mt-1">Detik</div>
                         </div>
                         <div>
-                            <input type="number" name="milidetik" min="0" max="99" class="bg-gray-50 border border-gray-200 text-gray-900 text-center text-sm rounded-xl block w-full p-3" placeholder="Ms" required>
+                            <input type="number" name="milidetik" min="0" max="99" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-center text-sm rounded-xl block w-full p-3" placeholder="Ms" required>
                             <div class="text-[10px] text-gray-400 text-center mt-1">1/100 dtk</div>
                         </div>
                     </div>
@@ -259,9 +259,9 @@ include '../includes/koneksi.php';
 
                 <div class="mb-6">
                     <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Catatan Pelatih</label>
-                    <textarea name="notes" rows="2" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" placeholder="Kondisi atlet, cuaca, atau evaluasi teknik..."></textarea>
+                    <textarea name="notes" rows="2" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" placeholder="Kondisi atlet, cuaca, atau evaluasi teknik..."></textarea>
                 </div>
-                <button type="submit" name="tambah" class="w-full text-white bg-blue-700 hover:bg-blue-800 font-bold rounded-xl text-sm px-5 py-3 shadow-lg">Simpan Rekor</button>
+                <button type="submit" name="tambah" class="w-full text-white bg-algolia-blue hover:bg-algolia-darkblue font-bold rounded-xl text-sm px-5 py-3 shadow-lg">Simpan Rekor</button>
             </form>
         </div>
     </div>

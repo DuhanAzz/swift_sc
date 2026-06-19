@@ -29,11 +29,11 @@ while($r = mysqli_fetch_assoc($q_recent)) {
 }
 ?>
 
-<div class="p-4 sm:ml-64">
-    <div class="p-4 rounded-lg mt-14">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
+    <div class="p-4 lg:p-8 page-content">
         
         <div class="mb-8">
-            <h1 class="text-3xl font-extrabold text-gray-800 tracking-tight">Selamat Datang, <?= htmlspecialchars($_SESSION['name']); ?>! 👋</h1>
+            <h1 class="text-2xl font-bold text-algolia-navy tracking-tight">Selamat Datang, <?= htmlspecialchars($_SESSION['name']); ?>! 👋</h1>
             <p class="text-base text-gray-500 mt-1">Ini adalah ringkasan aktivitas klub renang Swift SC hari ini.</p>
             <p class="text-sm font-semibold text-blue-600 mt-2">Role: <?= htmlspecialchars(ucfirst($_SESSION['role'])); ?> | Cabang: <?= htmlspecialchars($_SESSION['cabang'] ?: 'Semua'); ?></p>
         </div>
@@ -76,13 +76,13 @@ while($r = mysqli_fetch_assoc($q_recent)) {
             </div>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100">
+        <div class="card">
             <div class="p-5 border-b border-gray-100 flex justify-between items-center">
                 <h2 class="text-lg font-bold text-gray-800">5 Pencatatan Waktu Terakhir</h2>
                 <a href="performa.php" class="text-sm font-semibold text-blue-600 hover:underline">Lihat Semua &rarr;</a>
             </div>
             <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left text-gray-500">
+                <table class="table-algolia">
                     <thead class="text-xs text-gray-400 uppercase bg-gray-50">
                         <tr>
                             <th class="px-6 py-3">Atlet</th>

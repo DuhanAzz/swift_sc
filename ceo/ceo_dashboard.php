@@ -13,80 +13,160 @@ $total_atlet = 0;
 $q1 = mysqli_query($koneksi, "SELECT COUNT(id) as total FROM member");
 if($q1 && $r = mysqli_fetch_assoc($q1)) $total_atlet = $r['total'];
 
-// 2. Total Coaches
-$total_pelatih = 0;
-$q2 = mysqli_query($koneksi, "SELECT COUNT(id) as total FROM pelatih");
-if($q2 && $r = mysqli_fetch_assoc($q2)) $total_pelatih = $r['total'];
+// 2. Total Pendapatan Bulan Ini
+$total_pendapatan_bulan = 0;
+$bulan_ini = date('m');
+$tahun_ini = date('Y');
+$q2 = mysqli_query($koneksi, "SELECT SUM(nominal) as total FROM arus_kas WHERE jenis='Pemasukan' AND MONTH(tanggal)='$bulan_ini' AND YEAR(tanggal)='$tahun_ini'");
+if($q2 && $r = mysqli_fetch_assoc($q2)) $total_pendapatan_bulan = floatval($r['total']);
 
-// 3. Total Cash (Saldo Global)
-$total_kas = 0;
-$q3 = mysqli_query($koneksi, "SELECT SUM(CASE WHEN type='Pemasukan' THEN amount ELSE -amount END) as total_saldo FROM cash_flows");
-if($q3 && $r = mysqli_fetch_assoc($q3)) $total_kas = floatval($r['total_saldo']);
+// 3. Total Cabang
+$total_cabang = 0;
+$q3 = mysqli_query($koneksi, "SELECT COUNT(id) as total FROM cabang");
+if($q3 && $r = mysqli_fetch_assoc($q3)) $total_cabang = $r['total'];
+
+// 4. Peringkat Cabang (Berdasarkan Pendapatan dan Member Bulan Ini)
+$peringkat_cabang = [];
+$q_rank = mysqli_query($koneksi, "
+    SELECT 
+        c.nama_cabang,
+        (SELECT COUNT(id) FROM member WHERE cabang_id = c.id) as total_member,
+        (SELECT SUM(nominal) FROM arus_kas WHERE cabang_id = c.id AND jenis = 'Pemasukan' AND MONTH(tanggal)='$bulan_ini' AND YEAR(tanggal)='$tahun_ini') as pendapatan
+    FROM cabang c
+    ORDER BY pendapatan DESC, total_member DESC
+    LIMIT 5
+");
+if($q_rank) {
+    while($row = mysqli_fetch_assoc($q_rank)) {
+        $peringkat_cabang[] = $row;
+    }
+}
 
 ?>
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
+    
+    <!-- Top Bar (Desktop) -->
+    <div class="topbar hidden lg:flex items-center justify-between h-14 px-6 sticky top-0 z-30">
+        <div>
+            <span class="text-sm font-medium text-algolia-navy">Dashboard</span>
+            <span class="text-sm text-gray-400 mx-2">/</span>
+            <span class="text-sm text-gray-400">CEO</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <span class="badge badge-blue">CEO Access</span>
+            <div class="w-8 h-8 rounded-full bg-algolia-blue flex items-center justify-center">
+                <span class="text-white text-xs font-bold"><?= strtoupper(substr($_SESSION['name'] ?? 'C', 0, 1)) ?></span>
+            </div>
+        </div>
+    </div>
 
-<div class="p-4 sm:ml-64">
-    <div class="p-4 rounded-lg mt-14">
+    <div class="p-4 lg:p-8 page-content">
         
-        <div class="mb-8 flex justify-between items-center border-b border-gray-200 pb-4">
-            <div>
-                <h1 class="text-3xl font-extrabold text-gray-800 tracking-tight">Super Admin Dashboard</h1>
-                <p class="text-base text-gray-500 mt-1">Ringkasan operasional global seluruh cabang Swift SC.</p>
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold text-algolia-navy">Selamat Datang!</h1>
+            <p class="text-sm text-gray-500 mt-1">Ringkasan operasional global seluruh cabang Swift SC</p>
+        </div>
+
+        <!-- Stat Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div class="card p-5">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="stat-label">Total Atlet Global</span>
+                    <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-algolia-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    </div>
+                </div>
+                <div class="stat-number"><?= $total_atlet; ?></div>
+                <p class="text-xs text-gray-400 mt-1">Atlet terdaftar di seluruh cabang</p>
             </div>
-            <div class="text-right">
-                <span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded border border-indigo-400">CEO Access</span>
+
+            <div class="card p-5">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="stat-label">Pendapatan Bulan Ini</span>
+                    <div class="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                </div>
+                <div class="stat-number text-2xl">Rp <?= number_format($total_pendapatan_bulan, 0, ',', '.'); ?></div>
+                <p class="text-xs text-gray-400 mt-1">Total arus kas masuk bulan ini</p>
+            </div>
+
+            <div class="card p-5">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="stat-label">Cabang Beroperasi</span>
+                    <div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                    </div>
+                </div>
+                <div class="stat-number"><?= $total_cabang; ?></div>
+                <p class="text-xs text-gray-400 mt-1">Total lokasi cabang Swift SC</p>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-gradient-to-br from-indigo-600 to-indigo-800 rounded-2xl p-6 shadow-lg text-white relative overflow-hidden">
-                <div class="absolute -right-4 -bottom-4 opacity-10">
-                    <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                </div>
-                <div class="relative z-10">
-                    <p class="text-indigo-100 text-sm font-bold uppercase tracking-wider mb-1">Total Atlet Global</p>
-                    <h3 class="text-4xl font-black"><?= $total_atlet; ?> <span class="text-lg font-medium text-indigo-200">Orang</span></h3>
-                </div>
+        <!-- Peringkat Cabang -->
+        <div class="card overflow-hidden mb-6">
+            <div class="px-5 py-4 border-b border-[#E8E8EF]">
+                <h2 class="text-sm font-bold text-algolia-navy">Peringkat Performa Cabang (Bulan Ini)</h2>
             </div>
-
-            <div class="bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-2xl p-6 shadow-lg text-white relative overflow-hidden">
-                <div class="absolute -right-4 -bottom-4 opacity-10">
-                    <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
-                </div>
-                <div class="relative z-10">
-                    <p class="text-emerald-100 text-sm font-bold uppercase tracking-wider mb-1">Total Saldo Keuangan</p>
-                    <h3 class="text-3xl font-black truncate">Rp <?= number_format($total_kas, 0, ',', '.'); ?></h3>
-                </div>
-            </div>
-
-            <div class="bg-gradient-to-br from-amber-500 to-amber-700 rounded-2xl p-6 shadow-lg text-white relative overflow-hidden">
-                <div class="absolute -right-4 -bottom-4 opacity-10">
-                    <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-                </div>
-                <div class="relative z-10">
-                    <p class="text-amber-100 text-sm font-bold uppercase tracking-wider mb-1">Total Pelatih</p>
-                    <h3 class="text-4xl font-black"><?= $total_pelatih; ?> <span class="text-lg font-medium text-amber-200">Orang</span></h3>
-                </div>
+            <div class="overflow-x-auto">
+                <table class="table-algolia w-full text-left border-collapse">
+                    <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
+                        <tr>
+                            <th class="px-5 py-3 border-b border-[#E8E8EF] w-12 text-center">Rank</th>
+                            <th class="px-5 py-3 border-b border-[#E8E8EF]">Nama Cabang</th>
+                            <th class="px-5 py-3 border-b border-[#E8E8EF] text-center">Total Member Aktif</th>
+                            <th class="px-5 py-3 border-b border-[#E8E8EF] text-right">Pendapatan Bulan Ini</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php 
+                        $rank = 1;
+                        if(count($peringkat_cabang) > 0):
+                            foreach($peringkat_cabang as $p): 
+                        ?>
+                        <tr class="hover:bg-gray-50/50 border-b border-gray-100 transition-colors">
+                            <td class="px-5 py-3 text-center font-bold text-gray-400">#<?= $rank++ ?></td>
+                            <td class="px-5 py-3 text-sm font-bold text-algolia-navy"><?= htmlspecialchars($p['nama_cabang']) ?></td>
+                            <td class="px-5 py-3 text-sm text-gray-600 text-center"><?= $p['total_member'] ?> Atlet</td>
+                            <td class="px-5 py-3 text-sm font-bold text-green-600 text-right">Rp <?= number_format($p['pendapatan'] ?? 0, 0, ',', '.') ?></td>
+                        </tr>
+                        <?php 
+                            endforeach; 
+                        else:
+                        ?>
+                        <tr><td colspan="4" class="px-5 py-10 text-center text-gray-400 italic">Belum ada data performa cabang bulan ini.</td></tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col justify-center items-center text-center">
-                <div class="p-4 bg-indigo-50 rounded-full mb-4">
-                    <svg class="w-10 h-10 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+        <!-- Quick Access -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="card p-6">
+                <div class="flex items-start gap-4">
+                    <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+                        <svg class="w-5 h-5 text-algolia-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-semibold text-algolia-navy mb-1">CMS Konten Web</h3>
+                        <p class="text-xs text-gray-500 mb-3">Ubah teks Banner, Profil Klub, dan Jadwal di halaman publik.</p>
+                        <a href="ceo_cms_web.php" class="btn-primary text-xs">Kelola Konten</a>
+                    </div>
                 </div>
-                <h3 class="text-lg font-bold text-gray-800 mb-2">CMS Konten Web</h3>
-                <p class="text-sm text-gray-500 mb-4">Ubah teks Banner Utama, Profil Klub, dan Jadwal di halaman publik tanpa menyentuh kode.</p>
-                <a href="ceo_cms_web.php" class="bg-indigo-600 text-white font-semibold py-2 px-6 rounded-lg hover:bg-indigo-700 transition">Kelola Konten</a>
             </div>
 
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col justify-center items-center text-center">
-                <div class="p-4 bg-emerald-50 rounded-full mb-4">
-                    <svg class="w-10 h-10 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+            <div class="card p-6">
+                <div class="flex items-start gap-4">
+                    <div class="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0">
+                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-semibold text-algolia-navy mb-1">Laporan Global</h3>
+                        <p class="text-xs text-gray-500 mb-3">Akses Laporan Arus Kas dan Leaderboard Prestasi Atlet.</p>
+                        <a href="ceo_laporan_global.php" class="btn-outline text-xs">Lihat Laporan</a>
+                    </div>
                 </div>
-                <h3 class="text-lg font-bold text-gray-800 mb-2">Laporan Global</h3>
-                <p class="text-sm text-gray-500 mb-4">Akses Laporan Arus Kas lintas cabang dan Leaderboard Prestasi Atlet global.</p>
-                <a href="ceo_laporan_global.php" class="bg-emerald-600 text-white font-semibold py-2 px-6 rounded-lg hover:bg-emerald-700 transition">Lihat Laporan</a>
             </div>
         </div>
 
@@ -94,3 +174,4 @@ if($q3 && $r = mysqli_fetch_assoc($q3)) $total_kas = floatval($r['total_saldo'])
 </div>
 
 <?php include '../includes/footer.php'; ?>
+

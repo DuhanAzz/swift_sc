@@ -51,12 +51,12 @@ if (isset($_POST['simpan_cms'])) {
 }
 ?>
 
-<div class="p-4 sm:ml-64">
-    <div class="p-4 rounded-lg mt-14">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
+    <div class="p-4 lg:p-8 page-content">
         
         <div class="mb-6 flex justify-between items-center border-b pb-4">
             <div>
-                <h1 class="text-2xl font-bold text-gray-800">Teks Banner & Profil Klub</h1>
+                <h1 class="text-xl font-bold text-algolia-navy">Teks Banner & Profil Klub</h1>
                 <p class="text-sm text-gray-500">Edit teks yang tampil pada bagian atas halaman depan publik (index.php).</p>
             </div>
             <a href="ceo_cms_web.php" class="bg-gray-100 text-gray-700 hover:bg-gray-200 font-bold py-2 px-4 rounded-lg text-sm transition-all">&larr; Kembali ke CMS Hub</a>
@@ -66,29 +66,29 @@ if (isset($_POST['simpan_cms'])) {
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div class="lg:col-span-2">
-                <form action="" method="POST" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <form action="" method="POST" class="card p-6">
                     
                     <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2">Bagian Hero Banner</h3>
                     <div class="mb-4">
                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Teks Kecil (Atas)</label>
-                        <input type="text" name="hero_title" value="<?= htmlspecialchars($cmsData['hero_title']); ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3 font-cursive text-lg" required>
+                        <input type="text" name="hero_title" value="<?= htmlspecialchars($cmsData['hero_title']); ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3 font-cursive text-lg" required>
                     </div>
                     <div class="mb-4">
                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Judul Utama (Besar)</label>
-                        <input type="text" name="hero_subtitle" value="<?= htmlspecialchars($cmsData['hero_subtitle']); ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3 font-black uppercase" required>
+                        <input type="text" name="hero_subtitle" value="<?= htmlspecialchars($cmsData['hero_subtitle']); ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3 font-black uppercase" required>
                     </div>
                     <div class="mb-6">
                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Deskripsi Pendek</label>
-                        <textarea name="hero_desc" rows="2" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required><?= htmlspecialchars($cmsData['hero_desc']); ?></textarea>
+                        <textarea name="hero_desc" rows="2" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required><?= htmlspecialchars($cmsData['hero_desc']); ?></textarea>
                     </div>
 
                     <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2 mt-8">Bagian Profil / Tentang Klub</h3>
                     <div class="mb-6">
                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Teks Paragraf "Tentang Swift SC"</label>
-                        <textarea name="about_text" rows="4" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl block w-full p-3" required><?= htmlspecialchars($cmsData['about_text']); ?></textarea>
+                        <textarea name="about_text" rows="4" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required><?= htmlspecialchars($cmsData['about_text']); ?></textarea>
                     </div>
 
-                    <button type="submit" name="simpan_cms" class="w-full text-white bg-indigo-600 hover:bg-indigo-700 font-bold rounded-xl text-sm px-5 py-3 shadow-md">Simpan Perubahan Konten</button>
+                    <button type="submit" name="simpan_cms" class="w-full text-white bg-algolia-blue hover:bg-algolia-darkblue font-bold rounded-xl text-sm px-5 py-3 shadow-md">Simpan Perubahan Konten</button>
                 </form>
             </div>
 
@@ -99,7 +99,7 @@ if (isset($_POST['simpan_cms'])) {
                     <a href="../index.php" target="_blank" class="block text-center w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg text-sm transition-all shadow-md">Lihat Halaman Publik</a>
                 </div>
 
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <div class="card p-6">
                     <h3 class="font-bold text-slate-800 mb-2">Ubah Background Gambar?</h3>
                     <p class="text-sm text-gray-500 mb-4">Untuk mengganti gambar Hero Banner, Anda dapat mengakses fitur ini melalui menu CMS Halaman Web di halaman Admin.</p>
                     <a href="../admin/manage_hero.php" class="text-indigo-600 font-semibold hover:underline text-sm">Buka Upload Gambar Banner &rarr;</a>

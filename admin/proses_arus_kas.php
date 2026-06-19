@@ -4,7 +4,7 @@ include '../includes/koneksi.php';
 
 // PROSES TAMBAH KAS BARU
 if(isset($_POST['tambah'])){
-    $pool_id          = mysqli_real_escape_string($koneksi, $_POST['pool_id']);
+    $cabang_id        = mysqli_real_escape_string($koneksi, $_POST['cabang_id']);
     // Mengambil ID user dari session admin yang sedang login
     $user_id          = $_SESSION['user_id'] ?? 0; 
     
@@ -14,7 +14,7 @@ if(isset($_POST['tambah'])){
     $amount           = (int)$_POST['amount'];
     $description      = mysqli_real_escape_string($koneksi, $_POST['description']);
 
-    $q = mysqli_query($koneksi, "INSERT INTO cash_flows (pool_id, user_id, transaction_date, type, category, amount, description) VALUES ('$pool_id', '$user_id', '$transaction_date', '$type', '$category', '$amount', '$description')");
+    $q = mysqli_query($koneksi, "INSERT INTO cash_flows (cabang_id, user_id, transaction_date, type, category, amount, description) VALUES ('$cabang_id', '$user_id', '$transaction_date', '$type', '$category', '$amount', '$description')");
     
     if($q) {
         header("location:arus_kas.php?pesan=sukses_tambah");

@@ -21,8 +21,8 @@ if($q_atlet) {
 }
 ?>
 
-<div class="p-4 sm:ml-64">
-    <div class="p-4 rounded-lg mt-14 max-w-2xl mx-auto">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
+    <div class="p-4 lg:p-8 page-content">
         
         <?php 
         if(isset($_GET['pesan'])){
@@ -48,7 +48,7 @@ if($q_atlet) {
             </div>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div class="card p-6">
             <form action="pelatih_performa_proses.php" method="POST" class="space-y-4">
                 
                 <div>
@@ -109,7 +109,7 @@ if($q_atlet) {
                 </div>
 
                 <div class="pt-4">
-                    <button type="submit" name="simpan" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg transition-transform active:scale-95 text-lg">
+                    <button type="submit" name="simpan" class="w-full bg-algolia-blue hover:bg-algolia-darkblue text-white font-bold py-4 rounded-xl shadow-lg transition-transform active:scale-95 text-lg">
                         Simpan Rekor
                     </button>
                 </div>

@@ -6,11 +6,11 @@ include '../includes/sidebar.php';
 include '../includes/koneksi.php';
 ?>
 
-<div class="p-4 sm:ml-64">
-    <div class="p-4 rounded-lg mt-14">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
+    <div class="p-4 lg:p-8 page-content">
         
         <div class="mb-6">
-            <h1 class="text-2xl font-bold text-gray-800">Jadwal Latihan</h1>
+            <h1 class="text-xl font-bold text-algolia-navy">Jadwal Latihan</h1>
             <p class="text-sm text-gray-500">Atur agenda dan program latihan mingguan</p>
         </div>
 
@@ -24,12 +24,12 @@ include '../includes/koneksi.php';
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             
             <div class="md:col-span-1">
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                <div class="bg-white p-5 rounded-2xl card-hover">
                     <h2 class="font-bold text-gray-700 mb-4 uppercase text-sm border-b pb-2">Tambah Jadwal Baru</h2>
                     <form action="proses_jadwal.php" method="POST">
                         <div class="mb-4">
                             <label class="block text-xs font-bold text-gray-500 mb-2">Hari</label>
-                            <select name="hari" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5" required>
+                            <select name="hari" class="bg-gray-50 border border-[#E8E8EF] text-sm rounded-lg block w-full p-2.5" required>
                                 <option value="Senin">Senin</option><option value="Selasa">Selasa</option>
                                 <option value="Rabu">Rabu</option><option value="Kamis">Kamis</option>
                                 <option value="Jumat">Jumat</option><option value="Sabtu">Sabtu</option>
@@ -39,22 +39,22 @@ include '../includes/koneksi.php';
                         <div class="grid grid-cols-2 gap-4 mb-4">
                             <div>
                                 <label class="block text-xs font-bold text-gray-500 mb-2">Jam Mulai</label>
-                                <input type="time" name="jam_mulai" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5" required>
+                                <input type="time" name="jam_mulai" class="bg-gray-50 border border-[#E8E8EF] text-sm rounded-lg block w-full p-2.5" required>
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-500 mb-2">Jam Selesai</label>
-                                <input type="time" name="jam_selesai" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5" required>
+                                <input type="time" name="jam_selesai" class="bg-gray-50 border border-[#E8E8EF] text-sm rounded-lg block w-full p-2.5" required>
                             </div>
                         </div>
                         <div class="mb-4">
                             <label class="block text-xs font-bold text-gray-500 mb-2">Lokasi / Kolam</label>
-                            <input type="text" name="lokasi" placeholder="Misal: Kolam Renang Tirtomoyo" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5" required>
+                            <input type="text" name="lokasi" placeholder="Misal: Kolam Renang Tirtomoyo" class="bg-gray-50 border border-[#E8E8EF] text-sm rounded-lg block w-full p-2.5" required>
                         </div>
                         <div class="mb-5">
                             <label class="block text-xs font-bold text-gray-500 mb-2">Fokus Program (Opsional)</label>
-                            <textarea name="program" rows="3" placeholder="Misal: Sprint 50m Gaya Bebas" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5"></textarea>
+                            <textarea name="program" rows="3" placeholder="Misal: Sprint 50m Gaya Bebas" class="bg-gray-50 border border-[#E8E8EF] text-sm rounded-lg block w-full p-2.5"></textarea>
                         </div>
-                        <button type="submit" name="tambah_jadwal" class="w-full text-white bg-blue-700 hover:bg-blue-800 font-bold rounded-lg text-sm px-5 py-2.5">
+                        <button type="submit" name="tambah_jadwal" class="w-full text-white bg-algolia-blue hover:bg-algolia-darkblue font-bold rounded-lg text-sm px-5 py-2.5">
                             Simpan Jadwal
                         </button>
                     </form>
@@ -62,9 +62,9 @@ include '../includes/koneksi.php';
             </div>
 
             <div class="md:col-span-2">
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <table class="w-full text-sm text-left text-gray-500">
-                        <thead class="text-xs text-white uppercase bg-slate-800">
+                <div class="card overflow-hidden">
+                    <table class="table-algolia">
+                        <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
                             <tr>
                                 <th class="px-6 py-4">Hari & Waktu</th>
                                 <th class="px-6 py-4">Lokasi</th>
