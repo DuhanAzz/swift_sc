@@ -39,6 +39,32 @@ if($q_perf) {
         $recent_performances[] = $row;
     }
 }
+
+// 4. Pendaftar Baru (Pending)
+$pending_count = 0;
+$q_pending = mysqli_query($koneksi, "SELECT COUNT(id) as total FROM calon_member WHERE status_approval='Pending'" . (!empty($admin_pool_id) ? " AND cabang_id='$admin_pool_id'" : ""));
+if($q_pending) $pending_count = mysqli_fetch_assoc($q_pending)['total'] ?? 0;
+
+// 5. Jatuh Tempo Tagihan — Member yang sudah 8x hadir bulan ini tapi belum bayar
+$bulan_ini = date('m');
+$tahun_ini = date('Y');
+$overdue_members = [];
+$q_members = mysqli_query($koneksi, "SELECT m.id, m.nama, m.no_hp, m.nia FROM member m WHERE m.cabang_id='$admin_pool_id' ORDER BY m.nama ASC");
+if($q_members) {
+    while($mem = mysqli_fetch_assoc($q_members)) {
+        // Hitung kehadiran bulan ini
+        $q_cnt = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM absensi WHERE member_id='{$mem['id']}' AND status='Hadir' AND MONTH(tanggal)='$bulan_ini' AND YEAR(tanggal)='$tahun_ini'");
+        $cnt = ($q_cnt) ? (mysqli_fetch_assoc($q_cnt)['total'] ?? 0) : 0;
+        if($cnt >= 8) {
+            // Cek apakah sudah bayar bulan ini
+            $q_pay = mysqli_query($koneksi, "SELECT status FROM pembayaran WHERE member_id='{$mem['id']}' AND bulan='$bulan_ini' AND tahun='$tahun_ini' AND status='Lunas'");
+            if(!$q_pay || mysqli_num_rows($q_pay) == 0) {
+                $mem['jumlah_hadir'] = $cnt;
+                $overdue_members[] = $mem;
+            }
+        }
+    }
+}
 ?>
 <div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
     
@@ -70,7 +96,7 @@ if($q_perf) {
         </div>
 
         <!-- Stat Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             
             <div class="card p-5">
                 <div class="flex items-center justify-between mb-3">
@@ -104,7 +130,90 @@ if($q_perf) {
                 <div class="stat-number"><?= isset($total_rekor) ? $total_rekor : 0; ?></div>
                 <p class="text-xs text-gray-400 mt-1">Rekor performa dicatat</p>
             </div>
+
+            <a href="admin_member.php" class="card p-5 hover:shadow-md transition-shadow relative overflow-hidden">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="stat-label">Pendaftar Baru</span>
+                    <div class="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+                    </div>
+                </div>
+                <div class="stat-number <?= $pending_count > 0 ? 'text-orange-500' : '' ?>"><?= $pending_count; ?></div>
+                <p class="text-xs text-gray-400 mt-1">Menunggu verifikasi</p>
+                <?php if($pending_count > 0): ?>
+                <span class="absolute top-3 right-3 w-2.5 h-2.5 bg-orange-500 rounded-full animate-pulse"></span>
+                <?php endif; ?>
+            </a>
         </div>
+
+        <!-- Jatuh Tempo Tagihan Panel -->
+        <?php if(count($overdue_members) > 0): ?>
+        <div class="card overflow-hidden mb-6 border-2 border-amber-200">
+            <div class="px-5 py-4 bg-amber-50 border-b border-amber-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                <div class="flex items-center gap-2">
+                    <span class="text-amber-600 text-lg">⚠️</span>
+                    <div>
+                        <h2 class="text-sm font-bold text-amber-800">Jatuh Tempo Tagihan (Sudah 8x Hadir)</h2>
+                        <p class="text-[10px] text-amber-600"><?= count($overdue_members) ?> atlet perlu ditagih bulan <?= $nama_bulan[date('m')] ?? date('F') ?></p>
+                    </div>
+                </div>
+                <a href="pembayaran.php" class="text-xs font-bold text-amber-700 hover:underline bg-amber-100 px-3 py-1.5 rounded-lg">Kelola Tagihan →</a>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="table-algolia">
+                    <thead>
+                        <tr>
+                            <th>Atlet</th>
+                            <th>NIA</th>
+                            <th class="text-center">Kehadiran</th>
+                            <th>No. WA</th>
+                            <th class="text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <?php 
+                    $nama_bulan = ['01'=>'Januari','02'=>'Februari','03'=>'Maret','04'=>'April','05'=>'Mei','06'=>'Juni','07'=>'Juli','08'=>'Agustus','09'=>'September','10'=>'Oktober','11'=>'November','12'=>'Desember'];
+                    foreach($overdue_members as $om): 
+                        $wa_num = preg_replace('/^0/', '62', $om['no_hp'] ?? '');
+                        $wa_text = "Halo Kak " . $om['nama'] . ", ini pengingat tagihan iuran bulanan Swift SC.\n\nAnda sudah menyelesaikan " . $om['jumlah_hadir'] . "x pertemuan bulan " . ($nama_bulan[date('m')] ?? '') . " " . date('Y') . ".\n\nMohon segera melakukan pembayaran iuran. Terima kasih! 🏊";
+                    ?>
+                        <tr class="bg-amber-50/30">
+                            <td class="font-bold text-gray-800"><?= htmlspecialchars($om['nama']) ?></td>
+                            <td class="text-xs text-gray-500 font-mono"><?= htmlspecialchars($om['nia'] ?? '-') ?></td>
+                            <td class="text-center">
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700">
+                                    <?= $om['jumlah_hadir'] ?>x hadir
+                                </span>
+                            </td>
+                            <td class="text-xs text-gray-600"><?= htmlspecialchars($om['no_hp'] ?? '-') ?></td>
+                            <td class="text-center">
+                                <a href="https://wa.me/<?= $wa_num ?>?text=<?= urlencode($wa_text) ?>" target="_blank" class="inline-flex items-center gap-1 bg-green-500 hover:bg-green-600 text-white font-bold py-1.5 px-3 rounded-lg text-[10px] transition-colors">
+                                    💬 Kirim WA
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <!-- Pending Registrations Panel -->
+        <?php if($pending_count > 0): ?>
+        <div class="card overflow-hidden mb-6 border-2 border-blue-200">
+            <div class="px-5 py-4 bg-blue-50 border-b border-blue-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                <div class="flex items-center gap-2">
+                    <span class="text-blue-500 text-lg">📋</span>
+                    <div>
+                        <h2 class="text-sm font-bold text-blue-800">Pendaftar Menunggu Verifikasi</h2>
+                        <p class="text-[10px] text-blue-600"><?= $pending_count ?> pendaftar baru perlu di-approve</p>
+                    </div>
+                </div>
+                <a href="admin_member.php" class="text-xs font-bold text-blue-700 hover:underline bg-blue-100 px-3 py-1.5 rounded-lg">Verifikasi Sekarang →</a>
+            </div>
+        </div>
+        <?php endif; ?>
 
         <!-- Recent Performance Table -->
         <div class="card overflow-hidden">
