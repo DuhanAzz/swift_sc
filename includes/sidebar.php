@@ -12,11 +12,13 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
         </svg>
     </button>
-    <div class="flex items-center gap-1.5">
-        <img src="../assets/logo.png" alt="Swift SC" class="h-7 w-7 object-contain rounded" onerror="this.style.display='none'">
-        <span class="font-bold text-sm text-algolia-navy">Swift<span class="text-algolia-blue">SC</span></span>
+    <div class="flex items-center gap-2.5">
+        <div class="bg-white p-1.5 rounded-full shadow-sm w-9 h-9 flex items-center justify-center">
+            <img src="../assets/logo.png" alt="Swift SC" class="h-6 w-6 object-contain" onerror="this.onerror=null; this.outerHTML='<div class=\'w-6 h-6 rounded-full bg-algolia-blue flex items-center justify-center\'><svg class=\'w-4 h-4 text-white\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2.5\' d=\'M13 10V3L4 14h7v7l9-11h-7z\'></path></svg></div>';">
+        </div>
+        <span class="font-black italic tracking-tighter text-lg text-algolia-navy">Swift<span class="text-algolia-blue">SC</span></span>
     </div>
-    <div class="w-8 h-8 rounded-full bg-algolia-blue flex items-center justify-center">
+    <div class="w-8 h-8 rounded-full bg-algolia-blue flex items-center justify-center shadow-md">
         <span class="text-white text-xs font-bold"><?= strtoupper(substr($nama, 0, 1)) ?></span>
     </div>
 </div>
@@ -28,10 +30,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
 <aside id="sidebar" class="sidebar-nav fixed left-0 top-0 h-full w-[220px] z-50 flex flex-col transform -translate-x-full lg:translate-x-0 transition-transform duration-200 ease-in-out overflow-hidden">
     
     <!-- Logo -->
-    <div class="px-4 pt-5 pb-3 flex items-center gap-2.5 border-b border-white/[0.06] mb-2">
-        <img src="../assets/logo.png" alt="Swift SC" class="h-7 w-7 object-contain rounded flex-shrink-0" onerror="this.onerror=null; this.outerHTML='<div class=\'w-7 h-7 rounded-lg bg-algolia-blue flex items-center justify-center flex-shrink-0\'><svg class=\'w-4 h-4 text-white\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2.5\' d=\'M13 10V3L4 14h7v7l9-11h-7z\'></path></svg></div>';">
+    <div class="px-5 pt-6 pb-4 flex items-center gap-3 border-b border-slate-800 mb-2">
+        <div class="bg-white p-2 rounded-full shadow-lg w-12 h-12 flex items-center justify-center flex-shrink-0">
+            <img src="../assets/logo.png" alt="Swift SC" class="h-8 w-8 object-contain" onerror="this.onerror=null; this.outerHTML='<div class=\'w-8 h-8 rounded-full bg-algolia-blue flex items-center justify-center flex-shrink-0\'><svg class=\'w-5 h-5 text-white\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2.5\' d=\'M13 10V3L4 14h7v7l9-11h-7z\'></path></svg></div>';">
+        </div>
         <div>
-            <span class="font-bold text-[15px] text-white tracking-tight">Swift<span class="text-algolia-blue">SC</span></span>
+            <span class="font-black italic tracking-tighter text-xl text-white">Swift<span class="text-algolia-blue">SC</span></span>
         </div>
     </div>
     
@@ -126,6 +130,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <a href="../pelatih/pelatih_program.php" class="sidebar-link <?= ($current_page == 'pelatih_program.php') ? 'active' : '' ?>">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                 Jurnal Latihan
+            </a>
+            
+            <div class="sidebar-section-title mt-4">Tools Lapangan</div>
+            <a href="../pelatih/stopwatch.php" class="sidebar-link <?= ($current_page == 'stopwatch.php') ? 'active' : '' ?>">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                Digital Stopwatch
             </a>
         <?php endif; ?>
     </nav>

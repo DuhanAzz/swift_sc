@@ -6,30 +6,31 @@
     <title>Swift Swimming Club</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        // Algolia Dashboard palette
+                        // Global Dashboard palette overridden to Navy/Cyan
                         algolia: {
-                            blue: '#5468FF',
-                            darkblue: '#3A4DC7',
-                            navy: '#21243D',
-                            sidebar: '#1B1D2E',
-                            hover: '#5468FF',
+                            blue: '#0891b2', // cyan-600
+                            darkblue: '#0e7490', // cyan-700
+                            navy: '#0f172a', // slate-900
+                            sidebar: '#0f172a', // slate-900
+                            hover: '#0891b2', // cyan-600
                         },
                         panel: {
                             bg: '#FFFFFF',
-                            surface: '#F5F5FA',
-                            border: '#E8E8EF',
-                            hover: '#FAFAFE',
+                            surface: '#f8fafc',
+                            border: '#e2e8f0',
+                            hover: '#f1f5f9',
                         }
                     },
                     fontFamily: {
-                        'inter': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        'inter': ['Plus Jakarta Sans', 'sans-serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
                     },
                 }
             }
@@ -38,14 +39,14 @@
     
     <style>
         body { 
-            font-family: 'Inter', system-ui, -apple-system, sans-serif; 
-            background: #F5F5FA;
-            color: #21243D;
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: #f8fafc;
+            color: #0f172a;
         }
         
         /* Sidebar */
         .sidebar-nav {
-            background: #21243D;
+            background: #0f172a;
         }
         .sidebar-link {
             display: flex;
@@ -53,21 +54,21 @@
             gap: 10px;
             padding: 8px 16px;
             font-size: 13px;
-            font-weight: 500;
-            color: #9CA0B8;
-            border-radius: 6px;
+            font-weight: 600;
+            color: #94a3b8;
+            border-radius: 8px;
             transition: all 0.15s ease;
             text-decoration: none;
             position: relative;
-            margin: 1px 0;
+            margin: 2px 0;
         }
         .sidebar-link:hover {
-            color: #FFFFFF;
-            background: rgba(255,255,255,0.06);
+            color: #ffffff;
+            background: rgba(255,255,255,0.1);
         }
         .sidebar-link.active {
-            color: #5468FF;
-            background: rgba(84,104,255,0.08);
+            color: #22d3ee;
+            background: rgba(34, 211, 238, 0.1);
         }
         .sidebar-link.active::before {
             content: '';
@@ -75,16 +76,16 @@
             left: -12px;
             top: 4px;
             bottom: 4px;
-            width: 3px;
-            background: #5468FF;
-            border-radius: 0 3px 3px 0;
+            width: 4px;
+            background: #06b6d4;
+            border-radius: 0 4px 4px 0;
         }
         .sidebar-section-title {
             font-size: 11px;
-            font-weight: 600;
-            color: #6B6F8D;
+            font-weight: 700;
+            color: #64748b;
             text-transform: uppercase;
-            letter-spacing: 0.08em;
+            letter-spacing: 0.1em;
             padding: 8px 16px 4px;
             margin-top: 16px;
         }
@@ -92,13 +93,32 @@
         /* Cards */
         .card {
             background: #FFFFFF;
-            border: 1px solid #E8E8EF;
-            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 1rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
         }
         .card-hover:hover {
-            border-color: #D1D5DB;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
+        
+        /* Stat Cards Number Weight */
+        .stat-number {
+            font-weight: 800;
+        }
+        
+        /* Buttons */
+        button, .btn, a.badge {
+            border-radius: 0.5rem !important; /* rounded-lg */
+        }
+        
+        /* Modern Tables */
+        table { border-collapse: separate; border-spacing: 0; width: 100%; border-radius: 0.75rem; overflow: hidden; }
+        th { background-color: #f8fafc; font-weight: 700 !important; color: #475569 !important; padding: 1rem 1.25rem !important; border-bottom: 1px solid #e2e8f0; }
+        td { padding: 1rem 1.25rem !important; border-bottom: 1px solid #f1f5f9; color: #334155; }
+        tbody tr:hover { background-color: #f8fafc; }
+        tbody tr:nth-child(even) { background-color: #fcfcfd; }
+
         
         /* Topbar */
         .topbar {
