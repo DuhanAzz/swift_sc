@@ -52,13 +52,23 @@ try {
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
         .bg-ocean {
-            background-color: #0b162c; /* Updated specific Poster Navy */
+            background-color: #0b162c;
             background-image: 
                 radial-gradient(ellipse at top right, rgba(13, 148, 136, 0.25) 0%, transparent 60%),
-                radial-gradient(ellipse at bottom left, rgba(249, 115, 22, 0.15) 0%, transparent 60%); /* Added orange subtle glow */
+                radial-gradient(ellipse at bottom left, rgba(249, 115, 22, 0.15) 0%, transparent 60%);
             background-size: cover;
             background-repeat: no-repeat;
-            background-attachment: fixed;
+            /* background-attachment: fixed; dihapus karena menyebabkan lag saat scrolling */
+        }
+        .bg-ocean-glow {
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(13, 148, 136, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(249, 115, 22, 0.1) 0%, transparent 50%);
+            animation: soft-pulse 8s infinite alternate ease-in-out;
+        }
+        @keyframes soft-pulse {
+            from { opacity: 0.7; transform: scale(1); }
+            to { opacity: 1; transform: scale(1.05); }
         }
         .badge-orange {
             background-color: #f97316;
@@ -69,11 +79,8 @@ try {
 </head>
 <body class="bg-ocean text-slate-100 antialiased relative overflow-x-hidden min-h-screen">
     
-    <!-- Background Decorative Elements -->
-    <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
-        <div class="absolute -top-1/4 -left-1/4 w-1/2 h-1/2 bg-teal-900/30 rounded-full mix-blend-screen filter blur-[128px] animate-pulse"></div>
-        <div class="absolute -bottom-1/4 -right-1/4 w-1/2 h-1/2 bg-orange-900/20 rounded-full mix-blend-screen filter blur-[128px] animate-pulse" style="animation-delay: 2s;"></div>
-    </div>
+    <!-- Background Decorative Elements (Optimized) -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none bg-ocean-glow"></div>
 
     <nav class="glass-panel sticky top-0 z-50 border-b border-slate-700/50 shadow-sm">
         <div class="container mx-auto flex justify-between items-center px-4 py-3">
