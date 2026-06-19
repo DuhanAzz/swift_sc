@@ -38,6 +38,26 @@ if(isset($_POST['simpan_pengeluaran'])){
     }
 }
 
+// Proses Tambah Pemasukan Manual
+if(isset($_POST['simpan_pemasukan'])){
+    $nominal = (float) $_POST['nominal'];
+    $keterangan = mysqli_real_escape_string($koneksi, $_POST['keterangan']);
+    $tanggal = mysqli_real_escape_string($koneksi, $_POST['tanggal']);
+    $user_id = intval($_SESSION['user_id'] ?? 0);
+    
+    if($nominal > 0 && !empty($keterangan) && !empty($tanggal)){
+        $q_insert = mysqli_query($koneksi, "INSERT INTO arus_kas (cabang_id, jenis, nominal, keterangan, tanggal, user_id) 
+                                            VALUES ('$admin_pool_id', 'Pemasukan', '$nominal', '$keterangan', '$tanggal', '$user_id')");
+        if($q_insert) {
+            header("location:arus_kas.php?tgl_mulai=$tgl_mulai&tgl_akhir=$tgl_akhir&pesan=sukses_masuk");
+            exit;
+        } else {
+            header("location:arus_kas.php?tgl_mulai=$tgl_mulai&tgl_akhir=$tgl_akhir&pesan=gagal");
+            exit;
+        }
+    }
+}
+
 // Hapus Transaksi (Hanya jika dibutuhkan, tapi untuk ledger baiknya ada pembatasan. Kita sediakan endpoint hapusnya)
 if(isset($_GET['hapus'])){
     $id_hapus = intval($_GET['hapus']);
@@ -82,6 +102,7 @@ if($q_tabel) {
         if(isset($_GET['pesan'])){
             $pesan = $_GET['pesan'];
             if($pesan == "sukses") echo '<div class="p-3 mb-4 text-sm text-green-800 rounded-lg bg-green-50 border border-green-200 font-medium">✅ Transaksi pengeluaran berhasil dicatat!</div>';
+            if($pesan == "sukses_masuk") echo '<div class="p-3 mb-4 text-sm text-green-800 rounded-lg bg-green-50 border border-green-200 font-medium">✅ Transaksi pemasukan berhasil dicatat!</div>';
             if($pesan == "hapus_sukses") echo '<div class="p-3 mb-4 text-sm text-amber-800 rounded-lg bg-amber-50 border border-amber-200 font-medium">🗑️ Transaksi berhasil dihapus.</div>';
             if($pesan == "gagal") echo '<div class="p-3 mb-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200 font-medium">❌ Terjadi kesalahan saat menyimpan transaksi.</div>';
         }
@@ -97,6 +118,9 @@ if($q_tabel) {
                 <a href="export_arus_kas.php?tgl_mulai=<?= $tgl_mulai ?>&tgl_akhir=<?= $tgl_akhir ?>" target="_blank" class="bg-white border border-[#E8E8EF] text-gray-700 px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-gray-50 transition-colors">
                     <span>📊</span> Export Excel
                 </a>
+                <button data-modal-target="modalPemasukan" data-modal-toggle="modalPemasukan" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors shadow-sm">
+                    + Input Pemasukan
+                </button>
                 <button data-modal-target="modalPengeluaran" data-modal-toggle="modalPengeluaran" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors shadow-sm">
                     - Input Pengeluaran
                 </button>
@@ -236,6 +260,41 @@ if($q_tabel) {
                 
                 <button type="submit" name="simpan_pengeluaran" class="w-full text-white bg-red-500 hover:bg-red-600 font-bold rounded-lg text-sm px-5 py-3 transition-colors shadow-sm">
                     Simpan Pengeluaran
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Input Pemasukan -->
+<div id="modalPemasukan" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative p-4 w-full max-w-md max-h-full">
+        <div class="relative bg-white rounded-xl shadow-lg border border-panel-border">
+            <div class="flex items-center justify-between p-4 border-b">
+                <h3 class="text-base font-bold text-algolia-navy">Input Pemasukan Manual</h3>
+                <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-toggle="modalPemasukan">
+                    <svg class="w-3 h-3" fill="none" viewBox="0 0 14 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/></svg>
+                </button>
+            </div>
+            <form action="arus_kas.php" method="POST" class="p-5">
+                <input type="hidden" name="tgl_mulai" value="<?= $tgl_mulai ?>">
+                <input type="hidden" name="tgl_akhir" value="<?= $tgl_akhir ?>">
+                
+                <div class="mb-4">
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Tanggal</label>
+                    <input type="date" name="tanggal" value="<?= date('Y-m-d') ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-lg focus:ring-algolia-blue block w-full p-2.5" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Nominal (Rp)</label>
+                    <input type="number" name="nominal" placeholder="Contoh: 150000" min="1" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-lg focus:ring-algolia-blue block w-full p-2.5" required>
+                </div>
+                <div class="mb-5">
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Keterangan / Sumber Pemasukan</label>
+                    <textarea name="keterangan" rows="3" placeholder="Contoh: Pembayaran SPP bulan Maret via Transfer..." class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-lg focus:ring-algolia-blue block w-full p-2.5" required></textarea>
+                </div>
+                
+                <button type="submit" name="simpan_pemasukan" class="w-full text-white bg-emerald-500 hover:bg-emerald-600 font-bold rounded-lg text-sm px-5 py-3 transition-colors shadow-sm">
+                    Simpan Pemasukan
                 </button>
             </form>
         </div>
