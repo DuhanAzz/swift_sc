@@ -90,6 +90,15 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
                         $last_pay = $r_last;
                     }
                     
+                    // === PELACAKAN CAKUPAN PEMBAYARAN ===
+                    $total_paid = 0;
+                    $last_paid_date = null;
+                    $q_cover = mysqli_query($koneksi, "SELECT COUNT(id) as total, MAX(tanggal) as last_date FROM absensi WHERE member_id='$atlet_id' AND status_bayar='Paid' AND status='Hadir'");
+                    if($q_cover && $r_cover = mysqli_fetch_assoc($q_cover)) {
+                        $total_paid = $r_cover['total'] ?? 0;
+                        $last_paid_date = $r_cover['last_date'] ?? null;
+                    }
+                    
                     // Status logic
                     $perlu_bayar = ($jumlah_hadir >= $limit_hadir);
                     $sudah_lunas = false;
@@ -147,6 +156,18 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
                                     <span class="font-medium text-gray-600"><?= $nama_bulan_arr[str_pad($last_pay['bulan'],2,'0',STR_PAD_LEFT)] ?? '' ?> <?= $last_pay['tahun'] ?></span>
                                 </div>
                                 <?php endif; ?>
+                                
+                                <div class="flex items-center justify-between mt-2 pt-2 border-t border-dashed border-gray-200">
+                                    <span class="text-gray-500 font-bold">Tercover Hingga</span>
+                                    <?php if($total_paid > 0): ?>
+                                    <div class="text-right">
+                                        <span class="block font-bold text-indigo-600">Sesi ke-<?= $total_paid ?></span>
+                                        <span class="block text-[9px] text-gray-400">Tgl: <?= date('d M Y', strtotime($last_paid_date)) ?></span>
+                                    </div>
+                                    <?php else: ?>
+                                    <span class="text-[10px] text-gray-400 italic">Belum ada riwayat bayar</span>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         </div>
 
