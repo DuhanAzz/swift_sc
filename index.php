@@ -109,42 +109,43 @@ try {
         </div>
     </nav>
 
-    <!-- Hero Section (True Split-Screen) -->
-    <header class="relative w-full min-h-screen flex flex-col md:flex-row" id="heroHeader">
+    <!-- Hero Section (True Split-Screen & Mobile Optimized) -->
+    <header class="relative w-full min-h-[100dvh] flex flex-col md:flex-row" id="heroHeader">
         
-        <!-- Sisi Kiri: Rata Kiri, Full Blur, Teks (50% on desktop) -->
-        <div class="relative w-full md:w-1/2 min-h-[60vh] md:min-h-screen flex flex-col justify-center overflow-hidden">
+        <!-- Sisi Kiri: Rata Kiri, Full Blur, Teks -->
+        <div class="relative w-full md:w-1/2 flex-[1.2] md:flex-none md:min-h-screen flex flex-col justify-center overflow-hidden">
             <!-- Background Kiri (Statis) -->
             <?php $first_bg = count($banners) > 0 ? "admin/uploads/".$banners[0]['gambar'] : "https://images.unsplash.com/photo-1572334057861-6d72dbb688d2?auto=format&fit=crop&w=1920&q=80"; ?>
             <div id="heroLeftBg" class="absolute inset-0 bg-cover bg-center transition-opacity duration-1000" style="background-image: url('<?= htmlspecialchars($first_bg) ?>');"></div>
             
             <!-- Overlay Blur & Teks Rata Kiri (Permanen) -->
-            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-xl z-10 flex flex-col justify-center px-6 sm:px-12 md:px-16 lg:px-24">
+            <div class="absolute inset-0 bg-slate-900/70 md:bg-slate-900/60 backdrop-blur-xl z-10 flex flex-col justify-center px-6 sm:px-12 md:px-16 lg:px-24">
                 <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 to-transparent"></div>
                 <div class="absolute top-20 -left-10 w-64 h-64 bg-cyan-500/20 rounded-full filter blur-[60px] -z-10"></div>
                 
-                <h2 class="text-3xl md:text-4xl mb-4 text-cyan-300 font-extrabold drop-shadow-md tracking-wider">
+                <h2 class="text-xl sm:text-3xl md:text-4xl mb-2 sm:mb-4 text-cyan-300 font-extrabold drop-shadow-md tracking-wider">
                     Jump in. let's swim!
                 </h2>
-                <h1 class="text-6xl md:text-7xl lg:text-8xl font-black mb-6 uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white via-slate-100 to-cyan-400 drop-shadow-2xl leading-[1.1]">
+                <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black mb-4 sm:mb-6 uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white via-slate-100 to-cyan-400 drop-shadow-2xl leading-[1.1]">
                     SWIFT SC
                 </h1>
-                <p class="text-base md:text-xl text-slate-200 font-medium mb-10 leading-relaxed max-w-lg drop-shadow">
+                <p class="text-sm sm:text-base md:text-xl text-slate-200 font-medium mb-8 sm:mb-10 leading-relaxed max-w-lg drop-shadow">
                     Klub renang resmi dan tersertifikasi dengan fasilitas pelatih berlisensi nasional & internasional.
                 </p>
                 <div>
-                    <a href="pendaftaran.php" class="bg-cyan-600 hover:bg-cyan-500 text-white px-8 py-4 rounded-full font-bold text-base md:text-lg transition-all inline-flex items-center gap-3 transform hover:-translate-y-1 hover:scale-105 border border-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.4)]">
+                    <a href="pendaftaran.php" class="bg-cyan-600 hover:bg-cyan-500 text-white px-6 py-3 sm:px-8 sm:py-4 rounded-full font-bold text-sm sm:text-base md:text-lg transition-all inline-flex items-center gap-3 transform hover:-translate-y-1 hover:scale-105 border border-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.4)]">
                         DAFTAR SEKARANG
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </a>
                 </div>
             </div>
         </div>
 
-        <!-- Sisi Kanan: Gambar Dinamis Bergeser (50% on desktop) -->
-        <div class="relative w-full md:w-1/2 min-h-[40vh] md:min-h-screen bg-slate-900 overflow-hidden">
+        <!-- Sisi Kanan: Gambar Dinamis Bergeser -->
+        <div class="relative w-full md:w-1/2 flex-1 md:flex-none md:min-h-screen bg-slate-900 overflow-hidden">
             <!-- Shadow gradient di perbatasan untuk pemisah yang halus -->
-            <div class="absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-slate-900/30 to-transparent z-10 hidden md:block"></div>
+            <div class="absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-slate-900/50 to-transparent z-10 hidden md:block"></div>
+            <div class="absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-slate-900/50 to-transparent z-10 block md:hidden"></div>
             
             <div id="heroRightBg" class="absolute inset-0 bg-cover bg-center transition-all duration-[5000ms] ease-linear transform scale-110" style="background-image: url('<?= htmlspecialchars($first_bg) ?>');"></div>
         </div>
