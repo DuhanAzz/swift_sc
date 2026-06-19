@@ -118,20 +118,22 @@ try {
             <?php $first_bg = count($banners) > 0 ? "admin/uploads/".$banners[0]['gambar'] : "https://images.unsplash.com/photo-1572334057861-6d72dbb688d2?auto=format&fit=crop&w=1920&q=80"; ?>
             <div id="heroLeftBg" class="absolute inset-0 bg-cover bg-center transition-opacity duration-1000" style="background-image: url('<?= htmlspecialchars($first_bg) ?>');"></div>
             
-            <!-- Overlay Blur & Teks Rata Kiri -->
-            <div id="heroTextContainer" class="absolute inset-0 bg-slate-900/60 backdrop-blur-xl z-10 flex flex-col justify-center px-6 sm:px-12 md:px-16 lg:px-24 transition-opacity duration-1000">
+            <!-- Overlay Blur & Teks Rata Kiri (Permanen) -->
+            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-xl z-10 flex flex-col justify-center px-6 sm:px-12 md:px-16 lg:px-24">
                 <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 to-transparent"></div>
                 <div class="absolute top-20 -left-10 w-64 h-64 bg-cyan-500/20 rounded-full filter blur-[60px] -z-10"></div>
                 
-                <h2 id="heroSlideTitle" class="text-4xl md:text-5xl lg:text-6xl mb-6 text-white font-black drop-shadow-lg tracking-tight leading-[1.1]">
-                    <?= htmlspecialchars(count($banners) > 0 ? $banners[0]['judul'] : 'Jump in. let\'s swim!') ?>
+                <h2 class="text-3xl md:text-4xl mb-4 text-cyan-300 font-extrabold drop-shadow-md tracking-wider">
+                    Jump in. let's swim!
                 </h2>
-                <p id="heroSlideSubtitle" class="text-base md:text-xl text-cyan-50 font-medium mb-10 leading-relaxed max-w-lg drop-shadow-md">
-                    <?= htmlspecialchars(count($banners) > 0 ? $banners[0]['subjudul'] : 'SWIFT SC - Klub renang resmi dan tersertifikasi dengan fasilitas pelatih berlisensi nasional & internasional.') ?>
+                <h1 class="text-6xl md:text-7xl lg:text-8xl font-black mb-6 uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white via-slate-100 to-cyan-400 drop-shadow-2xl leading-[1.1]">
+                    SWIFT SC
+                </h1>
+                <p class="text-base md:text-xl text-slate-200 font-medium mb-10 leading-relaxed max-w-lg drop-shadow">
+                    Klub renang resmi dan tersertifikasi dengan fasilitas pelatih berlisensi nasional & internasional.
                 </p>
                 <div>
-                    <?php $first_link = count($banners) > 0 && !empty($banners[0]['link']) ? $banners[0]['link'] : 'pendaftaran.php'; ?>
-                    <a id="heroSlideLink" href="<?= htmlspecialchars($first_link) ?>" class="bg-cyan-600 hover:bg-cyan-500 text-white px-8 py-4 rounded-full font-bold text-base md:text-lg transition-all inline-flex items-center gap-3 transform hover:-translate-y-1 hover:scale-105 border border-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.4)]">
+                    <a href="pendaftaran.php" class="bg-cyan-600 hover:bg-cyan-500 text-white px-8 py-4 rounded-full font-bold text-base md:text-lg transition-all inline-flex items-center gap-3 transform hover:-translate-y-1 hover:scale-105 border border-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.4)]">
                         DAFTAR SEKARANG
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </a>
@@ -422,55 +424,41 @@ try {
         const heroBanners = <?= json_encode($banners) ?>;
         const heroLeftBg = document.getElementById('heroLeftBg');
         const heroRightBg = document.getElementById('heroRightBg');
-        const heroTitle = document.getElementById('heroSlideTitle');
-        const heroSub = document.getElementById('heroSlideSubtitle');
-        const heroLink = document.getElementById('heroSlideLink');
-        const textContainer = document.getElementById('heroTextContainer');
 
         if(heroBanners && heroBanners.length > 1) {
-            let currentHeroIndex = 0;
+            let leftIndex = 0;
+            let rightIndex = 1;
 
-            // Start initial pan for the right image
+            // Initial Setup
+            heroLeftBg.style.backgroundImage = `url('admin/uploads/${heroBanners[leftIndex].gambar}')`;
+            heroRightBg.style.backgroundImage = `url('admin/uploads/${heroBanners[rightIndex].gambar}')`;
+            
+            // Start right pan
             setTimeout(() => {
+                heroRightBg.style.transition = 'transform 5s linear';
                 heroRightBg.style.transform = 'scale(1.1) translateX(-5%)';
-            }, 100);
+            }, 50);
 
-            // Change slide every 5 seconds as requested
+            // Change slide every 5 seconds
             setInterval(() => {
-                // Fade out text and left bg slightly
-                heroLeftBg.style.opacity = '0.3';
-                heroRightBg.style.opacity = '0';
-                if(textContainer) textContainer.style.opacity = '0';
-
+                // Right becomes Left
+                leftIndex = rightIndex;
+                rightIndex = (rightIndex + 1) % heroBanners.length;
+                
+                // Instantly update Left to match what Right was
+                heroLeftBg.style.backgroundImage = `url('admin/uploads/${heroBanners[leftIndex].gambar}')`;
+                
+                // Instantly reset Right position and update its image
+                heroRightBg.style.transition = 'none';
+                heroRightBg.style.transform = 'scale(1.1) translateX(5%)';
+                heroRightBg.style.backgroundImage = `url('admin/uploads/${heroBanners[rightIndex].gambar}')`;
+                
+                // Start Right panning again
                 setTimeout(() => {
-                    currentHeroIndex = (currentHeroIndex + 1) % heroBanners.length;
-                    const banner = heroBanners[currentHeroIndex];
-                    
-                    // Update content
-                    const imageUrl = `admin/uploads/${banner.gambar}`;
-                    heroLeftBg.style.backgroundImage = `url('${imageUrl}')`;
-                    
-                    // Reset right background transform so it can slide again
-                    heroRightBg.style.transition = 'none';
-                    heroRightBg.style.transform = 'scale(1.1) translateX(5%)';
-                    heroRightBg.style.backgroundImage = `url('${imageUrl}')`;
-                    
-                    // Update Text
-                    if(heroTitle) heroTitle.textContent = banner.judul || 'SWIFT SC';
-                    if(heroSub) heroSub.textContent = banner.subjudul || '';
-                    if(heroLink) heroLink.href = banner.link || 'pendaftaran.php';
-                    
-                    // Fade in and slide to left over 5 seconds
-                    setTimeout(() => {
-                        heroLeftBg.style.opacity = '1';
-                        heroRightBg.style.transition = 'opacity 1s ease, transform 5s linear';
-                        heroRightBg.style.opacity = '1';
-                        heroRightBg.style.transform = 'scale(1.1) translateX(-5%)';
-                        
-                        if(textContainer) textContainer.style.opacity = '1';
-                    }, 50);
+                    heroRightBg.style.transition = 'transform 5s linear';
+                    heroRightBg.style.transform = 'scale(1.1) translateX(-5%)';
+                }, 50);
 
-                }, 1000); // 1s fade-out duration
             }, 5000); // 5s interval
         } else if (heroRightBg) {
             // Infinite pan for single image
