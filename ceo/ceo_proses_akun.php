@@ -129,6 +129,15 @@ if(isset($_POST['edit_pelatih'])){
 
     $id_kolam_val = empty($id_kolam) || $id_kolam == 'NULL' ? "NULL" : "'".mysqli_real_escape_string($koneksi, $id_kolam)."'";
 
+    // Get old name for fallback
+    $old_nama = '';
+    if(!$user_id) {
+        $q_old = mysqli_query($koneksi, "SELECT nama FROM pelatih WHERE id='$id'");
+        if($q_old && $row = mysqli_fetch_assoc($q_old)) {
+            $old_nama = mysqli_real_escape_string($koneksi, $row['nama']);
+        }
+    }
+
     // 1. Update Pelatih
     $q1 = mysqli_query($koneksi, "UPDATE pelatih SET nama='$nama_pelatih', sertifikasi='$lisensi', jabatan='$no_hp', id_kolam=$id_kolam_val, cabang='$nama_c' WHERE id='$id'");
     
@@ -140,13 +149,13 @@ if(isset($_POST['edit_pelatih'])){
         } else {
             $q2 = mysqli_query($koneksi, "UPDATE users SET username='$nama_pelatih', email='$email' WHERE id='$user_id'");
         }
-    } else {
+    } else if($old_nama) {
         // Fallback for older data without user_id
         if(!empty($password_baru)) {
             $hash = password_hash($password_baru, PASSWORD_DEFAULT);
-            mysqli_query($koneksi, "UPDATE users SET username='$nama_pelatih', email='$email', password='$hash' WHERE username=(SELECT nama FROM pelatih WHERE id='$id') AND role='Pelatih'");
+            mysqli_query($koneksi, "UPDATE users SET username='$nama_pelatih', email='$email', password='$hash' WHERE username='$old_nama' AND role='Pelatih'");
         } else {
-            mysqli_query($koneksi, "UPDATE users SET username='$nama_pelatih', email='$email' WHERE username=(SELECT nama FROM pelatih WHERE id='$id') AND role='Pelatih'");
+            mysqli_query($koneksi, "UPDATE users SET username='$nama_pelatih', email='$email' WHERE username='$old_nama' AND role='Pelatih'");
         }
     }
 
