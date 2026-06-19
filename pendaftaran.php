@@ -118,9 +118,9 @@ try {
                         </div>
 
                         <div>
-                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Alamat Domisili</label>
-                            <textarea name="alamat" rows="2" required placeholder="Tuliskan alamat domisili lengkap..."
-                                class="w-full bg-white border border-slate-200 rounded-lg py-2.5 px-3 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition placeholder-slate-400"></textarea>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Asal Sekolah</label>
+                            <input type="text" name="sekolah" required placeholder="Tuliskan nama sekolah lengkap..."
+                                class="w-full bg-white border border-slate-200 rounded-lg py-2.5 px-3 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition placeholder-slate-400">
                         </div>
                     </div>
                 </div>
@@ -149,7 +149,7 @@ try {
         </div>
 
         <div class="text-center pb-8 space-y-3">
-            <p class="text-sm text-slate-500">Sudah menjadi member? <a href="login.php" class="text-cyan-600 font-bold hover:underline">Masuk ke Dashboard</a></p>
+            <p class="text-sm text-slate-500">Owner/ Coach/ Admin <a href="login.php" class="text-cyan-600 font-bold hover:underline">Masuk ke Dashboard</a></p>
             <p class="text-sm text-slate-500"><a href="index.php" class="hover:text-cyan-600 transition-colors">&larr; Kembali ke Beranda Utama</a></p>
         </div>
     </div>
