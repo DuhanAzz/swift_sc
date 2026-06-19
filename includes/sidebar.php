@@ -55,7 +55,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </a>
             <a href="../ceo/ceo_manage_kolam.php" class="sidebar-link <?= ($current_page == 'ceo_manage_kolam.php') ? 'active' : '' ?>">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                Kolam Renang
+                Kelola Cabang
             </a>
             <a href="../ceo/ceo_laporan_global.php" class="sidebar-link <?= ($current_page == 'ceo_laporan_global.php') ? 'active' : '' ?>">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
@@ -85,9 +85,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                 Jadwal
             </a>
-            <a href="../admin/kolam.php" class="sidebar-link <?= ($current_page == 'kolam.php') ? 'active' : '' ?>">
+            <a href="../admin/profil_cabang.php" class="sidebar-link <?= ($current_page == 'profil_cabang.php') ? 'active' : '' ?>">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                Kolam
+                Profil Cabang
             </a>
             
             <div class="sidebar-section-title">Aktivitas</div>

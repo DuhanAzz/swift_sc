@@ -9,7 +9,13 @@ include '../includes/sidebar.php';
 include '../includes/koneksi.php';
 
 $admin_pool_id = $_SESSION['pool_id'] ?? '';
-$admin_cabang = $_SESSION['cabang'] ?? 'Semua Cabang';
+$admin_cabang = 'Semua Cabang';
+if(!empty($admin_pool_id)) {
+    $q_cab = mysqli_query($koneksi, "SELECT nama_cabang FROM cabang WHERE id='$admin_pool_id' LIMIT 1");
+    if($q_cab && $r_cab = mysqli_fetch_assoc($q_cab)) {
+        $admin_cabang = $r_cab['nama_cabang'];
+    }
+}
 
 // 1. Mengambil Total Atlet untuk Cabang Ini
 $total_atlet = 0;

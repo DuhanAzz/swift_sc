@@ -6,14 +6,10 @@ include '../includes/sidebar.php';
 include '../includes/koneksi.php';
 include '../includes/invoice_template.php';
 
-$filter_bulan = isset($_GET['bulan']) ? $_GET['bulan'] : date('m');
-$filter_tahun = isset($_GET['tahun']) ? $_GET['tahun'] : date('Y');
+$limit_hadir = isset($_GET['limit_hadir']) ? (int)$_GET['limit_hadir'] : 8;
+$tanggal_mulai = isset($_GET['tanggal_mulai']) ? $_GET['tanggal_mulai'] : date('Y-m-01');
+$tanggal_akhir = isset($_GET['tanggal_akhir']) ? $_GET['tanggal_akhir'] : date('Y-m-t');
 
-$nama_bulan = [
-    '01'=>'Januari','02'=>'Februari','03'=>'Maret','04'=>'April',
-    '05'=>'Mei','06'=>'Juni','07'=>'Juli','08'=>'Agustus',
-    '09'=>'September','10'=>'Oktober','11'=>'November','12'=>'Desember'
-];
 $admin_pool_id = $_SESSION['pool_id'] ?? '';
 
 // Ambil semua member
@@ -49,21 +45,20 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
             </div>
             
             <form action="pembayaran.php" method="GET" class="flex items-center gap-2">
-                <select name="bulan" class="bg-white border border-[#E8E8EF] text-sm rounded-lg p-2">
-                    <?php foreach($nama_bulan as $m => $nama) : ?>
-                        <option value="<?= $m; ?>" <?= ($filter_bulan == $m) ? 'selected' : ''; ?>><?= $nama; ?></option>
-                    <?php endforeach; ?>
-                </select>
-                <select name="tahun" class="bg-white border border-[#E8E8EF] text-sm rounded-lg p-2">
-                    <?php for($i=date('Y'); $i>=date('Y')-1; $i--) echo "<option value='$i' ".($filter_tahun==$i?'selected':'').">$i</option>"; ?>
-                </select>
-                <button type="submit" class="bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-bold">Tampilkan</button>
+                <div class="flex items-center bg-white border border-[#E8E8EF] rounded-lg px-2">
+                    <span class="text-xs text-gray-500 font-bold px-1">Limit:</span>
+                    <input type="number" name="limit_hadir" value="<?= $limit_hadir ?>" min="1" step="1" class="w-16 border-none text-sm p-2 focus:ring-0">
+                </div>
+                <input type="date" name="tanggal_mulai" value="<?= $tanggal_mulai ?>" class="bg-white border border-[#E8E8EF] text-sm rounded-lg p-2">
+                <span class="text-gray-400">-</span>
+                <input type="date" name="tanggal_akhir" value="<?= $tanggal_akhir ?>" class="bg-white border border-[#E8E8EF] text-sm rounded-lg p-2">
+                <button type="submit" class="bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-bold">Filter</button>
             </form>
         </div>
 
         <form action="proses_pembayaran.php" method="POST">
-            <input type="hidden" name="bulan" value="<?= $filter_bulan; ?>">
-            <input type="hidden" name="tahun" value="<?= $filter_tahun; ?>">
+            <input type="hidden" name="tanggal_mulai" value="<?= $tanggal_mulai; ?>">
+            <input type="hidden" name="tanggal_akhir" value="<?= $tanggal_akhir; ?>">
 
             <div class="grid grid-cols-1 gap-4">
                 <?php 
@@ -71,10 +66,10 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
                 foreach($q_atlet as $a):
                     $atlet_id = $a['id'];
                     
-                    // === KEHADIRAN BULAN INI ===
+                    // === KEHADIRAN UNPAID ===
                     $absensi_dates = [];
                     $jumlah_hadir = 0;
-                    $q_abs = mysqli_query($koneksi, "SELECT tanggal, status FROM absensi WHERE member_id='$atlet_id' AND MONTH(tanggal)='$filter_bulan' AND YEAR(tanggal)='$filter_tahun' ORDER BY tanggal ASC");
+                    $q_abs = mysqli_query($koneksi, "SELECT tanggal, status FROM absensi WHERE member_id='$atlet_id' AND status_bayar='Unpaid' AND tanggal >= '$tanggal_mulai' AND tanggal <= '$tanggal_akhir' ORDER BY tanggal ASC");
                     if($q_abs) {
                         while($ab = mysqli_fetch_assoc($q_abs)) {
                             $absensi_dates[] = $ab;
@@ -82,30 +77,22 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
                         }
                     }
                     
-                    // === PEMBAYARAN BULAN INI ===
+                    // Default form state (We create a new payment receipt each time they pay)
                     $status = 'Belum Bayar';
                     $jumlah = '';
                     $ket = '';
                     $tgl_bayar = null;
-                    $q_bayar = mysqli_query($koneksi, "SELECT * FROM pembayaran WHERE member_id='$atlet_id' AND bulan='$filter_bulan' AND tahun='$filter_tahun'");
-                    if($q_bayar && mysqli_num_rows($q_bayar) > 0) {
-                        $pData = mysqli_fetch_assoc($q_bayar);
-                        $status = $pData['status'] ?? 'Belum Bayar';
-                        $jumlah = $pData['jumlah_bayar'] ?? '';
-                        $ket = $pData['keterangan'] ?? '';
-                        $tgl_bayar = $pData['tgl_bayar'] ?? null;
-                    }
                     
                     // === RIWAYAT BAYAR TERAKHIR ===
                     $last_pay = null;
-                    $q_last = mysqli_query($koneksi, "SELECT bulan, tahun, tgl_bayar, jumlah_bayar FROM pembayaran WHERE member_id='$atlet_id' AND status='Lunas' ORDER BY tahun DESC, bulan DESC, tgl_bayar DESC LIMIT 1");
+                    $q_last = mysqli_query($koneksi, "SELECT bulan, tahun, tgl_bayar, jumlah_bayar FROM pembayaran WHERE member_id='$atlet_id' AND status='Lunas' ORDER BY tgl_bayar DESC LIMIT 1");
                     if($q_last && $r_last = mysqli_fetch_assoc($q_last)) {
                         $last_pay = $r_last;
                     }
                     
                     // Status logic
-                    $perlu_bayar = ($jumlah_hadir >= 8 && $status != 'Lunas');
-                    $sudah_lunas = ($status == 'Lunas');
+                    $perlu_bayar = ($jumlah_hadir >= $limit_hadir);
+                    $sudah_lunas = false;
                     
                     // Card border color
                     $card_border = 'border-[#E8E8EF]';
@@ -117,7 +104,7 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
                     $inv_text = generateInvoiceSPP(
                         $a['nama'], $a['nia'] ?? 'SWF-'.$atlet_id, 
                         $a['nama_cabang'] ?? 'Swift SC', 
-                        $filter_bulan, $filter_tahun, $jumlah_hadir, $a['no_hp'] ?? ''
+                        date('m'), date('Y'), $jumlah_hadir, $a['no_hp'] ?? ''
                     );
                 ?>
                 
@@ -152,10 +139,12 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
                                         <span class="text-gray-400 italic">Belum pernah</span>
                                     <?php endif; ?>
                                 </div>
-                                <?php if($last_pay): ?>
+                                <?php if($last_pay): 
+                                    $nama_bulan_arr = ['01'=>'Januari','02'=>'Februari','03'=>'Maret','04'=>'April','05'=>'Mei','06'=>'Juni','07'=>'Juli','08'=>'Agustus','09'=>'September','10'=>'Oktober','11'=>'November','12'=>'Desember'];
+                                ?>
                                 <div class="flex items-center justify-between">
                                     <span class="text-gray-500">Periode</span>
-                                    <span class="font-medium text-gray-600"><?= $nama_bulan[str_pad($last_pay['bulan'],2,'0',STR_PAD_LEFT)] ?? '' ?> <?= $last_pay['tahun'] ?></span>
+                                    <span class="font-medium text-gray-600"><?= $nama_bulan_arr[str_pad($last_pay['bulan'],2,'0',STR_PAD_LEFT)] ?? '' ?> <?= $last_pay['tahun'] ?></span>
                                 </div>
                                 <?php endif; ?>
                             </div>
@@ -164,12 +153,11 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
                         <!-- CENTER: Attendance Grid -->
                         <div class="flex-1 p-4">
                             <div class="flex items-center justify-between mb-2">
-                                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Kehadiran <?= $nama_bulan[$filter_bulan] ?> <?= $filter_tahun ?></p>
+                                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Sesi Belum Dibayar</p>
                                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold <?php
-                                    if($jumlah_hadir >= 8 && $sudah_lunas) echo 'bg-emerald-100 text-emerald-700';
-                                    elseif($jumlah_hadir >= 8) echo 'bg-amber-100 text-amber-700';
+                                    if($jumlah_hadir >= $limit_hadir) echo 'bg-amber-100 text-amber-700';
                                     else echo 'bg-gray-100 text-gray-600';
-                                ?>"><?= $jumlah_hadir ?>x / 8 pertemuan</span>
+                                ?>"><?= $jumlah_hadir ?>x / <?= $limit_hadir ?> pertemuan</span>
                             </div>
                             
                             <!-- Attendance pills -->
@@ -198,16 +186,16 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
                             </div>
 
                             <!-- Progress bar -->
-                            <?php $pct = min(($jumlah_hadir / 8) * 100, 100); ?>
+                            <?php $pct = min(($jumlah_hadir / $limit_hadir) * 100, 100); ?>
                             <div class="w-full bg-gray-100 rounded-full h-1.5 mb-3">
-                                <div class="h-1.5 rounded-full transition-all <?= $pct >= 100 ? 'bg-emerald-500' : 'bg-slate-400' ?>" style="width: <?= $pct ?>%"></div>
+                                <div class="h-1.5 rounded-full transition-all <?= $pct >= 100 ? 'bg-amber-500' : 'bg-slate-400' ?>" style="width: <?= $pct ?>%"></div>
                             </div>
                             
                             <?php if($perlu_bayar): ?>
                             <div class="bg-amber-50 border border-amber-200 rounded-lg p-2.5 flex items-start gap-2">
                                 <span class="text-amber-500 text-sm mt-0.5">⚠️</span>
                                 <div>
-                                    <p class="text-xs font-bold text-amber-800">Sudah 8x hadir — Waktunya bayar!</p>
+                                    <p class="text-xs font-bold text-amber-800">Sudah <?= $limit_hadir ?>x hadir — Waktunya bayar!</p>
                                     <p class="text-[10px] text-amber-600">Kirim tagihan via WhatsApp atau konfirmasi pembayaran.</p>
                                 </div>
                             </div>
