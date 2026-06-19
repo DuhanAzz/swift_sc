@@ -54,7 +54,8 @@ include '../includes/koneksi.php';
                     <?php
                     $no = 1;
                     $coachesArray = [];
-                    $q_pelatih = mysqli_query($koneksi, "SELECT p.*, c.nama_cabang as nama_kolam FROM pelatih p LEFT JOIN cabang c ON p.cabang = c.id ORDER BY p.id DESC");
+                    $pool_id = $_SESSION['pool_id'] ?? "NULL";
+                    $q_pelatih = mysqli_query($koneksi, "SELECT p.*, u.email, u.username, c.nama_cabang as nama_kolam FROM pelatih p LEFT JOIN cabang c ON p.id_kolam = c.id LEFT JOIN users u ON p.user_id = u.id WHERE p.id_kolam = '$pool_id' ORDER BY p.id DESC");
                     if($q_pelatih) {
                         while($row = mysqli_fetch_assoc($q_pelatih)) {
                             $coachesArray[] = $row;
@@ -85,14 +86,17 @@ include '../includes/koneksi.php';
                                         <svg class="w-3 h-3" fill="none" viewBox="0 0 14 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/></svg>
                                     </button>
                                 </div>
-                                <form action="proses_pelatih.php" method="POST" class="p-6 text-left">
+                                <form action="proses_pelatih.php" method="POST" class="p-6 text-left" enctype="multipart/form-data">
                                     <input type="hidden" name="id" value="<?= $data['id']; ?>">
+                                    <input type="hidden" name="user_id" value="<?= $data['user_id']; ?>">
+                                    
+                                    <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Nama & Akun Login</label>
+                                    <input type="text" name="nama_pelatih" value="<?= htmlspecialchars($data['nama']); ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm mb-3" required>
+                                    <input type="email" name="email" value="<?= htmlspecialchars($data['email'] ?? ''); ?>" placeholder="Email Login" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm mb-3" required>
+                                    <input type="password" name="password_baru" placeholder="Password Baru (Kosongkan jika tidak ubah)" class="bg-yellow-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm mb-5">
+                                    
+                                    <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Profil Pelatih</label>
                                     <div class="mb-5">
-                                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Nama Pelatih</label>
-                                        <input type="text" name="nama_pelatih" value="<?= htmlspecialchars($data['nama']); ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm" required>
-                                    </div>
-                                    <div class="mb-5">
-                                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Lisensi</label>
                                         <select name="lisensi" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm" required>
                                             <option value="Lisensi D" <?= ($data['sertifikasi'] == 'Lisensi D') ? 'selected' : '' ?>>Lisensi D (Pemula)</option>
                                             <option value="Lisensi C" <?= ($data['sertifikasi'] == 'Lisensi C') ? 'selected' : '' ?>>Lisensi C (Menengah)</option>
@@ -101,8 +105,7 @@ include '../includes/koneksi.php';
                                         </select>
                                     </div>
                                     <div class="mb-5">
-                                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">No. HP</label>
-                                        <input type="text" name="no_hp" value="<?= htmlspecialchars($data['jabatan']); ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm" required>
+                                        <input type="text" name="no_hp" value="<?= htmlspecialchars($data['jabatan']); ?>" placeholder="No. HP / Jabatan" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm" required>
                                     </div>
                                     <div class="mb-6">
                                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Lokasi Melatih</label>
@@ -140,20 +143,23 @@ include '../includes/koneksi.php';
     <div class="relative p-4 w-full max-w-md max-h-full">
         <div class="relative bg-white rounded-xl shadow-lg border border-panel-border">
             <div class="flex items-center justify-between p-5 border-b border-gray-100">
-                <h3 class="text-base font-semibold text-algolia-navy">Pendaftaran Pelatih Baru</h3>
+                <h3 class="text-base font-semibold text-algolia-navy">Tambah Data Pelatih</h3>
                 <button type="button" class="text-gray-400 bg-gray-50 hover:bg-red-50 hover:text-red-600 rounded-xl text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-toggle="modalTambahPelatih">
                     <svg class="w-3 h-3" fill="none" viewBox="0 0 14 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/></svg>
                 </button>
             </div>
-            <form action="proses_pelatih.php" method="POST" class="p-6 text-left">
+            <form action="proses_pelatih.php" method="POST" class="p-6 text-left" enctype="multipart/form-data">
+                <input type="hidden" name="id_kolam" value="<?= $pool_id; ?>">
+                
+                <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Nama & Akun Login</label>
+                <input type="text" name="nama_pelatih" placeholder="Nama Lengkap" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm mb-3" required>
+                <input type="email" name="email" placeholder="Email untuk Login" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm mb-3" required>
+                <input type="password" name="password" placeholder="Password Login" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm mb-5" required>
+                
+                <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Profil Pelatih</label>
                 <div class="mb-5">
-                    <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Nama Lengkap</label>
-                    <input type="text" name="nama_pelatih" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-indigo-600 focus:border-indigo-600 block w-full p-3 shadow-sm" placeholder="Contoh: Coach Richard" required>
-                </div>
-                <div class="mb-5">
-                    <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Tingkat Lisensi</label>
-                    <select name="lisensi" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-indigo-600 focus:border-indigo-600 block w-full p-3 shadow-sm" required>
-                        <option value="" disabled selected>-- Pilih Lisensi --</option>
+                    <select name="lisensi" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm" required>
+                        <option value="">-- Pilih Lisensi --</option>
                         <option value="Lisensi D">Lisensi D (Pemula)</option>
                         <option value="Lisensi C">Lisensi C (Menengah)</option>
                         <option value="Lisensi B">Lisensi B (Lanjutan)</option>
@@ -161,28 +167,18 @@ include '../includes/koneksi.php';
                     </select>
                 </div>
                 <div class="mb-5">
-                    <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">No. HP / WhatsApp</label>
-                    <input type="text" name="no_hp" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-indigo-600 focus:border-indigo-600 block w-full p-3 shadow-sm" placeholder="Contoh: 0812..." required>
+                    <input type="text" name="no_hp" placeholder="No. HP / Jabatan" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm" required>
                 </div>
                 <div class="mb-6">
-                    <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Tugaskan di Kolam</label>
-                    <select name="id_kolam" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-indigo-600 focus:border-indigo-600 block w-full p-3 shadow-sm" required>
-                        <option value="" disabled selected>-- Pilih Lokasi --</option>
-                        <?php
-                        $query_kolam = mysqli_query($koneksi, "SELECT * FROM cabang");
-                        if($query_kolam) {
-                            while($kolam = mysqli_fetch_assoc($query_kolam)) {
-                                $kolam_id = $kolam['id'];
-                                echo "<option value='".$kolam_id."'>".htmlspecialchars($kolam['nama_cabang'])."</option>";
-                            }
-                        }
-                        ?>
-                    </select>
+                    <label class="block mb-2 text-xs font-bold text-gray-500">Foto Pelatih</label>
+                    <input type="file" name="foto_pelatih" accept="image/*" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue block w-full p-2 shadow-sm">
                 </div>
-                <button type="submit" name="tambah" class="w-full text-white bg-algolia-blue hover:bg-algolia-darkblue font-bold rounded-xl text-sm px-5 py-3 shadow-md transition-all">Simpan Data Pelatih</button>
+                
+                <button type="submit" name="tambah" class="w-full text-white bg-algolia-blue hover:bg-algolia-darkblue font-bold rounded-xl text-sm px-5 py-3 shadow-md transition-all">+ Tambah Pelatih</button>
             </form>
         </div>
     </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
 <?php include '../includes/footer.php'; ?>

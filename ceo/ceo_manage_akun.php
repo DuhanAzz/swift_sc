@@ -151,7 +151,7 @@ include '../includes/koneksi.php';
                             <?php
                             $coachesArray = [];
                             try {
-                                $q_pelatih = mysqli_query($koneksi, "SELECT * FROM pelatih");
+                                $q_pelatih = mysqli_query($koneksi, "SELECT pelatih.*, users.email, users.username, cabang.nama_cabang as nama_kolam FROM pelatih LEFT JOIN users ON pelatih.user_id = users.id LEFT JOIN cabang ON pelatih.id_kolam = cabang.id");
                                 if($q_pelatih) {
                                     while($row = mysqli_fetch_assoc($q_pelatih)) {
                                         $coachesArray[] = $row;
@@ -163,10 +163,10 @@ include '../includes/koneksi.php';
                                 foreach($coachesArray as $data) {
                             ?>
                             <tr class="bg-white border-b hover:bg-slate-50">
-                                <td class="px-6 py-4 font-bold text-gray-800"><?= htmlspecialchars($data['nama']); ?></td>
-                                <td class="px-6 py-4"><span class="bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded border"><?= htmlspecialchars($data['sertifikasi'] ?? '-'); ?></span></td>
-                                <td class="px-6 py-4"><?= htmlspecialchars($data['jabatan']); ?></td>
-                                <td class="px-6 py-4"><?= htmlspecialchars($data['cabang']); ?></td>
+                                <td class="px-6 py-4 font-bold text-gray-800"><?= htmlspecialchars($data['nama_pelatih'] ?? $data['nama'] ?? '-'); ?></td>
+                                <td class="px-6 py-4"><span class="bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded border"><?= htmlspecialchars($data['lisensi'] ?? $data['sertifikasi'] ?? '-'); ?></span></td>
+                                <td class="px-6 py-4"><?= htmlspecialchars($data['no_hp'] ?? $data['jabatan'] ?? '-'); ?></td>
+                                <td class="px-6 py-4"><?= htmlspecialchars($data['nama_kolam'] ?? $data['cabang'] ?? '-'); ?></td>
                                 <td class="px-6 py-4 text-center space-x-2">
                                     <button data-modal-target="modalEditPelatih<?= $data['id']; ?>" data-modal-toggle="modalEditPelatih<?= $data['id']; ?>" class="font-medium text-blue-600 hover:underline">Edit</button>
                                     <a href="ceo_proses_akun.php?hapus_pelatih=<?= $data['id']; ?>" onclick="return confirm('Hapus pelatih ini?')" class="font-medium text-red-600 hover:underline">Hapus</a>
@@ -182,16 +182,23 @@ include '../includes/koneksi.php';
                                     </div>
                                     <form action="ceo_proses_akun.php" method="POST">
                                         <input type="hidden" name="id" value="<?= $data['id']; ?>">
-                                        <input type="text" name="nama_pelatih" value="<?= htmlspecialchars($data['nama']); ?>" class="w-full mb-3 p-2 border rounded" required>
-                                        <input type="text" name="lisensi" value="<?= htmlspecialchars($data['sertifikasi'] ?? ''); ?>" placeholder="Sertifikasi / Lisensi" class="w-full mb-3 p-2 border rounded" required>
-                                        <input type="text" name="no_hp" value="<?= htmlspecialchars($data['jabatan'] ?? ''); ?>" placeholder="Jabatan" class="w-full mb-3 p-2 border rounded" required>
-                                        <select name="id_kolam" class="w-full mb-4 p-2 border rounded">
+                                        <input type="hidden" name="user_id" value="<?= $data['user_id']; ?>">
+                                        
+                                        <label class="block text-xs font-bold text-gray-500 mb-1 mt-2">Nama & Akun Login</label>
+                                        <input type="text" name="nama_pelatih" value="<?= htmlspecialchars($data['nama_pelatih'] ?? $data['nama'] ?? ''); ?>" class="w-full mb-2 p-2 border rounded text-sm" required>
+                                        <input type="email" name="email" value="<?= htmlspecialchars($data['email'] ?? ''); ?>" class="w-full mb-2 p-2 border rounded text-sm" placeholder="Email Login" required>
+                                        <input type="password" name="password_baru" placeholder="Password Baru (Kosongkan jika tidak ubah)" class="w-full mb-4 p-2 border rounded text-sm bg-yellow-50">
+                                        
+                                        <label class="block text-xs font-bold text-gray-500 mb-1">Profil Pelatih</label>
+                                        <input type="text" name="lisensi" value="<?= htmlspecialchars($data['lisensi'] ?? $data['sertifikasi'] ?? ''); ?>" placeholder="Sertifikasi / Lisensi" class="w-full mb-2 p-2 border rounded text-sm" required>
+                                        <input type="text" name="no_hp" value="<?= htmlspecialchars($data['no_hp'] ?? $data['jabatan'] ?? ''); ?>" placeholder="Jabatan / No HP" class="w-full mb-3 p-2 border rounded text-sm" required>
+                                        <select name="id_kolam" class="w-full mb-4 p-2 border rounded text-sm">
                                             <?php
                                             try {
                                                 $q_kolam = mysqli_query($koneksi, "SELECT * FROM cabang");
                                                 while($k = mysqli_fetch_assoc($q_kolam)) {
-                                                    $sel = ($k['nama_cabang'] == $data['cabang']) ? 'selected' : '';
-                                                    echo "<option value='{$k['nama_cabang']}' $sel>{$k['nama_cabang']}</option>";
+                                                    $sel = ($k['id'] == $data['id_kolam']) ? 'selected' : '';
+                                                    echo "<option value='{$k['id']}' $sel>{$k['nama_cabang']}</option>";
                                                 }
                                             } catch (\Exception $e) {}
                                             ?>

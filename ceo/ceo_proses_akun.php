@@ -30,7 +30,11 @@ if(isset($_POST['tambah_akun_baru'])){
         $lisensi = mysqli_real_escape_string($koneksi, $_POST['lisensi']);
         $no_hp = mysqli_real_escape_string($koneksi, $_POST['no_hp']); // digunakan sebagai jabatan/no_hp
         
-        $q2 = mysqli_query($koneksi, "INSERT INTO pelatih (user_id, nama_pelatih, lisensi, no_hp, id_kolam, foto) VALUES ('$new_user_id', '$name', '$lisensi', '$no_hp', $pool_id, '$foto_name')");
+        // Cek cabang nama
+        $q_c = mysqli_query($koneksi, "SELECT nama_cabang FROM cabang WHERE id=$pool_id");
+        $nama_c = ($q_c && $r = mysqli_fetch_assoc($q_c)) ? $r['nama_cabang'] : 'Pusat';
+
+        $q2 = mysqli_query($koneksi, "INSERT INTO pelatih (user_id, nama, sertifikasi, jabatan, id_kolam, cabang, foto) VALUES ('$new_user_id', '$name', '$lisensi', '$no_hp', $pool_id, '$nama_c', '$foto_name')");
         
         if($q1 && $q2) { header("location:ceo_manage_akun.php?pesan=sukses_pelatih"); }
         else { header("location:ceo_manage_akun.php?pesan=gagal"); }
@@ -104,32 +108,53 @@ if(isset($_POST['tambah_pelatih'])){
 
 if(isset($_POST['edit_pelatih'])){
     $id           = mysqli_real_escape_string($koneksi, $_POST['id']);
+    $user_id      = mysqli_real_escape_string($koneksi, $_POST['user_id']);
     $nama_pelatih = mysqli_real_escape_string($koneksi, $_POST['nama_pelatih']);
+    $email        = mysqli_real_escape_string($koneksi, $_POST['email']);
+    $password_baru= $_POST['password_baru'];
     $lisensi      = mysqli_real_escape_string($koneksi, $_POST['lisensi']);
     $no_hp        = mysqli_real_escape_string($koneksi, $_POST['no_hp']);
-    $id_kolam     = mysqli_real_escape_string($koneksi, $_POST['id_kolam']);
+    $id_kolam     = empty($_POST['id_kolam']) ? "NULL" : "'".mysqli_real_escape_string($koneksi, $_POST['id_kolam'])."'";
 
-    // Get old name
-    $q_old = mysqli_query($koneksi, "SELECT nama FROM pelatih WHERE id='$id'");
-    $old_nama = ($q_old && $row = mysqli_fetch_assoc($q_old)) ? $row['nama'] : '';
+    // Get cabang name for legacy column
+    $q_c = mysqli_query($koneksi, "SELECT nama_cabang FROM cabang WHERE id=$id_kolam");
+    $nama_c = ($q_c && $r = mysqli_fetch_assoc($q_c)) ? $r['nama_cabang'] : 'Pusat';
 
-    $q = mysqli_query($koneksi, "UPDATE pelatih SET nama='$nama_pelatih', sertifikasi='$lisensi', jabatan='$no_hp', cabang='$id_kolam' WHERE id='$id'");
+    // 1. Update Pelatih
+    $q1 = mysqli_query($koneksi, "UPDATE pelatih SET nama='$nama_pelatih', sertifikasi='$lisensi', jabatan='$no_hp', id_kolam=$id_kolam, cabang='$nama_c' WHERE id='$id'");
     
-    if($old_nama && $old_nama !== $nama_pelatih) {
-        mysqli_query($koneksi, "UPDATE users SET username='$nama_pelatih' WHERE username='$old_nama' AND role='Pelatih'");
+    // 2. Update Users
+    if($user_id) {
+        if(!empty($password_baru)) {
+            $hash = password_hash($password_baru, PASSWORD_DEFAULT);
+            $q2 = mysqli_query($koneksi, "UPDATE users SET username='$nama_pelatih', email='$email', password='$hash' WHERE id='$user_id'");
+        } else {
+            $q2 = mysqli_query($koneksi, "UPDATE users SET username='$nama_pelatih', email='$email' WHERE id='$user_id'");
+        }
+    } else {
+        // Fallback for older data without user_id
+        if(!empty($password_baru)) {
+            $hash = password_hash($password_baru, PASSWORD_DEFAULT);
+            mysqli_query($koneksi, "UPDATE users SET username='$nama_pelatih', email='$email', password='$hash' WHERE username=(SELECT nama FROM pelatih WHERE id='$id') AND role='Pelatih'");
+        } else {
+            mysqli_query($koneksi, "UPDATE users SET username='$nama_pelatih', email='$email' WHERE username=(SELECT nama FROM pelatih WHERE id='$id') AND role='Pelatih'");
+        }
     }
 
-    if($q) { header("location:ceo_manage_akun.php?pesan=sukses_pelatih"); }
+    if($q1) { header("location:ceo_manage_akun.php?pesan=sukses_pelatih"); }
     else { header("location:ceo_manage_akun.php?pesan=gagal"); }
 }
 
 if(isset($_GET['hapus_pelatih'])){
     $id = mysqli_real_escape_string($koneksi, $_GET['hapus_pelatih']);
     
-    $q_get = mysqli_query($koneksi, "SELECT nama FROM pelatih WHERE id='$id'");
+    $q_get = mysqli_query($koneksi, "SELECT user_id, nama FROM pelatih WHERE id='$id'");
     if($q_get && $row = mysqli_fetch_assoc($q_get)) {
-        $nama = $row['nama'];
-        mysqli_query($koneksi, "DELETE FROM users WHERE username='$nama' AND role='Pelatih'");
+        if($row['user_id']) {
+            mysqli_query($koneksi, "DELETE FROM users WHERE id='{$row['user_id']}'");
+        } else {
+            mysqli_query($koneksi, "DELETE FROM users WHERE username='{$row['nama']}' AND role='Pelatih'");
+        }
     }
 
     $q = mysqli_query($koneksi, "DELETE FROM pelatih WHERE id='$id'");
