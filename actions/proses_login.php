@@ -31,32 +31,32 @@ if (isset($_POST['login'])) {
                 // Role-based Routing
                 $role = $_SESSION['role'];
                 if ($role === 'ceo') {
-                    header("location: ceo/ceo_dashboard.php");
+                    header("location: ../ceo/ceo_dashboard.php");
                 } else if ($role === 'coach' || $role === 'pelatih') {
-                    header("location: pelatih/pelatih_dashboard.php");
+                    header("location: ../pelatih/pelatih_dashboard.php");
                 } else {
                     // Default fallback to Admin
-                    header("location: admin/admin_dashboard.php");
+                    header("location: ../admin/admin_dashboard.php");
                 }
                 exit;
             } else {
                 // Password salah
-                header("location: login.php?pesan=gagal");
+                header("location: ../login.php?pesan=gagal");
                 exit;
             }
         } else {
             // User tidak ditemukan
-            header("location: login.php?pesan=gagal");
+            header("location: ../login.php?pesan=gagal");
             exit;
         }
 
     } catch (\Exception $e) {
         // Error lainnya
-        header("location: login.php?pesan=error&msg=" . urlencode($e->getMessage()));
+        header("location: ../login.php?pesan=error&msg=" . urlencode($e->getMessage()));
         exit;
     }
 } else {
-    header("location: login.php");
+    header("location: ../login.php");
     exit;
 }
 ?>
