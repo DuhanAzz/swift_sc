@@ -13,9 +13,14 @@ if(isset($_POST['update_visi_misi'])) {
     $visi = mysqli_real_escape_string($koneksi, $_POST['visi']);
     $misi = mysqli_real_escape_string($koneksi, $_POST['misi']);
     $tentang = mysqli_real_escape_string($koneksi, $_POST['tentang']);
-    mysqli_query($koneksi, "UPDATE cms_general SET content_value='$visi' WHERE section_name='visi'");
-    mysqli_query($koneksi, "UPDATE cms_general SET content_value='$misi' WHERE section_name='misi'");
-    mysqli_query($koneksi, "UPDATE cms_general SET content_value='$tentang' WHERE section_name='tentang_kami'");
+    
+    $cek = mysqli_query($koneksi, "SELECT id FROM tentang_club LIMIT 1");
+    if(mysqli_num_rows($cek) == 0) {
+        mysqli_query($koneksi, "INSERT INTO tentang_club (visi, misi, deskripsi) VALUES ('$visi', '$misi', '$tentang')");
+    } else {
+        mysqli_query($koneksi, "UPDATE tentang_club SET visi='$visi', misi='$misi', deskripsi='$tentang'");
+    }
+    
     header("location:ceo_cms_web.php?pesan=sukses");
     exit;
 }
@@ -24,12 +29,12 @@ if(isset($_POST['update_visi_misi'])) {
 $q_slider = mysqli_query($koneksi, "SELECT * FROM slider ORDER BY urutan ASC");
 $q_berita = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY id DESC");
 
-$cms_data = [];
-$q_cms = mysqli_query($koneksi, "SELECT section_name, content_value FROM cms_general");
-if($q_cms) {
-    while($row = mysqli_fetch_assoc($q_cms)) {
-        $cms_data[$row['section_name']] = $row['content_value'];
-    }
+$cms_data = ['visi' => '', 'misi' => '', 'tentang_kami' => ''];
+$q_cms = mysqli_query($koneksi, "SELECT * FROM tentang_club LIMIT 1");
+if($q_cms && $row = mysqli_fetch_assoc($q_cms)) {
+    $cms_data['visi'] = $row['visi'];
+    $cms_data['misi'] = $row['misi'];
+    $cms_data['tentang_kami'] = $row['deskripsi'];
 }
 ?>
 
