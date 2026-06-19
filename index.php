@@ -26,10 +26,10 @@ try {
     }
 } catch (\Exception $e) {}
 
-// Load cms_banners untuk dynamic hero slider
+// Load slider untuk dynamic hero slider (menggabungkan gambar & teks)
 $banners = [];
 try {
-    $q_banners = mysqli_query($koneksi, "SELECT * FROM cms_banners WHERE status='Aktif' ORDER BY urutan ASC");
+    $q_banners = mysqli_query($koneksi, "SELECT * FROM slider WHERE status='Aktif' ORDER BY urutan ASC");
     if($q_banners) { while($b = mysqli_fetch_assoc($q_banners)) { $banners[] = $b; } }
 } catch (\Exception $e) {}
 ?>
