@@ -13,15 +13,34 @@ $total_atlet = 0;
 $q1 = mysqli_query($koneksi, "SELECT COUNT(id) as total FROM member");
 if($q1 && $r = mysqli_fetch_assoc($q1)) $total_atlet = $r['total'];
 
-// 2. Total Coaches
-$total_pelatih = 0;
-$q2 = mysqli_query($koneksi, "SELECT COUNT(id) as total FROM pelatih");
-if($q2 && $r = mysqli_fetch_assoc($q2)) $total_pelatih = $r['total'];
+// 2. Total Pendapatan Bulan Ini
+$total_pendapatan_bulan = 0;
+$bulan_ini = date('m');
+$tahun_ini = date('Y');
+$q2 = mysqli_query($koneksi, "SELECT SUM(nominal) as total FROM arus_kas WHERE jenis='Pemasukan' AND MONTH(tanggal)='$bulan_ini' AND YEAR(tanggal)='$tahun_ini'");
+if($q2 && $r = mysqli_fetch_assoc($q2)) $total_pendapatan_bulan = floatval($r['total']);
 
-// 3. Total Cash (Saldo Global)
-$total_kas = 0;
-$q3 = mysqli_query($koneksi, "SELECT SUM(CASE WHEN type='Pemasukan' THEN amount ELSE -amount END) as total_saldo FROM cash_flows");
-if($q3 && $r = mysqli_fetch_assoc($q3)) $total_kas = floatval($r['total_saldo']);
+// 3. Total Cabang
+$total_cabang = 0;
+$q3 = mysqli_query($koneksi, "SELECT COUNT(id) as total FROM cabang");
+if($q3 && $r = mysqli_fetch_assoc($q3)) $total_cabang = $r['total'];
+
+// 4. Peringkat Cabang (Berdasarkan Pendapatan dan Member Bulan Ini)
+$peringkat_cabang = [];
+$q_rank = mysqli_query($koneksi, "
+    SELECT 
+        c.nama_cabang,
+        (SELECT COUNT(id) FROM member WHERE cabang_id = c.id) as total_member,
+        (SELECT SUM(nominal) FROM arus_kas WHERE cabang_id = c.id AND jenis = 'Pemasukan' AND MONTH(tanggal)='$bulan_ini' AND YEAR(tanggal)='$tahun_ini') as pendapatan
+    FROM cabang c
+    ORDER BY pendapatan DESC, total_member DESC
+    LIMIT 5
+");
+if($q_rank) {
+    while($row = mysqli_fetch_assoc($q_rank)) {
+        $peringkat_cabang[] = $row;
+    }
+}
 
 ?>
 <div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
@@ -63,24 +82,62 @@ if($q3 && $r = mysqli_fetch_assoc($q3)) $total_kas = floatval($r['total_saldo'])
 
             <div class="card p-5">
                 <div class="flex items-center justify-between mb-3">
-                    <span class="stat-label">Saldo Keuangan</span>
+                    <span class="stat-label">Pendapatan Bulan Ini</span>
                     <div class="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
                         <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
                 </div>
-                <div class="stat-number text-2xl">Rp <?= number_format($total_kas, 0, ',', '.'); ?></div>
-                <p class="text-xs text-gray-400 mt-1">Total saldo arus kas global</p>
+                <div class="stat-number text-2xl">Rp <?= number_format($total_pendapatan_bulan, 0, ',', '.'); ?></div>
+                <p class="text-xs text-gray-400 mt-1">Total arus kas masuk bulan ini</p>
             </div>
 
             <div class="card p-5">
                 <div class="flex items-center justify-between mb-3">
-                    <span class="stat-label">Total Pelatih</span>
+                    <span class="stat-label">Cabang Beroperasi</span>
                     <div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
-                        <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                     </div>
                 </div>
-                <div class="stat-number"><?= $total_pelatih; ?></div>
-                <p class="text-xs text-gray-400 mt-1">Pelatih aktif di seluruh cabang</p>
+                <div class="stat-number"><?= $total_cabang; ?></div>
+                <p class="text-xs text-gray-400 mt-1">Total lokasi cabang Swift SC</p>
+            </div>
+        </div>
+
+        <!-- Peringkat Cabang -->
+        <div class="card overflow-hidden mb-6">
+            <div class="px-5 py-4 border-b border-[#E8E8EF]">
+                <h2 class="text-sm font-bold text-algolia-navy">Peringkat Performa Cabang (Bulan Ini)</h2>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="table-algolia w-full text-left border-collapse">
+                    <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
+                        <tr>
+                            <th class="px-5 py-3 border-b border-[#E8E8EF] w-12 text-center">Rank</th>
+                            <th class="px-5 py-3 border-b border-[#E8E8EF]">Nama Cabang</th>
+                            <th class="px-5 py-3 border-b border-[#E8E8EF] text-center">Total Member Aktif</th>
+                            <th class="px-5 py-3 border-b border-[#E8E8EF] text-right">Pendapatan Bulan Ini</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php 
+                        $rank = 1;
+                        if(count($peringkat_cabang) > 0):
+                            foreach($peringkat_cabang as $p): 
+                        ?>
+                        <tr class="hover:bg-gray-50/50 border-b border-gray-100 transition-colors">
+                            <td class="px-5 py-3 text-center font-bold text-gray-400">#<?= $rank++ ?></td>
+                            <td class="px-5 py-3 text-sm font-bold text-algolia-navy"><?= htmlspecialchars($p['nama_cabang']) ?></td>
+                            <td class="px-5 py-3 text-sm text-gray-600 text-center"><?= $p['total_member'] ?> Atlet</td>
+                            <td class="px-5 py-3 text-sm font-bold text-green-600 text-right">Rp <?= number_format($p['pendapatan'] ?? 0, 0, ',', '.') ?></td>
+                        </tr>
+                        <?php 
+                            endforeach; 
+                        else:
+                        ?>
+                        <tr><td colspan="4" class="px-5 py-10 text-center text-gray-400 italic">Belum ada data performa cabang bulan ini.</td></tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
             </div>
         </div>
 
