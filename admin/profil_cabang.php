@@ -57,9 +57,13 @@ if($q_pelatih) $total_pelatih = mysqli_fetch_assoc($q_pelatih)['total'] ?? 0;
                 <div class="card overflow-hidden">
                     <div class="bg-gradient-to-r from-slate-800 to-slate-700 px-6 py-8">
                         <div class="flex items-center gap-4">
-                            <div class="w-16 h-16 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                            </div>
+                            <?php if(!empty($cabang_data['foto'])): ?>
+                                <img src="../uploads/<?= htmlspecialchars($cabang_data['foto']) ?>" class="w-16 h-16 rounded-xl object-cover border-2 border-white/20">
+                            <?php else: ?>
+                                <div class="w-16 h-16 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
+                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                                </div>
+                            <?php endif; ?>
                             <div>
                                 <h2 class="text-xl font-bold text-white"><?= htmlspecialchars($cabang_data['nama_cabang']) ?></h2>
                                 <p class="text-sm text-white/70">ID Cabang: #<?= $cabang_data['id'] ?></p>
@@ -67,8 +71,9 @@ if($q_pelatih) $total_pelatih = mysqli_fetch_assoc($q_pelatih)['total'] ?? 0;
                         </div>
                     </div>
                     
-                    <form action="proses_profil_cabang.php" method="POST" class="p-6">
+                    <form action="proses_profil_cabang.php" method="POST" enctype="multipart/form-data" class="p-6">
                         <input type="hidden" name="id" value="<?= $cabang_data['id'] ?>">
+                        <input type="hidden" name="foto_lama" value="<?= htmlspecialchars($cabang_data['foto'] ?? '') ?>">
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div>
@@ -81,9 +86,26 @@ if($q_pelatih) $total_pelatih = mysqli_fetch_assoc($q_pelatih)['total'] ?? 0;
                             </div>
                         </div>
                         
+                        <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Jam Operasional</label>
+                                <input type="text" name="jam_operasional" value="<?= htmlspecialchars($cabang_data['jam_operasional'] ?? '') ?>" placeholder="Misal: Senin - Jumat (08:00 - 17:00)" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm transition-all" required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Upload Foto Cabang</label>
+                                <input type="file" name="foto" accept="image/*" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-2.5 shadow-sm transition-all">
+                                <p class="text-[10px] text-gray-400 mt-1">Kosongkan jika tidak ingin mengubah foto saat ini.</p>
+                            </div>
+                        </div>
+
                         <div class="mt-5">
                             <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Alamat / Lokasi</label>
-                            <textarea name="lokasi" rows="3" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm transition-all" required><?= htmlspecialchars($cabang_data['lokasi']) ?></textarea>
+                            <textarea name="lokasi" rows="2" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm transition-all" required><?= htmlspecialchars($cabang_data['lokasi']) ?></textarea>
+                        </div>
+                        
+                        <div class="mt-5">
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Deskripsi Cabang</label>
+                            <textarea name="deskripsi" rows="3" placeholder="Jelaskan detail fasilitas dan profil singkat kolam renang..." class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm transition-all" required><?= htmlspecialchars($cabang_data['deskripsi'] ?? '') ?></textarea>
                         </div>
 
                         <div class="mt-5 flex justify-end">
