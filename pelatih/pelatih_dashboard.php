@@ -9,8 +9,35 @@ include '../includes/sidebar.php';
 include '../includes/koneksi.php';
 
 $coach_cabang_id = $_SESSION['cabang'] ?? '';
-$coach_id = $_SESSION['user_id'] ?? 0;
+$coach_user_id = $_SESSION['user_id'] ?? 0;
 $coach_name = $_SESSION['name'] ?? 'Pelatih';
+
+// Cek data pelatih di tabel pelatih
+$q_pelatih_data = mysqli_query($koneksi, "SELECT * FROM pelatih WHERE user_id='$coach_user_id'");
+$pelatih_data = mysqli_fetch_assoc($q_pelatih_data);
+$coach_id = $pelatih_data ? $pelatih_data['id'] : 0;
+$coach_foto = $pelatih_data ? $pelatih_data['foto'] : 'default_coach.jpg';
+
+// Proses upload foto profil
+$pesan_upload = '';
+if(isset($_POST['upload_foto'])) {
+    if(isset($_FILES['foto_profil']) && $_FILES['foto_profil']['error'] == 0 && $coach_id > 0) {
+        $ext = pathinfo($_FILES['foto_profil']['name'], PATHINFO_EXTENSION);
+        $filename = 'coach_' . $coach_id . '_' . time() . '.' . $ext;
+        $target = '../admin/uploads/' . $filename;
+        if(move_uploaded_file($_FILES['foto_profil']['tmp_name'], $target)) {
+            // Hapus foto lama jika bukan default
+            if($coach_foto != 'default_coach.jpg' && file_exists('../admin/uploads/' . $coach_foto)) {
+                @unlink('../admin/uploads/' . $coach_foto);
+            }
+            mysqli_query($koneksi, "UPDATE pelatih SET foto='$filename' WHERE id='$coach_id'");
+            $coach_foto = $filename; // update for display
+            $pesan_upload = '<div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 border border-green-200">Foto profil berhasil diperbarui!</div>';
+        } else {
+            $pesan_upload = '<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200">Gagal mengunggah foto.</div>';
+        }
+    }
+}
 
 // 1. Total Atlet di Cabang Pelatih
 $total_atlet = 0;
@@ -57,10 +84,26 @@ if($q_perf) {
 
     <div class="p-4 lg:p-8 page-content">
         
-        <div class="mb-6">
-            <h1 class="text-2xl font-bold text-algolia-navy">Halo, <?= htmlspecialchars($coach_name); ?>!</h1>
-            <p class="text-sm text-gray-500 mt-1">Ringkasan aktivitas latihan cabang Anda</p>
+        <div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-900">Halo, <?= htmlspecialchars($coach_name); ?>!</h1>
+                <p class="text-sm text-slate-500 mt-1">Ringkasan aktivitas latihan cabang Anda</p>
+            </div>
+            
+            <!-- Profil Singkat & Upload Foto -->
+            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+                <img src="../admin/uploads/<?= htmlspecialchars($coach_foto) ?>" alt="Profil" class="w-12 h-12 rounded-full object-cover border border-slate-200" onerror="this.src='https://placehold.co/100x100?text=Foto'">
+                <div>
+                    <p class="text-xs text-slate-500 font-semibold mb-1">Ganti Foto Profil</p>
+                    <form action="" method="POST" enctype="multipart/form-data" class="flex items-center gap-2">
+                        <input type="file" name="foto_profil" accept="image/*" class="text-[10px] w-48 border border-slate-200 rounded p-1" required>
+                        <button type="submit" name="upload_foto" class="bg-cyan-600 hover:bg-cyan-500 text-white text-[10px] px-3 py-1.5 rounded font-bold transition-colors">Upload</button>
+                    </form>
+                </div>
+            </div>
         </div>
+
+        <?= $pesan_upload ?>
 
         <!-- Stat Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">

@@ -308,8 +308,8 @@ try {
 
         <!-- TOP PERFORMER PELATIH (Dynamic Check) -->
         <section id="pelatih">
-            <h3 class="text-3xl font-black text-center mb-10 uppercase text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-400">Tim Kepelatihan</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <h3 class="text-4xl font-black text-center mb-16 uppercase text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-400 drop-shadow-sm">Tim Kepelatihan</h3>
+            <div class="flex flex-wrap justify-center gap-8 md:gap-12 px-4">
                 <?php
                 $pelatihList = [];
                 try {
@@ -324,22 +324,34 @@ try {
                 } catch (\Exception $e) {}
                 
                 if (count($pelatihList) > 0) :
-                    foreach($pelatihList as $p) :
-                        $foto_pelatih = !empty($p['foto']) && file_exists("admin/" . $p['foto']) ? "admin/" . $p['foto'] : "https://ui-avatars.com/api/?name=" . urlencode($p['nama']) . "&background=0f172a&color=fff&size=256";
+                    // Variasi rotasi untuk efek organik
+                    $rotations = ['-rotate-3', 'rotate-2', '-rotate-1'];
+                    foreach($pelatihList as $index => $p) :
+                        $rotClass = $rotations[$index % count($rotations)];
+                        $foto_pelatih = !empty($p['foto']) && file_exists("admin/uploads/" . $p['foto']) ? "admin/uploads/" . $p['foto'] : "https://ui-avatars.com/api/?name=" . urlencode($p['nama']) . "&background=0f172a&color=fff&size=512";
                 ?>
-                <div class="glass-panel rounded-2xl overflow-hidden shadow-lg text-center pb-6 transition-all duration-300 hover:shadow-[0_0_20px_rgba(13,148,136,0.3)] hover:-translate-y-2 border border-slate-700/50 group">
-                    <div class="h-48 bg-slate-800 bg-cover bg-center" style="background-image: url('<?= $foto_pelatih ?>');"></div>
-                    <div class="relative z-20">
-                        <h4 class="text-xl font-bold mt-4 text-white"><?= $p['nama']; ?></h4>
-                        <p class="text-cyan-400 font-semibold text-sm"><?= $p['jabatan']; ?></p>
-                        <p class="text-xs text-slate-400 mt-2 px-4"><?= $p['sertifikasi']; ?></p>
+                <!-- Bingkai Polaroid -->
+                <div class="bg-slate-50 p-3 pb-16 md:p-4 md:pb-20 shadow-2xl rounded-sm transform transition-all duration-500 hover:-translate-y-4 hover:scale-105 hover:rotate-0 hover:shadow-[0_20px_50px_rgba(6,182,212,0.3)] relative group w-64 <?= $rotClass ?> z-10 hover:z-30">
+                    <div class="aspect-[3/4] bg-slate-200 overflow-hidden shadow-inner relative">
+                        <img src="<?= $foto_pelatih ?>" class="w-full h-full object-cover filter brightness-95 contrast-125 grayscale-[30%] group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-700" alt="<?= htmlspecialchars($p['nama']) ?>">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     </div>
+                    
+                    <!-- Area Teks Bawah Polaroid -->
+                    <div class="absolute bottom-0 left-0 w-full px-4 pb-4 pt-2 text-center flex flex-col items-center justify-end h-16 md:h-20">
+                        <h4 class="text-xl font-black text-slate-800 tracking-tight leading-tight line-clamp-1"><?= htmlspecialchars($p['nama']); ?></h4>
+                        <p class="text-xs font-bold text-cyan-700 uppercase tracking-widest mt-0.5 line-clamp-1"><?= htmlspecialchars($p['jabatan']); ?></p>
+                        <p class="text-[10px] text-slate-500 mt-1 line-clamp-1 italic"><?= htmlspecialchars($p['sertifikasi']); ?></p>
+                    </div>
+                    
+                    <!-- Pin Hiasan Opsional -->
+                    <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full bg-slate-300/80 shadow-sm opacity-50 z-20"></div>
                 </div>
                 <?php 
                     endforeach; 
                 else : 
                 ?>
-                    <p class="text-slate-500 italic col-span-3 text-center">Belum ada data pelatih di sistem.</p>
+                    <p class="text-slate-500 italic text-center w-full">Belum ada data pelatih di sistem.</p>
                 <?php endif; ?>
             </div>
         </section>
