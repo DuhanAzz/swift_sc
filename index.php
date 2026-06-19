@@ -109,51 +109,42 @@ try {
         </div>
     </nav>
 
-    <!-- Hero Section (Glassmorphism Asymmetric) -->
-    <header class="relative overflow-hidden min-h-screen flex items-center" id="heroHeader">
+    <!-- Hero Section (True Split-Screen) -->
+    <header class="relative w-full min-h-screen flex flex-col md:flex-row" id="heroHeader">
         
-        <!-- Lapisan Belakang (Slider Full Screen) -->
-        <div class="absolute inset-0 z-0 overflow-hidden bg-slate-900" id="sliderContainer">
+        <!-- Sisi Kiri: Rata Kiri, Full Blur, Teks (50% on desktop) -->
+        <div class="relative w-full md:w-1/2 min-h-[60vh] md:min-h-screen flex flex-col justify-center overflow-hidden">
+            <!-- Background Kiri (Statis) -->
             <?php $first_bg = count($banners) > 0 ? "admin/uploads/".$banners[0]['gambar'] : "https://images.unsplash.com/photo-1572334057861-6d72dbb688d2?auto=format&fit=crop&w=1920&q=80"; ?>
-            <div id="heroBgImg" class="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-[8000ms] ease-linear transform scale-110" style="background-image: url('<?= htmlspecialchars($first_bg) ?>');"></div>
-            <!-- Overlay gradient untuk fallback keterbacaan logo di navbar jika transparan -->
-            <div class="absolute inset-0 bg-gradient-to-r from-slate-900/40 via-slate-900/10 to-transparent"></div>
-        </div>
-        
-        <!-- Lapisan Depan (Konten Kiri Blur) -->
-        <div class="container mx-auto relative z-10 w-full px-0 sm:px-4 flex h-full min-h-screen">
+            <div id="heroLeftBg" class="absolute inset-0 bg-cover bg-center transition-opacity duration-1000" style="background-image: url('<?= htmlspecialchars($first_bg) ?>');"></div>
             
-            <!-- Sisi Kiri: Blur Tebal & Teks (60% width on desktop) -->
-            <div class="w-full md:w-3/5 lg:w-1/2 bg-slate-900/40 backdrop-blur-[20px] border-r border-white/10 p-8 md:p-16 flex flex-col justify-center h-full min-h-screen shadow-[20px_0_40px_rgba(0,0,0,0.3)] relative overflow-hidden group pt-32">
+            <!-- Overlay Blur & Teks Rata Kiri -->
+            <div id="heroTextContainer" class="absolute inset-0 bg-slate-900/60 backdrop-blur-xl z-10 flex flex-col justify-center px-6 sm:px-12 md:px-16 lg:px-24 transition-opacity duration-1000">
                 <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 to-transparent"></div>
-                <div class="absolute -top-10 -right-10 w-64 h-64 bg-cyan-500/20 rounded-full filter blur-[50px] -z-10 group-hover:bg-cyan-500/30 transition-all duration-1000"></div>
+                <div class="absolute top-20 -left-10 w-64 h-64 bg-cyan-500/20 rounded-full filter blur-[60px] -z-10"></div>
                 
-                <h2 class="text-3xl md:text-4xl mb-4 text-cyan-300 font-extrabold drop-shadow-md tracking-wider">
-                    Jump in. let's swim!
+                <h2 id="heroSlideTitle" class="text-4xl md:text-5xl lg:text-6xl mb-6 text-white font-black drop-shadow-lg tracking-tight leading-[1.1]">
+                    <?= htmlspecialchars(count($banners) > 0 ? $banners[0]['judul'] : 'Jump in. let\'s swim!') ?>
                 </h2>
-                <h1 class="text-6xl md:text-7xl lg:text-8xl font-black mb-6 uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white via-slate-100 to-cyan-400 drop-shadow-2xl leading-[1.1]">
-                    SWIFT SC
-                </h1>
-                <p class="text-base md:text-xl text-slate-200 font-medium mb-10 leading-relaxed max-w-lg drop-shadow">
-                    Klub renang resmi dan tersertifikasi dengan fasilitas pelatih berlisensi nasional & internasional.
+                <p id="heroSlideSubtitle" class="text-base md:text-xl text-cyan-50 font-medium mb-10 leading-relaxed max-w-lg drop-shadow-md">
+                    <?= htmlspecialchars(count($banners) > 0 ? $banners[0]['subjudul'] : 'SWIFT SC - Klub renang resmi dan tersertifikasi dengan fasilitas pelatih berlisensi nasional & internasional.') ?>
                 </p>
                 <div>
-                    <a href="pendaftaran.php" class="badge-cyan hover:bg-cyan-600 px-8 py-4 rounded-full font-black text-lg transition-all inline-flex items-center gap-3 transform hover:-translate-y-1 hover:scale-105 border border-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.4)]">
+                    <?php $first_link = count($banners) > 0 && !empty($banners[0]['link']) ? $banners[0]['link'] : 'pendaftaran.php'; ?>
+                    <a id="heroSlideLink" href="<?= htmlspecialchars($first_link) ?>" class="bg-cyan-600 hover:bg-cyan-500 text-white px-8 py-4 rounded-full font-bold text-base md:text-lg transition-all inline-flex items-center gap-3 transform hover:-translate-y-1 hover:scale-105 border border-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.4)]">
                         DAFTAR SEKARANG
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </a>
                 </div>
             </div>
+        </div>
 
-            <!-- Sisi Kanan: Transparan 100% -->
-            <div class="hidden md:flex md:w-2/5 lg:w-1/2 bg-transparent relative h-full min-h-screen flex-col justify-end p-12 pb-24">
-                <!-- Teks judul slider yang aktif -->
-                <div class="transition-opacity duration-1000 bg-slate-900/60 backdrop-blur-md p-6 rounded-2xl border border-white/10 w-max max-w-full transform translate-y-8" id="heroTextContainer">
-                    <h3 id="heroSlideTitle" class="text-2xl font-bold text-white mb-1 drop-shadow-lg"><?= htmlspecialchars(count($banners) > 0 ? $banners[0]['judul'] : '') ?></h3>
-                    <p id="heroSlideSubtitle" class="text-sm text-cyan-300 font-medium drop-shadow-md"><?= htmlspecialchars(count($banners) > 0 ? $banners[0]['subjudul'] : '') ?></p>
-                </div>
-            </div>
-
+        <!-- Sisi Kanan: Gambar Dinamis Bergeser (50% on desktop) -->
+        <div class="relative w-full md:w-1/2 min-h-[40vh] md:min-h-screen bg-slate-900 overflow-hidden">
+            <!-- Shadow gradient di perbatasan untuk pemisah yang halus -->
+            <div class="absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-slate-900/30 to-transparent z-10 hidden md:block"></div>
+            
+            <div id="heroRightBg" class="absolute inset-0 bg-cover bg-center transition-all duration-[5000ms] ease-linear transform scale-110" style="background-image: url('<?= htmlspecialchars($first_bg) ?>');"></div>
         </div>
     </header>
 
@@ -427,53 +418,65 @@ try {
 
     <!-- Scripts -->
     <script>
-        // Dynamic Hero Slider Logic (Glassmorphism Slide Effect)
+        // Dynamic Split-Screen Slider Logic
         const heroBanners = <?= json_encode($banners) ?>;
-        const heroBg = document.getElementById('heroBgImg');
+        const heroLeftBg = document.getElementById('heroLeftBg');
+        const heroRightBg = document.getElementById('heroRightBg');
         const heroTitle = document.getElementById('heroSlideTitle');
         const heroSub = document.getElementById('heroSlideSubtitle');
+        const heroLink = document.getElementById('heroSlideLink');
         const textContainer = document.getElementById('heroTextContainer');
 
         if(heroBanners && heroBanners.length > 1) {
             let currentHeroIndex = 0;
 
-            // Start initial pan
+            // Start initial pan for the right image
             setTimeout(() => {
-                heroBg.style.transform = 'scale(1.1) translateX(-5%)';
+                heroRightBg.style.transform = 'scale(1.1) translateX(-5%)';
             }, 100);
 
+            // Change slide every 5 seconds as requested
             setInterval(() => {
-                // Fade out text and image
-                heroBg.style.opacity = '0';
+                // Fade out text and left bg slightly
+                heroLeftBg.style.opacity = '0.3';
+                heroRightBg.style.opacity = '0';
                 if(textContainer) textContainer.style.opacity = '0';
 
                 setTimeout(() => {
                     currentHeroIndex = (currentHeroIndex + 1) % heroBanners.length;
                     const banner = heroBanners[currentHeroIndex];
                     
-                    // Reset transform before showing new image so it slides from right to left
-                    heroBg.style.transition = 'none';
-                    heroBg.style.transform = 'scale(1.1) translateX(5%)';
+                    // Update content
+                    const imageUrl = `admin/uploads/${banner.gambar}`;
+                    heroLeftBg.style.backgroundImage = `url('${imageUrl}')`;
                     
+                    // Reset right background transform so it can slide again
+                    heroRightBg.style.transition = 'none';
+                    heroRightBg.style.transform = 'scale(1.1) translateX(5%)';
+                    heroRightBg.style.backgroundImage = `url('${imageUrl}')`;
+                    
+                    // Update Text
+                    if(heroTitle) heroTitle.textContent = banner.judul || 'SWIFT SC';
+                    if(heroSub) heroSub.textContent = banner.subjudul || '';
+                    if(heroLink) heroLink.href = banner.link || 'pendaftaran.php';
+                    
+                    // Fade in and slide to left over 5 seconds
                     setTimeout(() => {
-                        heroBg.style.backgroundImage = `url('admin/uploads/${banner.gambar}')`;
-                        if(heroTitle) heroTitle.textContent = banner.judul;
-                        if(heroSub) heroSub.textContent = banner.subjudul;
+                        heroLeftBg.style.opacity = '1';
+                        heroRightBg.style.transition = 'opacity 1s ease, transform 5s linear';
+                        heroRightBg.style.opacity = '1';
+                        heroRightBg.style.transform = 'scale(1.1) translateX(-5%)';
                         
-                        // Fade in and slide to left over 8 seconds
-                        heroBg.style.transition = 'opacity 1s ease, transform 8s linear';
-                        heroBg.style.opacity = '1';
-                        heroBg.style.transform = 'scale(1.1) translateX(-5%)';
                         if(textContainer) textContainer.style.opacity = '1';
                     }, 50);
 
                 }, 1000); // 1s fade-out duration
-            }, 8000); // Change slide every 8s
-        } else if (heroBg) {
-            // If only 1 image, infinite pan back and forth
+            }, 5000); // 5s interval
+        } else if (heroRightBg) {
+            // Infinite pan for single image
             setTimeout(() => {
-                heroBg.style.transition = 'transform 20s alternate infinite linear';
-                heroBg.style.transform = 'scale(1.15) translateX(-5%)';
+                heroRightBg.style.transition = 'transform 15s alternate infinite linear';
+                heroRightBg.style.transform = 'scale(1.15) translateX(-5%)';
             }, 100);
         }
     </script>
