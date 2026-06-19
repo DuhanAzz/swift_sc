@@ -51,7 +51,7 @@ try {
     <title>Swift SC — <?= htmlspecialchars($cmsData['hero_title']) ?></title>
     <meta name="description" content="Swift Swimming Club - Klub renang resmi dan tersertifikasi dengan pelatih berlisensi nasional & internasional.">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Sora:wght@300;400;600;700;800&family=Caveat:wght@700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
@@ -66,6 +66,7 @@ try {
                     fontFamily: {
                         sora: ['Sora', 'sans-serif'],
                         inter: ['Inter', 'sans-serif'],
+                        caveat: ['Caveat', 'cursive'],
                     }
                 }
             }
@@ -138,19 +139,22 @@ try {
     </nav>
 
     <!-- ===== HERO SECTION (Algolia Dark Hero) ===== -->
-    <header class="hero-bg relative overflow-hidden">
-        <?php if (file_exists('admin/uploads/hero_bg.jpg')): ?>
-            <div class="absolute inset-0 bg-cover bg-center opacity-15" style="background-image: url('admin/uploads/hero_bg.jpg?v=<?= time() ?>');"></div>
+    <header class="hero-bg relative overflow-hidden" id="heroHeader">
+        <?php if (file_exists('admin/uploads/hero_bg.jpg') && count($banners) == 0): ?>
+            <div id="heroBgImg" class="absolute inset-0 bg-cover bg-center opacity-15 transition-all duration-1000 ease-in-out" style="background-image: url('admin/uploads/hero_bg.jpg?v=<?= time() ?>');"></div>
+        <?php else: ?>
+            <?php $first_bg = count($banners) > 0 ? "admin/uploads/".$banners[0]['gambar'] : "https://images.unsplash.com/photo-1572334057861-6d72dbb688d2?auto=format&fit=crop&w=1920&q=80"; ?>
+            <div id="heroBgImg" class="absolute inset-0 bg-cover bg-center opacity-15 transition-all duration-1000 ease-in-out" style="background-image: url('<?= htmlspecialchars($first_bg) ?>');"></div>
         <?php endif; ?>
         
         <div class="relative max-w-[1440px] mx-auto flex flex-col lg:flex-row items-center">
             <!-- Left: Text Content -->
             <div class="w-full lg:w-1/2 px-6 lg:pl-20 py-16 lg:py-28 text-center lg:text-left">
-                <h1 class="font-sora font-bold text-white mb-6 text-[40px] sm:text-[56px] lg:text-[70px] leading-[105%] tracking-[-3px] fade-up">
-                    <?= htmlspecialchars($cmsData['hero_title']) ?>
+                <h1 id="heroTitle" class="font-caveat font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300 uppercase mb-6 text-[50px] sm:text-[66px] lg:text-[80px] leading-[105%] tracking-[1px] transition-opacity duration-1000 ease-in-out fade-up">
+                    <?= htmlspecialchars(count($banners) > 0 ? $banners[0]['judul'] : $cmsData['hero_title']) ?>
                 </h1>
-                <p class="font-sora text-base sm:text-lg lg:text-[19px] font-normal leading-relaxed text-gray-300 mb-0 max-w-[430px] mx-auto lg:mx-0 fade-up fade-up-delay-1">
-                    <?= htmlspecialchars($cmsData['hero_desc']) ?>
+                <p id="heroSubtitle" class="font-sora text-base sm:text-lg lg:text-[19px] font-normal leading-relaxed text-gray-300 mb-0 max-w-[430px] mx-auto lg:mx-0 transition-opacity duration-1000 ease-in-out fade-up fade-up-delay-1">
+                    <?= htmlspecialchars(count($banners) > 0 ? $banners[0]['subjudul'] : $cmsData['hero_desc']) ?>
                 </p>
                 
                 <div class="flex justify-center lg:justify-start gap-3 mt-9 fade-up fade-up-delay-2">
@@ -553,8 +557,38 @@ try {
             currentSlide = (currentSlide + dir + slides) % slides;
             track.style.transform = `translateX(-${currentSlide * 100}%)`;
         }
-        // Auto-advance slider
+        // Auto-advance slider array based
         setInterval(() => { if(document.getElementById('sliderTrack')) moveSlider(1); }, 5000);
+
+        // Dynamic Hero Slider
+        const heroBanners = <?= json_encode($banners) ?>;
+        if(heroBanners && heroBanners.length > 1) {
+            let currentHeroIndex = 0;
+            const heroBg = document.getElementById('heroBgImg');
+            const heroTitle = document.getElementById('heroTitle');
+            const heroSub = document.getElementById('heroSubtitle');
+
+            setInterval(() => {
+                // Fade out
+                heroBg.style.opacity = '0';
+                heroTitle.style.opacity = '0';
+                heroSub.style.opacity = '0';
+
+                setTimeout(() => {
+                    currentHeroIndex = (currentHeroIndex + 1) % heroBanners.length;
+                    const banner = heroBanners[currentHeroIndex];
+                    
+                    heroBg.style.backgroundImage = `url('admin/uploads/${banner.gambar}')`;
+                    heroTitle.textContent = banner.judul;
+                    heroSub.textContent = banner.subjudul;
+                    
+                    // Fade in
+                    heroBg.style.opacity = '0.15';
+                    heroTitle.style.opacity = '1';
+                    heroSub.style.opacity = '1';
+                }, 1000); // Wait for fade out to complete before changing text and fading in
+            }, 6000); // Run every 6 seconds to allow 1s transition
+        }
     </script>
 </body>
 </html>
