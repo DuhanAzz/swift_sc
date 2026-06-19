@@ -115,6 +115,16 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
                         $a['nama_cabang'] ?? 'Swift SC', 
                         date('m'), date('Y'), $jumlah_hadir, $a['no_hp'] ?? ''
                     );
+                    
+                    // Tambahan Status Cakupan
+                    if($total_paid > 0) {
+                        $inv_text .= "\n\n*Sebagai informasi, pembayaran Anda sebelumnya telah meng-cover kehadiran hingga:*\n";
+                        $inv_text .= "- Sesi ke: " . $total_paid . "\n";
+                        $inv_text .= "- Tanggal: " . date('d M Y', strtotime($last_paid_date)) . "\n\n";
+                    } else {
+                        $inv_text .= "\n\n*Sebagai informasi, belum ada riwayat pembayaran yang tercatat sebelumnya.*\n\n";
+                    }
+                    $inv_text .= "Sesi berikutnya yang belum dibayar saat ini berjumlah: *" . $jumlah_hadir . "* sesi.";
                 ?>
                 
                 <div class="bg-white rounded-xl border-2 <?= $card_border ?> overflow-hidden shadow-sm hover:shadow-md transition-shadow">
