@@ -108,20 +108,29 @@ if(isset($_POST['tambah_pelatih'])){
 
 if(isset($_POST['edit_pelatih'])){
     $id           = mysqli_real_escape_string($koneksi, $_POST['id']);
-    $user_id      = mysqli_real_escape_string($koneksi, $_POST['user_id']);
+    $user_id      = isset($_POST['user_id']) ? mysqli_real_escape_string($koneksi, $_POST['user_id']) : '';
     $nama_pelatih = mysqli_real_escape_string($koneksi, $_POST['nama_pelatih']);
-    $email        = mysqli_real_escape_string($koneksi, $_POST['email']);
-    $password_baru= $_POST['password_baru'];
+    $email        = isset($_POST['email']) ? mysqli_real_escape_string($koneksi, $_POST['email']) : '';
+    $password_baru= isset($_POST['password_baru']) ? $_POST['password_baru'] : '';
     $lisensi      = mysqli_real_escape_string($koneksi, $_POST['lisensi']);
     $no_hp        = mysqli_real_escape_string($koneksi, $_POST['no_hp']);
-    $id_kolam     = empty($_POST['id_kolam']) ? "NULL" : "'".mysqli_real_escape_string($koneksi, $_POST['id_kolam'])."'";
+    
+    $raw_id_kolam = $_POST['id_kolam'] ?? '';
+    if(is_numeric($raw_id_kolam)) {
+        $id_kolam = $raw_id_kolam;
+        $q_c = mysqli_query($koneksi, "SELECT nama_cabang FROM cabang WHERE id='$id_kolam'");
+        $nama_c = ($q_c && $r = mysqli_fetch_assoc($q_c)) ? $r['nama_cabang'] : 'Pusat';
+    } else {
+        // Fallback if legacy form sent branch name instead of ID
+        $nama_c = mysqli_real_escape_string($koneksi, $raw_id_kolam);
+        $q_c = mysqli_query($koneksi, "SELECT id FROM cabang WHERE nama_cabang='$nama_c' LIMIT 1");
+        $id_kolam = ($q_c && $r = mysqli_fetch_assoc($q_c)) ? $r['id'] : 'NULL';
+    }
 
-    // Get cabang name for legacy column
-    $q_c = mysqli_query($koneksi, "SELECT nama_cabang FROM cabang WHERE id=$id_kolam");
-    $nama_c = ($q_c && $r = mysqli_fetch_assoc($q_c)) ? $r['nama_cabang'] : 'Pusat';
+    $id_kolam_val = empty($id_kolam) || $id_kolam == 'NULL' ? "NULL" : "'".mysqli_real_escape_string($koneksi, $id_kolam)."'";
 
     // 1. Update Pelatih
-    $q1 = mysqli_query($koneksi, "UPDATE pelatih SET nama='$nama_pelatih', sertifikasi='$lisensi', jabatan='$no_hp', id_kolam=$id_kolam, cabang='$nama_c' WHERE id='$id'");
+    $q1 = mysqli_query($koneksi, "UPDATE pelatih SET nama='$nama_pelatih', sertifikasi='$lisensi', jabatan='$no_hp', id_kolam=$id_kolam_val, cabang='$nama_c' WHERE id='$id'");
     
     // 2. Update Users
     if($user_id) {
