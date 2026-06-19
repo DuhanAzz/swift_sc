@@ -3,7 +3,7 @@
 session_start();
 
 // Panggil file koneksi database
-require_once 'includes/koneksi.php';
+require_once '../includes/koneksi.php';
 
 if (isset($_POST['login'])) {
     $email = bersihkan_input($_POST['email']);
