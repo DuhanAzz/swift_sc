@@ -51,12 +51,22 @@ if($q_cf) {
     }
 }
 
-// --- Ambil Leaderboard Atlet Global ---
-$performances = [];
-$q_perf = mysqli_query($koneksi, "SELECT performa.*, member.nama as nama_atlet FROM performa LEFT JOIN member ON performa.member_id = member.id ORDER BY waktu_ms ASC LIMIT 100");
-if($q_perf) {
-    while($row = mysqli_fetch_assoc($q_perf)) {
-        $performances[] = $row;
+// --- Ambil Laporan Agregasi (Rekapitulasi per Cabang) ---
+$rekapitulasi = [];
+$q_rekap = mysqli_query($koneksi, "
+    SELECT 
+        c.nama_cabang,
+        SUM(CASE WHEN a.jenis = 'Pemasukan' THEN a.nominal ELSE 0 END) as total_pemasukan,
+        SUM(CASE WHEN a.jenis = 'Pengeluaran' THEN a.nominal ELSE 0 END) as total_pengeluaran
+    FROM cabang c
+    LEFT JOIN arus_kas a ON c.id = a.cabang_id AND MONTH(a.tanggal) = MONTH(CURRENT_DATE()) AND YEAR(a.tanggal) = YEAR(CURRENT_DATE())
+    GROUP BY c.id
+    ORDER BY total_pemasukan DESC
+");
+if($q_rekap) {
+    while($row = mysqli_fetch_assoc($q_rekap)) {
+        $row['profit'] = $row['total_pemasukan'] - $row['total_pengeluaran'];
+        $rekapitulasi[] = $row;
     }
 }
 ?>
@@ -101,23 +111,33 @@ if($q_perf) {
             </form>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div class="card p-6 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-bold text-gray-500 uppercase">Total Pemasukan (Global)</p>
-                    <h3 class="text-2xl font-black text-green-600">Rp <?= number_format($total_masuk, 0, ',', '.'); ?></h3>
-                </div>
-                <div class="bg-green-100 p-3 rounded-full text-green-600">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div class="card p-5 border-b-4 border-green-500">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Total Pemasukan (Global)</p>
+                        <h3 class="text-2xl font-black text-green-600">Rp <?= number_format($total_masuk, 0, ',', '.'); ?></h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center text-green-500">📈</div>
                 </div>
             </div>
-            <div class="card p-6 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-bold text-gray-500 uppercase">Total Pengeluaran (Global)</p>
-                    <h3 class="text-2xl font-black text-red-600">Rp <?= number_format($total_keluar, 0, ',', '.'); ?></h3>
+            <div class="card p-5 border-b-4 border-red-500">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Total Pengeluaran (Global)</p>
+                        <h3 class="text-2xl font-black text-red-500">Rp <?= number_format($total_keluar, 0, ',', '.'); ?></h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-red-500">📉</div>
                 </div>
-                <div class="bg-red-100 p-3 rounded-full text-red-600">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
+            </div>
+            <?php $saldo_akhir = $total_masuk - $total_keluar; ?>
+            <div class="card p-5 border-b-4 <?= $saldo_akhir >= 0 ? 'border-blue-500' : 'border-red-600' ?>">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Saldo Akhir (Global)</p>
+                        <h3 class="text-2xl font-black <?= $saldo_akhir >= 0 ? 'text-blue-600' : 'text-red-600' ?>">Rp <?= number_format($saldo_akhir, 0, ',', '.') ?></h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-full <?= $saldo_akhir >= 0 ? 'bg-blue-50 text-blue-500' : 'bg-red-50 text-red-600' ?> flex items-center justify-center">💰</div>
                 </div>
             </div>
         </div>
@@ -126,6 +146,9 @@ if($q_perf) {
             <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
                 <li class="mr-2" role="presentation">
                     <button class="inline-block p-4 border-b-2 rounded-t-lg" id="cashflow-tab" data-tabs-target="#cashflow" type="button" role="tab" aria-controls="cashflow" aria-selected="false">Arus Kas Global</button>
+                </li>
+                <li class="mr-2" role="presentation">
+                    <button class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-[#E8E8EF]" id="rekap-tab" data-tabs-target="#rekap" type="button" role="tab" aria-controls="rekap" aria-selected="false">Rekapitulasi Cabang</button>
                 </li>
                 <li class="mr-2" role="presentation">
                     <button class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-[#E8E8EF]" id="leaderboard-tab" data-tabs-target="#leaderboard" type="button" role="tab" aria-controls="leaderboard" aria-selected="false">Global Leaderboard</button>
@@ -137,7 +160,10 @@ if($q_perf) {
             <!-- TAB CASHFLOW -->
             <div class="hidden p-4 rounded-lg bg-gray-50" id="cashflow" role="tabpanel" aria-labelledby="cashflow-tab">
                 <div class="card overflow-hidden">
-                    <table class="table-algolia">
+                    <div class="px-5 py-4 border-b border-[#E8E8EF]">
+                        <h2 class="text-sm font-bold text-algolia-navy">Riwayat Transaksi Lintas Cabang</h2>
+                    </div>
+                    <table class="table-algolia w-full text-left border-collapse">
                         <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
                             <tr>
                                 <th class="px-6 py-4">Tanggal</th>
@@ -162,6 +188,39 @@ if($q_perf) {
                                 <td class="px-6 py-4 text-sm font-bold <?= $color ?> text-right"><?= $is_in ? '+' : '-' ?> Rp <?= number_format($c['nominal'], 0, ',', '.'); ?></td>
                             </tr>
                             <?php } } else { echo "<tr><td colspan='6' class='text-center py-4 text-gray-500 italic'>Tidak ada transaksi pada filter ini.</td></tr>"; } ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB REKAPITULASI -->
+            <div class="hidden p-4 rounded-lg bg-gray-50" id="rekap" role="tabpanel" aria-labelledby="rekap-tab">
+                <div class="card overflow-hidden">
+                    <div class="px-5 py-4 border-b border-[#E8E8EF]">
+                        <h2 class="text-sm font-bold text-algolia-navy">Tabel Agregasi Keuangan Per Cabang (Bulan Ini)</h2>
+                    </div>
+                    <table class="table-algolia w-full text-left border-collapse">
+                        <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
+                            <tr>
+                                <th class="px-6 py-4 border-b border-[#E8E8EF]">Nama Cabang</th>
+                                <th class="px-6 py-4 border-b border-[#E8E8EF] text-right">Total Pemasukan</th>
+                                <th class="px-6 py-4 border-b border-[#E8E8EF] text-right">Total Pengeluaran</th>
+                                <th class="px-6 py-4 border-b border-[#E8E8EF] text-right">Profit Bersih</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php 
+                            if (count($rekapitulasi) > 0) { 
+                                foreach($rekapitulasi as $r) { 
+                                    $profit_color = $r['profit'] >= 0 ? 'text-blue-600' : 'text-red-600';
+                            ?>
+                            <tr class="bg-white border-b border-gray-100 hover:bg-gray-50/50 transition-colors">
+                                <td class="px-6 py-4 font-bold text-algolia-navy"><?= htmlspecialchars($r['nama_cabang']); ?></td>
+                                <td class="px-6 py-4 font-semibold text-green-600 text-right">Rp <?= number_format($r['total_pemasukan'], 0, ',', '.'); ?></td>
+                                <td class="px-6 py-4 font-semibold text-red-500 text-right">Rp <?= number_format($r['total_pengeluaran'], 0, ',', '.'); ?></td>
+                                <td class="px-6 py-4 font-black <?= $profit_color ?> text-right">Rp <?= number_format($r['profit'], 0, ',', '.'); ?></td>
+                            </tr>
+                            <?php } } else { echo "<tr><td colspan='4' class='text-center py-4 text-gray-400 italic'>Belum ada data rekapitulasi.</td></tr>"; } ?>
                         </tbody>
                     </table>
                 </div>

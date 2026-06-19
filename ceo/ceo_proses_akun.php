@@ -1,6 +1,42 @@
 <?php
 include '../includes/koneksi.php';
 
+// === PROSES UNIFIED AKUN BARU ===
+if(isset($_POST['tambah_akun_baru'])){
+    $name     = mysqli_real_escape_string($koneksi, $_POST['name']);
+    $email    = mysqli_real_escape_string($koneksi, $_POST['email']);
+    $role_str = mysqli_real_escape_string($koneksi, $_POST['role']); // 'Admin' atau 'Pelatih'
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $pool_id  = empty($_POST['cabang_id']) ? "NULL" : "'".mysqli_real_escape_string($koneksi, $_POST['cabang_id'])."'";
+
+    if($role_str == 'Admin') {
+        $q = mysqli_query($koneksi, "INSERT INTO users (username, email, password, role, cabang_id) VALUES ('$name', '$email', '$password', '$role_str', $pool_id)");
+        if($q) { header("location:ceo_manage_akun.php?pesan=sukses_admin"); }
+        else { header("location:ceo_manage_akun.php?pesan=gagal"); }
+    } else if($role_str == 'Pelatih') {
+        // Upload Foto
+        $foto_name = '';
+        if(isset($_FILES['foto_pelatih']) && $_FILES['foto_pelatih']['error'] == 0){
+            $ext = pathinfo($_FILES['foto_pelatih']['name'], PATHINFO_EXTENSION);
+            $foto_name = 'pelatih_' . time() . '.' . $ext;
+            move_uploaded_file($_FILES['foto_pelatih']['tmp_name'], '../uploads/' . $foto_name);
+        }
+
+        // Simpan ke users untuk login
+        $q1 = mysqli_query($koneksi, "INSERT INTO users (username, email, password, role, cabang_id) VALUES ('$name', '$email', '$password', '$role_str', $pool_id)");
+        $new_user_id = mysqli_insert_id($koneksi);
+
+        // Simpan ke pelatih untuk data profil
+        $lisensi = mysqli_real_escape_string($koneksi, $_POST['lisensi']);
+        $no_hp = mysqli_real_escape_string($koneksi, $_POST['no_hp']); // digunakan sebagai jabatan/no_hp
+        
+        $q2 = mysqli_query($koneksi, "INSERT INTO pelatih (user_id, nama_pelatih, lisensi, no_hp, id_kolam, foto) VALUES ('$new_user_id', '$name', '$lisensi', '$no_hp', $pool_id, '$foto_name')");
+        
+        if($q1 && $q2) { header("location:ceo_manage_akun.php?pesan=sukses_pelatih"); }
+        else { header("location:ceo_manage_akun.php?pesan=gagal"); }
+    }
+}
+
 // === PROSES ADMIN & MANAJER ===
 
 if(isset($_POST['tambah_admin'])){
