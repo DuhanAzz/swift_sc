@@ -220,7 +220,22 @@ include '../includes/koneksi.php';
                         <input type="text" name="jabatan" placeholder="Contoh: Head Coach" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all" required>
                     </div>
                     <div>
-                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Foto Pelatih</label>
+                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Lokasi Melatih</label>
+                        <select name="id_kolam" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all" required>
+                            <?php
+                            $q_kolam = mysqli_query($koneksi, "SELECT * FROM cabang");
+                            if($q_kolam) {
+                                while($k = mysqli_fetch_assoc($q_kolam)) {
+                                    $k_id = $k['id'];
+                                    $select = ($k_id == $pool_id) ? 'selected' : '';
+                                    echo "<option value='".$k_id."' $select>".htmlspecialchars($k['nama_cabang'])."</option>";
+                                }
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Foto Pelatih (Opsional)</label>
                         <input type="file" name="foto_pelatih" accept="image/*" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-3 shadow-sm transition-all">
                     </div>
                 </div>
