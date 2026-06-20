@@ -85,7 +85,7 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
                     
                     // === RIWAYAT BAYAR TERAKHIR ===
                     $last_pay = null;
-                    $q_last = mysqli_query($koneksi, "SELECT bulan, tahun, tgl_bayar, jumlah_bayar FROM pembayaran WHERE member_id='$atlet_id' AND status='Lunas' ORDER BY tgl_bayar DESC LIMIT 1");
+                    $q_last = mysqli_query($koneksi, "SELECT bulan, tahun, tgl_bayar, jumlah_bayar, jumlah_sesi_terbayar, cover_tgl_awal, cover_tgl_akhir FROM pembayaran WHERE member_id='$atlet_id' AND status='Lunas' ORDER BY tgl_bayar DESC LIMIT 1");
                     if($q_last && $r_last = mysqli_fetch_assoc($q_last)) {
                         $last_pay = $r_last;
                     }
@@ -174,15 +174,20 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
                                 </div>
                                 <?php endif; ?>
                                 
-                                <div class="flex items-center justify-between mt-2 pt-2 border-t border-dashed border-gray-200">
-                                    <span class="text-gray-500 font-bold">Tercover Hingga</span>
-                                    <?php if($total_paid > 0): ?>
-                                    <div class="text-right">
-                                        <span class="block font-bold text-indigo-600">Sesi ke-<?= $total_paid ?></span>
-                                        <span class="block text-[9px] text-gray-400">Tgl: <?= date('d M Y', strtotime($last_paid_date)) ?></span>
-                                    </div>
+                                <div class="mt-2 pt-2 border-t border-dashed border-gray-200">
+                                    <span class="text-gray-500 font-bold block mb-1.5">Cakupan Sesi</span>
+                                    <?php if($last_pay && !empty($last_pay['jumlah_sesi_terbayar'])): 
+                                        $eng_m = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                                        $ind_m = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                                        $t_awal = str_replace($eng_m, $ind_m, date('d M Y', strtotime($last_pay['cover_tgl_awal'])));
+                                        $t_akhir = str_replace($eng_m, $ind_m, date('d M Y', strtotime($last_pay['cover_tgl_akhir'])));
+                                    ?>
+                                        <div class="text-left">
+                                            <span class="inline-block bg-teal-100 text-teal-800 rounded-lg text-xs px-2 py-1 font-bold mb-1.5"><?= $last_pay['jumlah_sesi_terbayar'] ?>x Pertemuan</span>
+                                            <span class="block text-xs text-slate-500"><?= $t_awal ?> - <?= $t_akhir ?></span>
+                                        </div>
                                     <?php else: ?>
-                                    <span class="text-[10px] text-gray-400 italic">Belum ada riwayat bayar</span>
+                                        <span class="text-xs text-gray-400 italic">Belum dicatat (-)</span>
                                     <?php endif; ?>
                                 </div>
                             </div>

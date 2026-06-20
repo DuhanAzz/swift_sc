@@ -28,6 +28,9 @@ if(isset($_POST['simpan_bayar'])){
         $cek = mysqli_query($koneksi, "SELECT id, status as old_status, tgl_bayar as old_tgl FROM pembayaran WHERE member_id='$atlet_id' AND bulan='$bulan' AND tahun='$tahun' ORDER BY id DESC LIMIT 1");
         
         $is_newly_lunas = false;
+        $jml_sesi = "NULL";
+        $tgl_awal = "NULL";
+        $tgl_akhir = "NULL";
         
         if(mysqli_num_rows($cek) > 0) {
             $row = mysqli_fetch_assoc($cek);
@@ -41,12 +44,37 @@ if(isset($_POST['simpan_bayar'])){
             } else {
                 $tgl_bayar_val = "NULL";
             }
-            mysqli_query($koneksi, "UPDATE pembayaran SET status='$status', jumlah_bayar='$jml', keterangan='$ket', tgl_bayar=$tgl_bayar_val WHERE id='$id'");
+            
+            if($is_newly_lunas) {
+                $q_abs = mysqli_query($koneksi, "SELECT COUNT(id) as jml, MIN(tanggal) as awal, MAX(tanggal) as akhir FROM absensi WHERE member_id='$atlet_id' AND status_bayar='Unpaid' AND status='Hadir'");
+                if($q_abs && $r_abs = mysqli_fetch_assoc($q_abs)){
+                    if($r_abs['jml'] > 0){
+                        $jml_sesi = $r_abs['jml'];
+                        $tgl_awal = "'" . $r_abs['awal'] . "'";
+                        $tgl_akhir = "'" . $r_abs['akhir'] . "'";
+                    }
+                }
+                mysqli_query($koneksi, "UPDATE pembayaran SET status='$status', jumlah_bayar='$jml', keterangan='$ket', tgl_bayar=$tgl_bayar_val, jumlah_sesi_terbayar=$jml_sesi, cover_tgl_awal=$tgl_awal, cover_tgl_akhir=$tgl_akhir WHERE id='$id'");
+            } else {
+                mysqli_query($koneksi, "UPDATE pembayaran SET status='$status', jumlah_bayar='$jml', keterangan='$ket', tgl_bayar=$tgl_bayar_val WHERE id='$id'");
+            }
         } else {
             // Only insert if they are actually paying or filling something, otherwise we'd create blank records for everyone
             if($status == 'Lunas' || $jml > 0 || !empty($ket)) {
-                mysqli_query($koneksi, "INSERT INTO pembayaran (member_id, bulan, tahun, status, tgl_bayar, jumlah_bayar, keterangan) VALUES ('$atlet_id', '$bulan', '$tahun', '$status', $tgl_bayar_val, '$jml', '$ket')");
-                if($status == 'Lunas') $is_newly_lunas = true;
+                if($status == 'Lunas') {
+                    $is_newly_lunas = true;
+                    $q_abs = mysqli_query($koneksi, "SELECT COUNT(id) as jml, MIN(tanggal) as awal, MAX(tanggal) as akhir FROM absensi WHERE member_id='$atlet_id' AND status_bayar='Unpaid' AND status='Hadir'");
+                    if($q_abs && $r_abs = mysqli_fetch_assoc($q_abs)){
+                        if($r_abs['jml'] > 0){
+                            $jml_sesi = $r_abs['jml'];
+                            $tgl_awal = "'" . $r_abs['awal'] . "'";
+                            $tgl_akhir = "'" . $r_abs['akhir'] . "'";
+                        }
+                    }
+                    mysqli_query($koneksi, "INSERT INTO pembayaran (member_id, bulan, tahun, status, tgl_bayar, jumlah_bayar, keterangan, jumlah_sesi_terbayar, cover_tgl_awal, cover_tgl_akhir) VALUES ('$atlet_id', '$bulan', '$tahun', '$status', $tgl_bayar_val, '$jml', '$ket', $jml_sesi, $tgl_awal, $tgl_akhir)");
+                } else {
+                    mysqli_query($koneksi, "INSERT INTO pembayaran (member_id, bulan, tahun, status, tgl_bayar, jumlah_bayar, keterangan) VALUES ('$atlet_id', '$bulan', '$tahun', '$status', $tgl_bayar_val, '$jml', '$ket')");
+                }
             }
         }
         
