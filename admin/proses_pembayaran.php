@@ -75,18 +75,7 @@ if(isset($_POST['simpan_bayar'])){
             if(!empty($id_str)) {
                 mysqli_query($koneksi, "UPDATE absensi SET status_bayar='Paid' WHERE id IN ($id_str)");
             }
-        } else {
-            // Jika Status 'Belum Bayar'
-            if(mysqli_num_rows($cek) > 0) {
-                $row = mysqli_fetch_assoc($cek);
-                $id = $row['id'];
-                mysqli_query($koneksi, "UPDATE pembayaran SET status='$status', jumlah_bayar='$jml', keterangan='$ket', tgl_bayar=$tgl_bayar_val WHERE id='$id'");
-            } else {
-                if($jml > 0 || !empty($ket)) {
-                    mysqli_query($koneksi, "INSERT INTO pembayaran (member_id, bulan, tahun, status, tgl_bayar, jumlah_bayar, keterangan) VALUES ('$atlet_id', '$bulan', '$tahun', '$status', $tgl_bayar_val, '$jml', '$ket')");
-                }
-            }
-        }    
+            
             // Otomatisasi Pemasukan SPP ke Arus Kas
             $admin_id = intval($_SESSION['user_id'] ?? 0);
             $cabang_id = intval($_SESSION['pool_id'] ?? 0);
@@ -103,6 +92,17 @@ if(isset($_POST['simpan_bayar'])){
                 
                 mysqli_query($koneksi, "INSERT INTO arus_kas (cabang_id, jenis, nominal, keterangan, tanggal, user_id) 
                                         VALUES ('$cabang_id', 'Pemasukan', '$nominal_spp', '$ket_kas', '$tgl_sekarang', '$admin_id')");
+            }
+        } else {
+            // Jika Status 'Belum Bayar'
+            if(mysqli_num_rows($cek) > 0) {
+                $row = mysqli_fetch_assoc($cek);
+                $id = $row['id'];
+                mysqli_query($koneksi, "UPDATE pembayaran SET status='$status', jumlah_bayar='$jml', keterangan='$ket', tgl_bayar=$tgl_bayar_val WHERE id='$id'");
+            } else {
+                if($jml > 0 || !empty($ket)) {
+                    mysqli_query($koneksi, "INSERT INTO pembayaran (member_id, bulan, tahun, status, tgl_bayar, jumlah_bayar, keterangan) VALUES ('$atlet_id', '$bulan', '$tahun', '$status', $tgl_bayar_val, '$jml', '$ket')");
+                }
             }
         }
     }
