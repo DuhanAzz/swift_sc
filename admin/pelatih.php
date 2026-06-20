@@ -13,15 +13,15 @@ include '../includes/koneksi.php';
         <?php 
         if(isset($_GET['pesan'])){
             if($_GET['pesan'] == "sukses_tambah"){
-                echo '<div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 border border-green-200" role="alert">
+                echo '<div class="p-4 mb-4 text-sm text-green-800 rounded-xl bg-green-50 border border-green-200" role="alert">
                         <span class="font-medium">Berhasil!</span> Data pelatih baru telah ditambahkan.
                       </div>';
             } else if($_GET['pesan'] == "sukses_edit"){
-                echo '<div class="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 border border-blue-200" role="alert">
+                echo '<div class="p-4 mb-4 text-sm text-blue-800 rounded-xl bg-blue-50 border border-blue-200" role="alert">
                         <span class="font-medium">Update Sukses!</span> Perubahan data pelatih tersimpan.
                       </div>';
             } else if($_GET['pesan'] == "sukses_hapus"){
-                echo '<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200" role="alert">
+                echo '<div class="p-4 mb-4 text-sm text-red-800 rounded-xl bg-red-50 border border-red-200" role="alert">
                         <span class="font-medium">Terhapus!</span> Data pelatih telah dihapus.
                       </div>';
             }
@@ -33,7 +33,7 @@ include '../includes/koneksi.php';
                 <h1 class="text-xl font-bold text-algolia-navy">Manajemen Pelatih</h1>
                 <p class="text-sm text-gray-500">Kelola data instruktur dan pelatih Swift Swimming Club</p>
             </div>
-            <button data-modal-target="modalTambahPelatih" data-modal-toggle="modalTambahPelatih" class="text-white bg-algolia-blue hover:bg-algolia-darkblue focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center transition-all shadow-lg">
+            <button data-modal-target="modalTambahPelatih" data-modal-toggle="modalTambahPelatih" class="text-white bg-algolia-blue hover:bg-algolia-darkblue focus:ring-4 focus:ring-blue-200 font-bold rounded-xl text-sm px-6 py-3 flex items-center transition-all shadow-lg shadow-blue-500/30">
                 <svg class="w-4 h-4 me-2" fill="currentColor" viewBox="0 0 20 20"><path d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"/></svg>
                 Tambah Pelatih
             </button>
@@ -85,8 +85,8 @@ include '../includes/koneksi.php';
                     </tr>
 
                     <div id="modalEditPelatih<?= $data['id']; ?>" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-                        <div class="relative p-4 w-full max-w-2xl max-h-full">
-                            <div class="relative bg-white rounded-2xl shadow-xl border border-gray-100">
+                        <div class="relative p-4 w-full max-w-2xl mx-auto max-h-full">
+                            <div class="relative bg-white rounded-2xl shadow-2xl shadow-slate-900/20 border border-gray-100">
                                 <div class="flex items-center justify-between p-5 border-b border-gray-100">
                                     <h3 class="text-lg font-bold text-gray-800">Edit Data Pelatih</h3>
                                     <button type="button" class="text-gray-400 bg-gray-50 hover:bg-red-50 hover:text-red-600 rounded-xl text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-toggle="modalEditPelatih<?= $data['id']; ?>">
@@ -168,8 +168,8 @@ include '../includes/koneksi.php';
 </div>
 
 <div id="modalTambahPelatih" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-    <div class="relative p-4 w-full max-w-2xl max-h-full">
-        <div class="relative bg-white rounded-2xl shadow-xl border border-gray-100">
+    <div class="relative p-4 w-full max-w-2xl mx-auto max-h-full">
+        <div class="relative bg-white rounded-2xl shadow-2xl shadow-slate-900/20 border border-gray-100">
             <div class="flex items-center justify-between p-5 border-b border-gray-100">
                 <h3 class="text-lg font-bold text-gray-800">Tambah Data Pelatih</h3>
                 <button type="button" class="text-gray-400 bg-gray-50 hover:bg-red-50 hover:text-red-600 rounded-xl text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-toggle="modalTambahPelatih">
