@@ -90,8 +90,8 @@ if(isset($_POST['simpan_bayar'])){
                 $ket_kas = "Pembayaran SPP a/n " . mysqli_real_escape_string($koneksi, $nama_atlet);
                 $tgl_sekarang = date('Y-m-d');
                 
-                mysqli_query($koneksi, "INSERT INTO arus_kas (cabang_id, jenis, nominal, keterangan, tanggal, user_id) 
-                                        VALUES ('$cabang_id', 'Pemasukan', '$nominal_spp', '$ket_kas', '$tgl_sekarang', '$admin_id')");
+                mysqli_query($koneksi, "INSERT INTO arus_kas (cabang_id, jenis, category, nominal, keterangan, tanggal, user_id) 
+                                        VALUES ('$cabang_id', 'Pemasukan', 'SPP', '$nominal_spp', '$ket_kas', '$tgl_sekarang', '$admin_id')");
             }
         } else {
             // Jika Status 'Belum Bayar'
