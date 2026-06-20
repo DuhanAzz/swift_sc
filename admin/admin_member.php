@@ -149,6 +149,7 @@ if (isset($_GET['invoice_id'])) {
                             <tr>
                                 <th class="px-6 py-4">NIA / ID</th>
                                 <th class="px-6 py-4">Nama Atlet</th>
+                                <th class="px-6 py-4">Kelas & Pelatih</th>
                                 <th class="px-6 py-4">Jenis Kelamin</th>
                                 <th class="px-6 py-4">Tgl Bergabung</th>
                                 <th class="px-6 py-4">Status Pembayaran</th>
@@ -158,7 +159,7 @@ if (isset($_GET['invoice_id'])) {
                             <?php
                             $activeMembers = [];
                             try {
-                                $query_active = "SELECT * FROM member WHERE 1=1";
+                                $query_active = "SELECT m.*, p.nama as nama_pelatih FROM member m LEFT JOIN pelatih p ON m.pelatih_id = p.id WHERE 1=1";
                                 if(!empty($admin_pool_id)) $query_active .= " AND cabang_id = '$admin_pool_id'";
                                 $query_active .= " ORDER BY nama ASC";
                                 $res_active = mysqli_query($koneksi, $query_active);
@@ -178,6 +179,19 @@ if (isset($_GET['invoice_id'])) {
                             <tr class="bg-white border-b hover:bg-slate-50">
                                 <td class="px-6 py-4 font-mono font-bold text-slate-700"><?= strtoupper($nia); ?></td>
                                 <td class="px-6 py-4 font-bold text-gray-800"><?= htmlspecialchars($d['nama'] ?? ''); ?></td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-block px-2.5 py-1 rounded-full text-[10px] font-bold bg-teal-100 text-teal-800 mb-1">
+                                        <?= htmlspecialchars($d['tingkatan_kelas'] ?? 'Pemula'); ?>
+                                    </span>
+                                    <?php if(!empty($d['nama_pelatih'])): ?>
+                                    <div class="flex items-center gap-1 text-xs text-gray-500 mt-1">
+                                        <svg class="w-3 h-3 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                        <?= htmlspecialchars($d['nama_pelatih']); ?>
+                                    </div>
+                                    <?php else: ?>
+                                    <div class="text-[10px] text-gray-400 italic mt-1">- Tanpa Pelatih -</div>
+                                    <?php endif; ?>
+                                </td>
                                 <td class="px-6 py-4"><?= ($d['jenis_kelamin'] ?? '') == 'L' ? 'Laki-laki' : 'Perempuan'; ?></td>
                                 <td class="px-6 py-4"><?= isset($d['tanggal_gabung']) ? date('d M Y', strtotime($d['tanggal_gabung'])) : '-'; ?></td>
                                 <td class="px-6 py-4">

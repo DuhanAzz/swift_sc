@@ -6,7 +6,8 @@ include '../includes/sidebar.php';
 include '../includes/koneksi.php';
 ?>
 
-<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen" style="font-family: 'Plus Jakarta Sans', sans-serif;">
     <div class="p-4 lg:p-8 page-content">
         
         <?php 
@@ -53,6 +54,7 @@ include '../includes/koneksi.php';
                     <tr>
                         <th class="px-6 py-4">No</th>
                         <th class="px-6 py-4">Nama Atlet</th>
+                        <th class="px-6 py-4">Kelas & Pelatih</th>
                         <th class="px-6 py-4">Gender</th>
                         <th class="px-6 py-4">No. HP</th>
                         <th class="px-6 py-4">Cabang Latihan</th>
@@ -63,7 +65,7 @@ include '../includes/koneksi.php';
                     <?php
                     $no = 1;
                     $atletArray = [];
-                    $q_atlet = mysqli_query($koneksi, "SELECT m.*, c.nama_cabang as nama_kolam FROM member m LEFT JOIN cabang c ON m.cabang_id = c.id WHERE 1=1 ORDER BY m.id DESC");
+                    $q_atlet = mysqli_query($koneksi, "SELECT m.*, c.nama_cabang as nama_kolam, p.nama as nama_pelatih FROM member m LEFT JOIN cabang c ON m.cabang_id = c.id LEFT JOIN pelatih p ON m.pelatih_id = p.id WHERE 1=1 ORDER BY m.id DESC");
                     if($q_atlet) {
                         while($row = mysqli_fetch_assoc($q_atlet)) {
                             $atletArray[] = $row;
@@ -77,6 +79,19 @@ include '../includes/koneksi.php';
                     <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
                         <td class="px-6 py-4 font-medium text-gray-900"><?= $no++; ?></td>
                         <td class="px-6 py-4 font-bold text-gray-800"><?= htmlspecialchars($data['nama']); ?></td>
+                        <td class="px-6 py-4">
+                            <span class="inline-block px-2.5 py-1 rounded-full text-[10px] font-bold bg-teal-100 text-teal-800 mb-1">
+                                <?= htmlspecialchars($data['tingkatan_kelas'] ?? 'Pemula'); ?>
+                            </span>
+                            <?php if(!empty($data['nama_pelatih'])): ?>
+                            <div class="flex items-center gap-1 text-xs text-gray-500 mt-1">
+                                <svg class="w-3 h-3 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                <?= htmlspecialchars($data['nama_pelatih']); ?>
+                            </div>
+                            <?php else: ?>
+                            <div class="text-[10px] text-gray-400 italic mt-1">- Tanpa Pelatih -</div>
+                            <?php endif; ?>
+                        </td>
                         <td class="px-6 py-4"><?= htmlspecialchars($data['jenis_kelamin']); ?></td>
                         <td class="px-6 py-4"><?= htmlspecialchars($data['no_hp']); ?></td>
                         <td class="px-6 py-4 font-semibold text-algolia-blue"><?= htmlspecialchars($data['nama_kolam']); ?></td>
@@ -87,72 +102,71 @@ include '../includes/koneksi.php';
                     </tr>
 
                     <div id="modalEditAtlet<?= $data['id']; ?>" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-                        <div class="relative p-4 w-full max-w-md max-h-full">
-                            <div class="relative bg-white rounded-xl shadow-lg border border-panel-border">
+                        <div class="relative p-4 w-full max-w-2xl max-h-full">
+                            <div class="relative bg-white rounded-2xl shadow-xl border border-gray-100">
                                 <div class="flex items-center justify-between p-5 border-b border-gray-100">
-                                    <h3 class="text-base font-semibold text-algolia-navy">Edit Data Atlet</h3>
+                                    <h3 class="text-lg font-bold text-gray-800">Edit Data Atlet</h3>
                                     <button type="button" class="text-gray-400 bg-gray-50 hover:bg-red-50 hover:text-red-600 rounded-xl text-sm w-8 h-8 ms-auto inline-flex justify-center items-center transition-colors" data-modal-toggle="modalEditAtlet<?= $data['id']; ?>">
                                         <svg class="w-3 h-3" fill="none" viewBox="0 0 14 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/></svg>
                                     </button>
                                 </div>
-                                <form action="proses_atlet.php" method="POST" class="p-6 text-left">
+                                <form action="proses_atlet.php" method="POST" class="p-6">
                                     <input type="hidden" name="id" value="<?= $data['id']; ?>">
                                     
-                                    <div class="mb-5">
-                                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Nama Lengkap</label>
-                                        <input type="text" name="nama" value="<?= $data['nama']; ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full p-3 shadow-sm transition-all" required>
-                                    </div>
-                                    
-                                    <div class="mb-5">
-                                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Jenis Kelamin</label>
-                                        <select name="jenis_kelamin" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full p-3 shadow-sm transition-all" required>
-                                            <option value="L" <?= ($data['jenis_kelamin'] == 'L') ? 'selected' : '' ?>>Laki-laki</option>
-                                            <option value="P" <?= ($data['jenis_kelamin'] == 'P') ? 'selected' : '' ?>>Perempuan</option>
-                                        </select>
-                                    </div>
-                                    
-                                    <div class="mb-5">
-                                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">No. HP</label>
-                                        <input type="text" name="no_hp" value="<?= $data['no_hp']; ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full p-3 shadow-sm transition-all" required>
-                                    </div>
-                                    
-                                    <div class="mb-5">
-                                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Cabang Latihan</label>
-                                        <select name="id_kolam" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full p-3 shadow-sm transition-all" required>
-                                            <?php
-                                            $q_kolam = mysqli_query($koneksi, "SELECT * FROM cabang");
-                                            if($q_kolam) {
-                                                while($k = mysqli_fetch_assoc($q_kolam)) {
-                                                    $k_id = $k['id'];
-                                                    $select = ($k_id == $data['cabang_id']) ? 'selected' : '';
-                                                    echo "<option value='".$k_id."' $select>".htmlspecialchars($k['nama_cabang'])."</option>";
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                        <div>
+                                            <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Nama Lengkap</label>
+                                            <input type="text" name="nama" value="<?= $data['nama']; ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all" required>
+                                        </div>
+                                        <div>
+                                            <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Jenis Kelamin</label>
+                                            <select name="jenis_kelamin" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all" required>
+                                                <option value="L" <?= ($data['jenis_kelamin'] == 'L') ? 'selected' : '' ?>>Laki-laki</option>
+                                                <option value="P" <?= ($data['jenis_kelamin'] == 'P') ? 'selected' : '' ?>>Perempuan</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">No. HP</label>
+                                            <input type="text" name="no_hp" value="<?= $data['no_hp']; ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all" required>
+                                        </div>
+                                        <div>
+                                            <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Cabang Latihan</label>
+                                            <select name="id_kolam" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all" required>
+                                                <?php
+                                                $q_kolam = mysqli_query($koneksi, "SELECT * FROM cabang");
+                                                if($q_kolam) {
+                                                    while($k = mysqli_fetch_assoc($q_kolam)) {
+                                                        $k_id = $k['id'];
+                                                        $select = ($k_id == $data['cabang_id']) ? 'selected' : '';
+                                                        echo "<option value='".$k_id."' $select>".htmlspecialchars($k['nama_cabang'])."</option>";
+                                                    }
                                                 }
-                                            }
-                                            ?>
-                                        </select>
-                                    </div>
-
-                                    <div class="mb-5">
-                                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Tingkatan Kelas</label>
-                                        <select name="tingkatan_kelas" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full p-3 shadow-sm transition-all">
-                                            <option value="Pemula" <?= (($data['tingkatan_kelas'] ?? '') == 'Pemula') ? 'selected' : '' ?>>Pemula</option>
-                                            <option value="Lanjutan" <?= (($data['tingkatan_kelas'] ?? '') == 'Lanjutan') ? 'selected' : '' ?>>Lanjutan</option>
-                                            <option value="Prestasi" <?= (($data['tingkatan_kelas'] ?? '') == 'Prestasi') ? 'selected' : '' ?>>Prestasi</option>
-                                            <option value="Privat" <?= (($data['tingkatan_kelas'] ?? '') == 'Privat') ? 'selected' : '' ?>>Privat</option>
-                                        </select>
-                                    </div>
-                                    
-                                    <div class="mb-6">
-                                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Tugaskan ke Pelatih</label>
-                                        <select name="pelatih_id" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full p-3 shadow-sm transition-all">
-                                            <option value="">-- Tanpa Pelatih --</option>
-                                            <?php foreach($pelatihList as $pel): ?>
-                                                <option value="<?= $pel['id'] ?>" <?= (($data['pelatih_id'] ?? '') == $pel['id']) ? 'selected' : '' ?>><?= htmlspecialchars($pel['nama']) ?></option>
-                                            <?php endforeach; ?>
-                                        </select>
+                                                ?>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Tingkatan Kelas</label>
+                                            <select name="tingkatan_kelas" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all">
+                                                <option value="Pemula" <?= (($data['tingkatan_kelas'] ?? '') == 'Pemula') ? 'selected' : '' ?>>Pemula</option>
+                                                <option value="Lanjutan" <?= (($data['tingkatan_kelas'] ?? '') == 'Lanjutan') ? 'selected' : '' ?>>Lanjutan</option>
+                                                <option value="Prestasi" <?= (($data['tingkatan_kelas'] ?? '') == 'Prestasi') ? 'selected' : '' ?>>Prestasi</option>
+                                                <option value="Privat" <?= (($data['tingkatan_kelas'] ?? '') == 'Privat') ? 'selected' : '' ?>>Privat</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Tugaskan ke Pelatih</label>
+                                            <select name="pelatih_id" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all">
+                                                <option value="">-- Tanpa Pelatih --</option>
+                                                <?php foreach($pelatihList as $pel): ?>
+                                                    <option value="<?= $pel['id'] ?>" <?= (($data['pelatih_id'] ?? '') == $pel['id']) ? 'selected' : '' ?>><?= htmlspecialchars($pel['nama']) ?></option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
                                     </div>
                                     
-                                    <button type="submit" name="edit" class="w-full text-white bg-algolia-blue hover:bg-algolia-darkblue font-bold rounded-xl text-sm px-5 py-3 shadow-md hover:shadow-lg transition-all">Update Data Atlet</button>
+                                    <div class="flex justify-end border-t border-gray-100 pt-5">
+                                        <button type="submit" name="edit" class="text-white bg-teal-600 hover:bg-teal-700 font-bold rounded-xl text-sm px-8 py-3.5 shadow-md hover:shadow-lg transition-all focus:ring-4 focus:ring-teal-200">Simpan Perubahan</button>
+                                    </div>
                                 </form>
                             </div>
                         </div>
@@ -171,42 +185,40 @@ include '../includes/koneksi.php';
 </div>
 
 <div id="modalTambahAtlet" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-    <div class="relative p-4 w-full max-w-md max-h-full">
-        <div class="relative bg-white rounded-xl shadow-lg border border-panel-border">
+    <div class="relative p-4 w-full max-w-2xl max-h-full">
+        <div class="relative bg-white rounded-2xl shadow-xl border border-gray-100">
             <div class="flex items-center justify-between p-5 border-b border-gray-100">
-                <h3 class="text-base font-semibold text-algolia-navy">Pendaftaran Atlet Baru</h3>
+                <h3 class="text-lg font-bold text-gray-800">Pendaftaran Atlet Baru</h3>
                 <button type="button" class="text-gray-400 bg-gray-50 hover:bg-red-50 hover:text-red-600 rounded-xl text-sm w-8 h-8 ms-auto inline-flex justify-center items-center transition-colors" data-modal-toggle="modalTambahAtlet">
                     <svg class="w-3 h-3" fill="none" viewBox="0 0 14 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/></svg>
                 </button>
             </div>
-            <form action="proses_atlet.php" method="POST" class="p-6 text-left">
+            <form action="proses_atlet.php" method="POST" class="p-6">
                 
-                <div class="mb-5">
-                    <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Nama Lengkap</label>
-                    <input type="text" name="nama" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm transition-all" placeholder="Contoh: Michael Phelps" required>
-                </div>
-                
-                <div class="mb-5">
-                    <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Jenis Kelamin</label>
-                    <select name="jenis_kelamin" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm transition-all" required>
-                        <option value="" disabled selected>-- Pilih Jenis Kelamin --</option>
-                        <option value="L">Laki-laki</option>
-                        <option value="P">Perempuan</option>
-                    </select>
-                </div>
-                
-                <div class="mb-5">
-                    <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">No. HP / WhatsApp</label>
-                    <input type="text" name="no_hp" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm transition-all" placeholder="Contoh: 08123456789" required>
-                </div>
-                
-                <div class="mb-5">
-                    <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Tanggal Lahir</label>
-                    <input type="date" name="tanggal_lahir" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm transition-all" required>
-                </div>
-                    <div class="mb-5">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Nama Lengkap</label>
+                        <input type="text" name="nama" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all" placeholder="Contoh: Michael Phelps" required>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Jenis Kelamin</label>
+                        <select name="jenis_kelamin" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all" required>
+                            <option value="" disabled selected>-- Pilih Jenis Kelamin --</option>
+                            <option value="L">Laki-laki</option>
+                            <option value="P">Perempuan</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">No. HP / WhatsApp</label>
+                        <input type="text" name="no_hp" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all" placeholder="Contoh: 08123456789" required>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Tanggal Lahir</label>
+                        <input type="date" name="tanggal_lahir" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all" required>
+                    </div>
+                    <div>
                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Pilih Cabang Latihan</label>
-                        <select name="id_kolam" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm transition-all" required>
+                        <select name="id_kolam" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all" required>
                             <option value="" disabled selected>-- Pilih Kolam Renang --</option>
                             <?php
                             $q_kolam2 = mysqli_query($koneksi, "SELECT * FROM cabang");
@@ -219,28 +231,29 @@ include '../includes/koneksi.php';
                             ?>
                         </select>
                     </div>
-
-                    <div class="mb-5">
+                    <div>
                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Tingkatan Kelas</label>
-                        <select name="tingkatan_kelas" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm transition-all">
+                        <select name="tingkatan_kelas" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all">
                             <option value="Pemula" selected>Pemula</option>
                             <option value="Lanjutan">Lanjutan</option>
                             <option value="Prestasi">Prestasi</option>
                             <option value="Privat">Privat</option>
                         </select>
                     </div>
-
-                    <div class="mb-6">
+                    <div>
                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Tugaskan ke Pelatih</label>
-                        <select name="pelatih_id" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm transition-all">
+                        <select name="pelatih_id" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all">
                             <option value="">-- Tanpa Pelatih --</option>
                             <?php foreach($pelatihList as $pel): ?>
                                 <option value="<?= $pel['id'] ?>"><?= htmlspecialchars($pel['nama']) ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
+                </div>
                 
-                <button type="submit" name="tambah" class="w-full text-white bg-algolia-blue hover:bg-algolia-darkblue font-bold rounded-xl text-sm px-5 py-3 shadow-md hover:shadow-lg transition-all">Simpan Data Atlet</button>
+                <div class="flex justify-end border-t border-gray-100 pt-5 mt-2">
+                    <button type="submit" name="tambah" class="text-white bg-teal-600 hover:bg-teal-700 font-bold rounded-xl text-sm px-8 py-3.5 shadow-md hover:shadow-lg transition-all focus:ring-4 focus:ring-teal-200">Simpan Data Atlet</button>
+                </div>
             </form>
         </div>
     </div>
