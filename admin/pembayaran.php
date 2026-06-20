@@ -7,15 +7,25 @@ include '../includes/koneksi.php';
 include '../includes/invoice_template.php';
 
 $limit_hadir = isset($_GET['limit_hadir']) ? (int)$_GET['limit_hadir'] : 8;
-$tanggal_mulai = isset($_GET['tanggal_mulai']) ? $_GET['tanggal_mulai'] : date('Y-m-01');
-$tanggal_akhir = isset($_GET['tanggal_akhir']) ? $_GET['tanggal_akhir'] : date('Y-m-t');
+$tanggal_mulai = isset($_GET['tanggal_mulai']) ? mysqli_real_escape_string($koneksi, trim($_GET['tanggal_mulai'], "'\" ")) : date('Y-m-01');
+$tanggal_akhir = isset($_GET['tanggal_akhir']) ? mysqli_real_escape_string($koneksi, trim($_GET['tanggal_akhir'], "'\" ")) : date('Y-m-t');
+$cari_nama = isset($_GET['cari_nama']) ? mysqli_real_escape_string($koneksi, $_GET['cari_nama']) : '';
+$filter_kelas = isset($_GET['filter_kelas']) ? mysqli_real_escape_string($koneksi, $_GET['filter_kelas']) : '';
+$template_nominal = isset($_GET['template_nominal']) ? $_GET['template_nominal'] : '';
 
 $admin_pool_id = $_SESSION['pool_id'] ?? '';
+
+// Ambil opsi kelas
+$kelas_options = [];
+$q_kelas = mysqli_query($koneksi, "SELECT DISTINCT tingkatan_kelas FROM member WHERE tingkatan_kelas IS NOT NULL AND tingkatan_kelas != '' ORDER BY tingkatan_kelas");
+if($q_kelas) { while($r_k = mysqli_fetch_assoc($q_kelas)) { $kelas_options[] = $r_k['tingkatan_kelas']; } }
 
 // Ambil semua member
 $q_atlet = [];
 $q_str = "SELECT m.*, c.nama_cabang FROM member m LEFT JOIN cabang c ON m.cabang_id = c.id WHERE 1=1";
 if(!empty($admin_pool_id)) $q_str .= " AND m.cabang_id='$admin_pool_id'";
+if(!empty($cari_nama)) $q_str .= " AND m.nama LIKE '%$cari_nama%'";
+if(!empty($filter_kelas)) $q_str .= " AND m.tingkatan_kelas = '$filter_kelas'";
 $q_str .= " ORDER BY m.nama ASC";
 $q = mysqli_query($koneksi, $q_str);
 if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
@@ -44,15 +54,32 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
                 <p class="text-sm text-gray-500">Detail kehadiran, riwayat pembayaran, dan tagihan via WhatsApp</p>
             </div>
             
-            <form action="pembayaran.php" method="GET" class="flex items-center gap-2">
-                <div class="flex items-center bg-white border border-[#E8E8EF] rounded-lg px-2">
-                    <span class="text-xs text-gray-500 font-bold px-1">Limit:</span>
-                    <input type="number" name="limit_hadir" value="<?= $limit_hadir ?>" min="1" step="1" class="w-16 border-none text-sm p-2 focus:ring-0">
+            <form action="pembayaran.php" method="GET" class="flex flex-col gap-3 w-full md:w-auto">
+                <!-- Baris 1: Cari Nama, Kelas, Nominal Template -->
+                <div class="flex flex-col sm:flex-row items-center gap-2">
+                    <input type="text" name="cari_nama" value="<?= htmlspecialchars($cari_nama) ?>" placeholder="Cari Nama Atlet..." class="w-full sm:w-auto bg-white border border-[#E8E8EF] text-sm rounded-lg p-2">
+                    <select name="filter_kelas" class="w-full sm:w-auto bg-white border border-[#E8E8EF] text-sm rounded-lg p-2">
+                        <option value="">Semua Kelas</option>
+                        <?php foreach($kelas_options as $k): ?>
+                            <option value="<?= htmlspecialchars($k) ?>" <?= $filter_kelas == $k ? 'selected' : '' ?>><?= htmlspecialchars($k) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <input type="number" id="template_nominal" name="template_nominal" value="<?= htmlspecialchars($template_nominal) ?>" placeholder="Nominal/Sesi (Rp)" class="w-full sm:w-auto bg-white border border-[#E8E8EF] text-sm rounded-lg p-2" title="Otomatis mengalikan nominal dengan sesi yang dicentang">
                 </div>
-                <input type="date" name="tanggal_mulai" value="<?= $tanggal_mulai ?>" class="bg-white border border-[#E8E8EF] text-sm rounded-lg p-2">
-                <span class="text-gray-400">-</span>
-                <input type="date" name="tanggal_akhir" value="<?= $tanggal_akhir ?>" class="bg-white border border-[#E8E8EF] text-sm rounded-lg p-2">
-                <button type="submit" class="bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-bold">Filter</button>
+                
+                <!-- Baris 2: Limit, Tanggal, Tombol -->
+                <div class="flex flex-col sm:flex-row items-center gap-2">
+                    <div class="flex items-center bg-white border border-[#E8E8EF] rounded-lg px-2 w-full sm:w-auto">
+                        <span class="text-xs text-gray-500 font-bold px-1 whitespace-nowrap">Limit Sesi:</span>
+                        <input type="number" name="limit_hadir" value="<?= $limit_hadir ?>" min="1" step="1" class="w-full sm:w-16 border-none text-sm p-2 focus:ring-0">
+                    </div>
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        <input type="date" name="tanggal_mulai" value="<?= $tanggal_mulai ?>" class="flex-1 bg-white border border-[#E8E8EF] text-sm rounded-lg p-2">
+                        <span class="text-gray-400">-</span>
+                        <input type="date" name="tanggal_akhir" value="<?= $tanggal_akhir ?>" class="flex-1 bg-white border border-[#E8E8EF] text-sm rounded-lg p-2">
+                    </div>
+                    <button type="submit" class="w-full sm:w-auto bg-slate-800 text-white px-5 py-2 rounded-lg text-sm font-bold hover:bg-slate-700 transition-colors">Tampilkan</button>
+                </div>
             </form>
         </div>
 
@@ -69,11 +96,11 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
                     // === KEHADIRAN (TAGIHAN AKTIF) ===
                     $absensi_dates = [];
                     $jumlah_hadir = 0;
-                    $q_abs = mysqli_query($koneksi, "SELECT id, tanggal, status FROM absensi WHERE member_id='$atlet_id' AND status_bayar='Unpaid' AND tanggal >= '$tanggal_mulai' AND tanggal <= '$tanggal_akhir' ORDER BY tanggal ASC");
+                    $q_abs = mysqli_query($koneksi, "SELECT id, tanggal, status, status_bayar FROM absensi WHERE member_id='$atlet_id' AND tanggal >= '$tanggal_mulai' AND tanggal <= '$tanggal_akhir' ORDER BY tanggal ASC");
                     if($q_abs) {
                         while($ab = mysqli_fetch_assoc($q_abs)) {
                             $absensi_dates[] = $ab;
-                            if($ab['status'] == 'Hadir') $jumlah_hadir++;
+                            if($ab['status'] == 'Hadir' && $ab['status_bayar'] == 'Unpaid') $jumlah_hadir++;
                         }
                     }
                     
@@ -115,34 +142,9 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
                     $d_wa = mysqli_fetch_assoc($q_wa);
                     $total_sesi = $d_wa['total_sesi'] ?? 0;
                     
-                    $eng_months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                    $ind_months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-                    
-                    $tgl_awal_indo = !empty($d_wa['tgl_awal']) ? str_replace($eng_months, $ind_months, date('d M Y', strtotime($d_wa['tgl_awal']))) : '-';
-                    $tgl_akhir_indo = !empty($d_wa['tgl_akhir']) ? str_replace($eng_months, $ind_months, date('d M Y', strtotime($d_wa['tgl_akhir']))) : '-';
-                    
                     $inv_nama = $a['nama'];
                     $inv_nia = $a['nia'] ?? '-';
                     $inv_cabang = $a['nama_cabang'] ?? '-';
-                    
-                    $inv_text = "══════════════════════\n";
-                    $inv_text .= " TAGIHAN SPP SWIFT SC\n";
-                    $inv_text .= "══════════════════════\n\n";
-                    $inv_text .= "Kepada : *" . $inv_nama . "*\n";
-                    $inv_text .= "NIA    : " . $inv_nia . "\n";
-                    if($inv_cabang != '-') $inv_text .= "Cabang : " . $inv_cabang . "\n";
-                    $inv_text .= "\n─── Rincian Tagihan ───\n";
-                    $inv_text .= "Total Sesi : " . $total_sesi . " Pertemuan\n";
-                    $inv_text .= "Periode    : " . $tgl_awal_indo . " s/d " . $tgl_akhir_indo . "\n";
-                    $inv_text .= "──────────────────────\n";
-                    $inv_text .= "TOTAL      : *Rp [Nominal]*\n\n";
-                    $inv_text .= "Mohon segera melakukan pembayaran.\n\n";
-                    $inv_text .= "Pembayaran dapat dilakukan via:\n";
-                    $inv_text .= "💳 Transfer Bank (hubungi admin)\n";
-                    $inv_text .= "💵 Tunai saat latihan\n\n";
-                    $inv_text .= "Terima kasih,\n";
-                    $inv_text .= "*Admin Swift SC*\n";
-                    $inv_text .= "══════════════════════";
                 ?>
                 
                 <div class="bg-white rounded-xl border-2 <?= $card_border ?> overflow-hidden shadow-sm hover:shadow-md transition-shadow">
@@ -228,13 +230,20 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
                                         $tgl_ab = date('d', strtotime($ab['tanggal']));
                                         $tgl_full = date('d M Y', strtotime($ab['tanggal']));
                                         
-                                        if($st == 'Hadir') { 
-                                            $checked = ($check_count < $limit_hadir) ? 'checked' : '';
+                                        if($ab['status_bayar'] == 'Paid' && $st == 'Hadir') {
+                                            ?>
+                                            <span class="inline-flex items-center gap-0.5 px-2 py-1 rounded-md text-[10px] font-semibold bg-emerald-100 text-emerald-700" title="Hadir (Lunas) - <?= $tgl_full ?>">
+                                                <span class="text-[8px]">✅</span>
+                                                <?= $tgl_ab ?>
+                                            </span>
+                                            <?php
+                                        } elseif($st == 'Hadir') { 
+                                            $checked = ''; // Default unchecked (kuning)
                                             $check_count++;
                                             ?>
                                             <label class="cursor-pointer group relative">
-                                                <input type="checkbox" name="selected_absensi[<?= $atlet_id ?>][]" value="<?= $ab_id ?>" class="peer sr-only" data-tanggal="<?= $ab['tanggal'] ?>" <?= $checked ?>>
-                                                <div class="peer-checked:bg-emerald-100 peer-checked:text-emerald-700 bg-amber-100 text-amber-800 rounded-md px-2 py-1 text-[10px] font-semibold transition-colors" title="Hadir - <?= $tgl_full ?>">
+                                                <input type="checkbox" name="selected_absensi[<?= $atlet_id ?>][]" value="<?= $ab_id ?>" class="peer sr-only" data-tanggal="<?= $ab['tanggal'] ?>" onchange="updateNominal(<?= $atlet_id ?>)" <?= $checked ?>>
+                                                <div class="peer-checked:bg-blue-100 peer-checked:text-blue-800 bg-amber-100 text-amber-800 rounded-md px-2 py-1 text-[10px] font-semibold transition-colors" title="Hadir - <?= $tgl_full ?>">
                                                     <span class="text-[8px] peer-checked:inline hidden">●</span>
                                                     <span class="text-[8px] peer-checked:hidden inline">○</span>
                                                     <?= $tgl_ab ?>
@@ -293,9 +302,8 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
                             
                             <?php if($total_sesi > 0): ?>
                             <div class="bg-amber-50 border border-amber-200 rounded-lg p-2 mb-1">
-                                <p class="text-[10px] font-bold text-amber-800 mb-0.5">Cakupan Tagihan:</p>
-                                <p class="text-xs font-bold text-amber-600"><?= $total_sesi ?> Sesi</p>
-                                <p class="text-[9px] text-amber-600/80 mt-0.5"><?= $tgl_awal_indo ?> - <?= $tgl_akhir_indo ?></p>
+                                <p class="text-[10px] font-bold text-amber-800 mb-0.5">Sesi Unpaid Terdeteksi:</p>
+                                <p class="text-xs font-bold text-amber-600"><?= $total_sesi ?> Sesi Hadir</p>
                             </div>
                             <?php endif; ?>
 
@@ -316,15 +324,18 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
                             </div>
                             
                             <div class="flex gap-1.5 mt-auto pt-2">
-                                <button type="button" onclick="copyInvoiceSPP(<?= $atlet_id ?>)" class="flex-1 flex items-center justify-center gap-1 bg-white border border-[#E8E8EF] text-gray-600 py-2 rounded-lg text-[10px] font-bold hover:bg-gray-50 transition-colors" title="Copy Invoice">
+                                <?php
+                                    $js_nama = htmlspecialchars($inv_nama, ENT_QUOTES);
+                                    $js_nia = htmlspecialchars($inv_nia, ENT_QUOTES);
+                                    $js_cabang = htmlspecialchars($inv_cabang, ENT_QUOTES);
+                                ?>
+                                <button type="button" onclick="copyDynamicWA(event, <?= $atlet_id ?>, '<?= $js_nama ?>', '<?= $js_nia ?>', '<?= $js_cabang ?>')" class="flex-1 flex items-center justify-center gap-1 bg-white border border-[#E8E8EF] text-gray-600 py-2 rounded-lg text-[10px] font-bold hover:bg-gray-50 transition-colors" title="Copy Invoice">
                                     📋 Copy
                                 </button>
-                                <a href="https://wa.me/<?= $wa_phone ?>?text=<?= rawurlencode($inv_text) ?>" target="_blank" class="flex-1 flex items-center justify-center gap-1 bg-green-500 text-white py-2 rounded-lg text-[10px] font-bold hover:bg-green-600 transition-colors" title="Kirim via WA">
+                                <a href="#" onclick="openDynamicWA(event, <?= $atlet_id ?>, '<?= $wa_phone ?>', '<?= $js_nama ?>', '<?= $js_nia ?>', '<?= $js_cabang ?>')" class="flex-1 flex items-center justify-center gap-1 bg-green-500 text-white py-2 rounded-lg text-[10px] font-bold hover:bg-green-600 transition-colors" title="Kirim via WA">
                                     💬 WhatsApp
                                 </a>
                             </div>
-                            
-                            <textarea id="inv_<?= $atlet_id ?>" class="hidden"><?= htmlspecialchars($inv_text) ?></textarea>
                         </div>
                     </div>
                 </div>
@@ -351,17 +362,80 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
 </div>
 
 <script>
-function copyInvoiceSPP(id) {
-    const textarea = document.getElementById('inv_' + id);
-    if (textarea) {
-        navigator.clipboard.writeText(textarea.value).then(() => {
-            const btn = event.currentTarget;
-            const orig = btn.innerHTML;
-            btn.innerHTML = '✅ OK!';
-            btn.classList.add('bg-green-50', 'text-green-600');
-            setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('bg-green-50', 'text-green-600'); }, 1500);
-        });
+function updateNominal(id) {
+    const templateInput = document.getElementById('template_nominal');
+    const templateVal = templateInput ? parseInt(templateInput.value) : 0;
+    
+    if (templateVal > 0) {
+        const checkboxes = document.querySelectorAll(`input[name="selected_absensi[${id}][]"]:checked`);
+        const total = templateVal * checkboxes.length;
+        document.querySelector(`input[name="jumlah[${id}]"]`).value = total > 0 ? total : '';
     }
+}
+
+function buildInvoiceText(id, nama, nia, cabang) {
+    const checkboxes = document.querySelectorAll(`input[name="selected_absensi[${id}][]"]:checked`);
+    let total_sesi = checkboxes.length;
+    let dates = [];
+    checkboxes.forEach(cb => dates.push(cb.getAttribute('data-tanggal')));
+    
+    let tgl_awal = '-';
+    let tgl_akhir = '-';
+    if(dates.length > 0) {
+        dates.sort();
+        tgl_awal = formatDateIndo(dates[0]);
+        tgl_akhir = formatDateIndo(dates[dates.length - 1]);
+    }
+
+    const nominalInput = document.querySelector(`input[name="jumlah[${id}]"]`).value;
+    let nominalStr = nominalInput ? Number(nominalInput).toLocaleString('id-ID') : '[Ketik Nominal]';
+    
+    let inv_text = "════════════════\n";
+    inv_text += "TAGIHAN SWIFT SC\n";
+    inv_text += "════════════════\n";
+    inv_text += `Kepada : *${nama}*\n`;
+    inv_text += `NIA    : ${nia}\n`;
+    if(cabang && cabang !== '-') inv_text += `Cabang : ${cabang}\n`;
+    inv_text += "\n─── Rincian ───\n";
+    inv_text += `Sesi    : ${total_sesi} Pertemuan\n`;
+    inv_text += `Periode : ${tgl_awal} s/d ${tgl_akhir}\n`;
+    inv_text += "───────────────\n";
+    inv_text += `TOTAL   : *Rp ${nominalStr}*\n\n`;
+    inv_text += "Mohon segera melakukan pembayaran.\n";
+    inv_text += "via:\n";
+    inv_text += "- Transfer Bank (hubungi admin)\n";
+    inv_text += "- Tunai saat latihan\n\n";
+    inv_text += "Terima kasih,\n";
+    inv_text += "*Admin Swift SC*\n";
+    inv_text += "════════════════";
+    return inv_text;
+}
+
+function formatDateIndo(dateStr) {
+    const ind_m = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+    const d = new Date(dateStr);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = ind_m[d.getMonth()];
+    const year = d.getFullYear();
+    return `${day} ${month} ${year}`;
+}
+
+function openDynamicWA(e, id, phone, nama, nia, cabang) {
+    e.preventDefault();
+    const text = buildInvoiceText(id, nama, nia, cabang);
+    const url = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank');
+}
+
+function copyDynamicWA(e, id, nama, nia, cabang) {
+    e.preventDefault();
+    const text = buildInvoiceText(id, nama, nia, cabang);
+    navigator.clipboard.writeText(text).then(() => {
+        const btn = e.currentTarget;
+        const orig = btn.innerHTML;
+        btn.innerHTML = '✅ OK!';
+        setTimeout(() => { btn.innerHTML = orig; }, 2000);
+    });
 }
 </script>
 
