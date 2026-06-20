@@ -121,17 +121,28 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
                     $tgl_awal_indo = !empty($d_wa['tgl_awal']) ? str_replace($eng_months, $ind_months, date('d M Y', strtotime($d_wa['tgl_awal']))) : '-';
                     $tgl_akhir_indo = !empty($d_wa['tgl_akhir']) ? str_replace($eng_months, $ind_months, date('d M Y', strtotime($d_wa['tgl_akhir']))) : '-';
                     
-                    $inv_text = "Halo, tagihan SPP ananda " . $a['nama'] . " untuk " . $total_sesi . " kali pertemuan (Periode " . $tgl_awal_indo . " - " . $tgl_akhir_indo . ") telah jatuh tempo. Mohon segera diselesaikan.";
+                    $inv_nama = $a['nama'];
+                    $inv_nia = $a['nia'] ?? '-';
+                    $inv_cabang = $a['nama_cabang'] ?? '-';
                     
-                    // Tambahan Status Cakupan
-                    if($total_paid > 0) {
-                        $inv_text .= "\n\n*Sebagai informasi, pembayaran Anda sebelumnya telah meng-cover kehadiran hingga:*\n";
-                        $inv_text .= "- Sesi ke: " . $total_paid . "\n";
-                        $inv_text .= "- Tanggal: " . date('d M Y', strtotime($last_paid_date)) . "\n\n";
-                    } else {
-                        $inv_text .= "\n\n*Sebagai informasi, belum ada riwayat pembayaran yang tercatat sebelumnya.*\n\n";
-                    }
-                    $inv_text .= "Sesi berikutnya yang belum dibayar saat ini berjumlah: *" . $jumlah_hadir . "* sesi.";
+                    $inv_text = "══════════════════════\n";
+                    $inv_text .= " TAGIHAN SPP SWIFT SC\n";
+                    $inv_text .= "══════════════════════\n\n";
+                    $inv_text .= "Kepada : *" . $inv_nama . "*\n";
+                    $inv_text .= "NIA    : " . $inv_nia . "\n";
+                    if($inv_cabang != '-') $inv_text .= "Cabang : " . $inv_cabang . "\n";
+                    $inv_text .= "\n─── Rincian Tagihan ───\n";
+                    $inv_text .= "Total Sesi : " . $total_sesi . " Pertemuan\n";
+                    $inv_text .= "Periode    : " . $tgl_awal_indo . " s/d " . $tgl_akhir_indo . "\n";
+                    $inv_text .= "──────────────────────\n";
+                    $inv_text .= "TOTAL      : *Rp [Nominal]*\n\n";
+                    $inv_text .= "Mohon segera melakukan pembayaran.\n\n";
+                    $inv_text .= "Pembayaran dapat dilakukan via:\n";
+                    $inv_text .= "💳 Transfer Bank (hubungi admin)\n";
+                    $inv_text .= "💵 Tunai saat latihan\n\n";
+                    $inv_text .= "Terima kasih,\n";
+                    $inv_text .= "*Admin Swift SC*\n";
+                    $inv_text .= "══════════════════════";
                 ?>
                 
                 <div class="bg-white rounded-xl border-2 <?= $card_border ?> overflow-hidden shadow-sm hover:shadow-md transition-shadow">
@@ -257,6 +268,15 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
 
                         <!-- RIGHT: Payment Actions -->
                         <div class="lg:w-[200px] flex-shrink-0 p-4 border-t lg:border-t-0 lg:border-l border-[#E8E8EF] bg-gray-50/30 flex flex-col gap-2.5">
+                            
+                            <?php if($total_sesi > 0): ?>
+                            <div class="bg-amber-50 border border-amber-200 rounded-lg p-2 mb-1">
+                                <p class="text-[10px] font-bold text-amber-800 mb-0.5">Cakupan Tagihan:</p>
+                                <p class="text-xs font-bold text-amber-600"><?= $total_sesi ?> Sesi</p>
+                                <p class="text-[9px] text-amber-600/80 mt-0.5"><?= $tgl_awal_indo ?> - <?= $tgl_akhir_indo ?></p>
+                            </div>
+                            <?php endif; ?>
+
                             <div>
                                 <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Status Bayar</label>
                                 <select name="status[<?= $atlet_id ?>]" class="w-full border border-[#E8E8EF] bg-white rounded-lg p-2 text-xs font-bold <?= $sudah_lunas ? 'text-emerald-600' : 'text-red-500' ?>">
@@ -277,7 +297,7 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
                                 <button type="button" onclick="copyInvoiceSPP(<?= $atlet_id ?>)" class="flex-1 flex items-center justify-center gap-1 bg-white border border-[#E8E8EF] text-gray-600 py-2 rounded-lg text-[10px] font-bold hover:bg-gray-50 transition-colors" title="Copy Invoice">
                                     📋 Copy
                                 </button>
-                                <a href="https://wa.me/<?= $wa_phone ?>?text=<?= urlencode($inv_text) ?>" target="_blank" class="flex-1 flex items-center justify-center gap-1 bg-green-500 text-white py-2 rounded-lg text-[10px] font-bold hover:bg-green-600 transition-colors" title="Kirim via WA">
+                                <a href="https://wa.me/<?= $wa_phone ?>?text=<?= rawurlencode($inv_text) ?>" target="_blank" class="flex-1 flex items-center justify-center gap-1 bg-green-500 text-white py-2 rounded-lg text-[10px] font-bold hover:bg-green-600 transition-colors" title="Kirim via WA">
                                     💬 WhatsApp
                                 </a>
                             </div>
