@@ -20,8 +20,11 @@ if(isset($_POST['simpan_bayar'])){
         $jml = (int)($jumlah[$atlet_id] ?? 0);
         $ket = mysqli_real_escape_string($koneksi, $keterangan[$atlet_id] ?? '');
         
-        // If status isn't 'Lunas', we don't necessarily need to do anything if they didn't input amount, but let's keep existing logic to update/insert.
-        // However, we only mark absensi as Paid when it is Lunas.
+        $selected_ids = $_POST['selected_absensi'][$atlet_id] ?? [];
+        if($status == 'Lunas' && empty($selected_ids)) {
+            continue; // Skip member if Lunas but no dates selected
+        }
+        
         $tgl_bayar = ($status == 'Lunas') ? date('Y-m-d H:i:s') : 'NULL';
         $tgl_bayar_val = ($status == 'Lunas') ? "'$tgl_bayar'" : "NULL";
         
@@ -31,11 +34,12 @@ if(isset($_POST['simpan_bayar'])){
         $jml_sesi = "NULL";
         $tgl_awal = "NULL";
         $tgl_akhir = "NULL";
+        $detail_tanggal_val = "NULL";
+        $id_str = "";
         
         if(mysqli_num_rows($cek) > 0) {
             $row = mysqli_fetch_assoc($cek);
             $id = $row['id'];
-            // Only update tgl_bayar if status changes TO Lunas (don't reset if already Lunas)
             if($status == 'Lunas' && $row['old_status'] != 'Lunas') {
                 $tgl_bayar_val = "'" . date('Y-m-d H:i:s') . "'";
                 $is_newly_lunas = true;
@@ -46,32 +50,57 @@ if(isset($_POST['simpan_bayar'])){
             }
             
             if($is_newly_lunas) {
-                $q_abs = mysqli_query($koneksi, "SELECT COUNT(id) as jml, MIN(tanggal) as awal, MAX(tanggal) as akhir FROM absensi WHERE member_id='$atlet_id' AND status_bayar='Unpaid' AND status='Hadir'");
+                $id_list = [];
+                foreach($selected_ids as $sid) { $id_list[] = (int)$sid; }
+                $id_str = implode(',', $id_list);
+                
+                $q_abs = mysqli_query($koneksi, "SELECT COUNT(id) as jml, MIN(tanggal) as awal, MAX(tanggal) as akhir, GROUP_CONCAT(tanggal ORDER BY tanggal ASC) as all_dates FROM absensi WHERE id IN ($id_str)");
                 if($q_abs && $r_abs = mysqli_fetch_assoc($q_abs)){
                     if($r_abs['jml'] > 0){
                         $jml_sesi = $r_abs['jml'];
                         $tgl_awal = "'" . $r_abs['awal'] . "'";
                         $tgl_akhir = "'" . $r_abs['akhir'] . "'";
+                        
+                        $dates_array = explode(',', $r_abs['all_dates']);
+                        $formatted_dates = [];
+                        $eng_m = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                        $ind_m = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
+                        foreach($dates_array as $d) {
+                            $formatted_dates[] = str_replace($eng_m, $ind_m, date('d M', strtotime($d)));
+                        }
+                        $detail_tanggal_val = "'" . mysqli_real_escape_string($koneksi, implode(', ', $formatted_dates)) . "'";
                     }
                 }
-                mysqli_query($koneksi, "UPDATE pembayaran SET status='$status', jumlah_bayar='$jml', keterangan='$ket', tgl_bayar=$tgl_bayar_val, jumlah_sesi_terbayar=$jml_sesi, cover_tgl_awal=$tgl_awal, cover_tgl_akhir=$tgl_akhir WHERE id='$id'");
+                mysqli_query($koneksi, "UPDATE pembayaran SET status='$status', jumlah_bayar='$jml', keterangan='$ket', tgl_bayar=$tgl_bayar_val, jumlah_sesi_terbayar=$jml_sesi, cover_tgl_awal=$tgl_awal, cover_tgl_akhir=$tgl_akhir, detail_tanggal=$detail_tanggal_val WHERE id='$id'");
             } else {
                 mysqli_query($koneksi, "UPDATE pembayaran SET status='$status', jumlah_bayar='$jml', keterangan='$ket', tgl_bayar=$tgl_bayar_val WHERE id='$id'");
             }
         } else {
-            // Only insert if they are actually paying or filling something, otherwise we'd create blank records for everyone
             if($status == 'Lunas' || $jml > 0 || !empty($ket)) {
                 if($status == 'Lunas') {
                     $is_newly_lunas = true;
-                    $q_abs = mysqli_query($koneksi, "SELECT COUNT(id) as jml, MIN(tanggal) as awal, MAX(tanggal) as akhir FROM absensi WHERE member_id='$atlet_id' AND status_bayar='Unpaid' AND status='Hadir'");
+                    $id_list = [];
+                    foreach($selected_ids as $sid) { $id_list[] = (int)$sid; }
+                    $id_str = implode(',', $id_list);
+                    
+                    $q_abs = mysqli_query($koneksi, "SELECT COUNT(id) as jml, MIN(tanggal) as awal, MAX(tanggal) as akhir, GROUP_CONCAT(tanggal ORDER BY tanggal ASC) as all_dates FROM absensi WHERE id IN ($id_str)");
                     if($q_abs && $r_abs = mysqli_fetch_assoc($q_abs)){
                         if($r_abs['jml'] > 0){
                             $jml_sesi = $r_abs['jml'];
                             $tgl_awal = "'" . $r_abs['awal'] . "'";
                             $tgl_akhir = "'" . $r_abs['akhir'] . "'";
+                            
+                            $dates_array = explode(',', $r_abs['all_dates']);
+                            $formatted_dates = [];
+                            $eng_m = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                            $ind_m = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
+                            foreach($dates_array as $d) {
+                                $formatted_dates[] = str_replace($eng_m, $ind_m, date('d M', strtotime($d)));
+                            }
+                            $detail_tanggal_val = "'" . mysqli_real_escape_string($koneksi, implode(', ', $formatted_dates)) . "'";
                         }
                     }
-                    mysqli_query($koneksi, "INSERT INTO pembayaran (member_id, bulan, tahun, status, tgl_bayar, jumlah_bayar, keterangan, jumlah_sesi_terbayar, cover_tgl_awal, cover_tgl_akhir) VALUES ('$atlet_id', '$bulan', '$tahun', '$status', $tgl_bayar_val, '$jml', '$ket', $jml_sesi, $tgl_awal, $tgl_akhir)");
+                    mysqli_query($koneksi, "INSERT INTO pembayaran (member_id, bulan, tahun, status, tgl_bayar, jumlah_bayar, keterangan, jumlah_sesi_terbayar, cover_tgl_awal, cover_tgl_akhir, detail_tanggal) VALUES ('$atlet_id', '$bulan', '$tahun', '$status', $tgl_bayar_val, '$jml', '$ket', $jml_sesi, $tgl_awal, $tgl_akhir, $detail_tanggal_val)");
                 } else {
                     mysqli_query($koneksi, "INSERT INTO pembayaran (member_id, bulan, tahun, status, tgl_bayar, jumlah_bayar, keterangan) VALUES ('$atlet_id', '$bulan', '$tahun', '$status', $tgl_bayar_val, '$jml', '$ket')");
                 }
@@ -79,8 +108,8 @@ if(isset($_POST['simpan_bayar'])){
         }
         
         // Mark attendances as Paid
-        if($is_newly_lunas) {
-            mysqli_query($koneksi, "UPDATE absensi SET status_bayar='Paid' WHERE member_id='$atlet_id' AND status_bayar='Unpaid'");
+        if($is_newly_lunas && !empty($id_str)) {
+            mysqli_query($koneksi, "UPDATE absensi SET status_bayar='Paid' WHERE id IN ($id_str)");
             
             // Otomatisasi Pemasukan SPP ke Arus Kas
             $admin_id = intval($_SESSION['user_id'] ?? 0);

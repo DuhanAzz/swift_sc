@@ -66,10 +66,10 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
                 foreach($q_atlet as $a):
                     $atlet_id = $a['id'];
                     
-                    // === KEHADIRAN UNPAID ===
+                    // === KEHADIRAN (TAGIHAN AKTIF) ===
                     $absensi_dates = [];
                     $jumlah_hadir = 0;
-                    $q_abs = mysqli_query($koneksi, "SELECT tanggal, status FROM absensi WHERE member_id='$atlet_id' AND status_bayar='Unpaid' AND tanggal >= '$tanggal_mulai' AND tanggal <= '$tanggal_akhir' ORDER BY tanggal ASC");
+                    $q_abs = mysqli_query($koneksi, "SELECT id, tanggal, status FROM absensi WHERE member_id='$atlet_id' AND status_bayar='Unpaid' AND tanggal >= '$tanggal_mulai' AND tanggal <= '$tanggal_akhir' ORDER BY tanggal ASC");
                     if($q_abs) {
                         while($ab = mysqli_fetch_assoc($q_abs)) {
                             $absensi_dates[] = $ab;
@@ -85,7 +85,7 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
                     
                     // === RIWAYAT BAYAR TERAKHIR ===
                     $last_pay = null;
-                    $q_last = mysqli_query($koneksi, "SELECT bulan, tahun, tgl_bayar, jumlah_bayar, jumlah_sesi_terbayar, cover_tgl_awal, cover_tgl_akhir FROM pembayaran WHERE member_id='$atlet_id' AND status='Lunas' ORDER BY tgl_bayar DESC LIMIT 1");
+                    $q_last = mysqli_query($koneksi, "SELECT bulan, tahun, tgl_bayar, jumlah_bayar, jumlah_sesi_terbayar, cover_tgl_awal, cover_tgl_akhir, detail_tanggal FROM pembayaran WHERE member_id='$atlet_id' AND status='Lunas' ORDER BY tgl_bayar DESC LIMIT 1");
                     if($q_last && $r_last = mysqli_fetch_assoc($q_last)) {
                         $last_pay = $r_last;
                     }
@@ -196,6 +196,9 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
                                         <div class="text-left">
                                             <span class="inline-block bg-teal-100 text-teal-800 rounded-lg text-xs px-2 py-1 font-bold mb-1.5"><?= $last_pay['jumlah_sesi_terbayar'] ?>x Pertemuan</span>
                                             <span class="block text-xs text-slate-500"><?= $t_awal ?> - <?= $t_akhir ?></span>
+                                            <?php if(!empty($last_pay['detail_tanggal'])): ?>
+                                                <span class="block text-[9px] text-gray-400 mt-1 italic break-words"><?= htmlspecialchars($last_pay['detail_tanggal']) ?></span>
+                                            <?php endif; ?>
                                         </div>
                                     <?php else: ?>
                                         <span class="text-xs text-gray-400 italic">Belum dicatat (-)</span>
@@ -218,20 +221,39 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
                             <div class="flex flex-wrap gap-1.5 mb-3">
                                 <?php 
                                 if(count($absensi_dates) > 0):
+                                    $check_count = 0;
                                     foreach($absensi_dates as $ab):
                                         $st = $ab['status'];
-                                        $pill_class = 'bg-gray-100 text-gray-500';
-                                        $pill_icon = '';
-                                        if($st == 'Hadir') { $pill_class = 'bg-emerald-100 text-emerald-700'; $pill_icon = '●'; }
-                                        elseif($st == 'Sakit') { $pill_class = 'bg-amber-100 text-amber-700'; $pill_icon = 'S'; }
-                                        elseif($st == 'Izin') { $pill_class = 'bg-sky-100 text-sky-700'; $pill_icon = 'I'; }
-                                        elseif($st == 'Alpa') { $pill_class = 'bg-red-100 text-red-700'; $pill_icon = 'A'; }
-                                ?>
-                                    <span class="inline-flex items-center gap-0.5 px-2 py-1 rounded-md text-[10px] font-semibold <?= $pill_class ?>" title="<?= $st . ' - ' . date('d M', strtotime($ab['tanggal'])) ?>">
-                                        <span class="text-[8px]"><?= $pill_icon ?></span>
-                                        <?= date('d', strtotime($ab['tanggal'])) ?>
-                                    </span>
-                                <?php 
+                                        $ab_id = $ab['id'];
+                                        $tgl_ab = date('d', strtotime($ab['tanggal']));
+                                        $tgl_full = date('d M Y', strtotime($ab['tanggal']));
+                                        
+                                        if($st == 'Hadir') { 
+                                            $checked = ($check_count < $limit_hadir) ? 'checked' : '';
+                                            $check_count++;
+                                            ?>
+                                            <label class="cursor-pointer group relative">
+                                                <input type="checkbox" name="selected_absensi[<?= $atlet_id ?>][]" value="<?= $ab_id ?>" class="peer sr-only" data-tanggal="<?= $ab['tanggal'] ?>" <?= $checked ?>>
+                                                <div class="peer-checked:bg-emerald-100 peer-checked:text-emerald-700 bg-amber-100 text-amber-800 rounded-md px-2 py-1 text-[10px] font-semibold transition-colors" title="Hadir - <?= $tgl_full ?>">
+                                                    <span class="text-[8px] peer-checked:inline hidden">●</span>
+                                                    <span class="text-[8px] peer-checked:hidden inline">○</span>
+                                                    <?= $tgl_ab ?>
+                                                </div>
+                                            </label>
+                                            <?php
+                                        } else {
+                                            $pill_class = 'bg-gray-100 text-gray-500';
+                                            $pill_icon = '';
+                                            if($st == 'Sakit') { $pill_class = 'bg-amber-100 text-amber-700'; $pill_icon = 'S'; }
+                                            elseif($st == 'Izin') { $pill_class = 'bg-sky-100 text-sky-700'; $pill_icon = 'I'; }
+                                            elseif($st == 'Alpa') { $pill_class = 'bg-red-100 text-red-700'; $pill_icon = 'A'; }
+                                            ?>
+                                            <span class="inline-flex items-center gap-0.5 px-2 py-1 rounded-md text-[10px] font-semibold <?= $pill_class ?>" title="<?= $st . ' - ' . $tgl_full ?>">
+                                                <span class="text-[8px]"><?= $pill_icon ?></span>
+                                                <?= $tgl_ab ?>
+                                            </span>
+                                            <?php
+                                        }
                                     endforeach;
                                 else: 
                                 ?>
