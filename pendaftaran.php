@@ -122,6 +122,18 @@ try {
                             <input type="text" name="sekolah" required placeholder="Tuliskan nama sekolah lengkap..."
                                 class="w-full bg-white border border-slate-200 rounded-lg py-2.5 px-3 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition placeholder-slate-400">
                         </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Pilihan Program / Tingkatan Kelas</label>
+                            <select name="tingkatan_kelas" required
+                                class="w-full bg-white border border-slate-200 rounded-lg py-3 px-3 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition appearance-auto font-medium" style="font-family: 'Plus Jakarta Sans', sans-serif;">
+                                <option value="">— Pilih Program —</option>
+                                <option value="Pemula">Pemula (Beginner)</option>
+                                <option value="Lanjutan">Lanjutan (Intermediate)</option>
+                                <option value="Prestasi">Prestasi (Advanced/Atlet)</option>
+                                <option value="Privat">Privat (1 on 1)</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
