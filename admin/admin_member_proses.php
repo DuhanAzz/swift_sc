@@ -33,9 +33,13 @@ if (isset($_POST['approve'])) {
             $tanggal_lahir = $pendingData['tanggal_lahir'];
             $tanggal_gabung = date('Y-m-d');
             
+            // Tangkap data tambahan (Kelas & Pelatih)
+            $tingkatan_kelas = isset($_POST['tingkatan_kelas']) ? mysqli_real_escape_string($koneksi, $_POST['tingkatan_kelas']) : 'Pemula';
+            $pelatih_id = !empty($_POST['pelatih_id']) ? "'" . mysqli_real_escape_string($koneksi, $_POST['pelatih_id']) . "'" : "NULL";
+            
             // 3. Masukkan ke tabel member
-            $query_insert = "INSERT INTO member (calon_member_id, nia, nama, jenis_kelamin, no_hp, tanggal_lahir, cabang_id, tanggal_gabung, payment_status, status_aktif) 
-                             VALUES ('$calon_member_id', '$nia', '$nama', '$jenis_kelamin', '$no_hp', '$tanggal_lahir', '$cabang_id', '$tanggal_gabung', 'Unpaid', 'Aktif')";
+            $query_insert = "INSERT INTO member (calon_member_id, nia, nama, jenis_kelamin, no_hp, tanggal_lahir, cabang_id, tanggal_gabung, payment_status, status_aktif, tingkatan_kelas, pelatih_id) 
+                             VALUES ('$calon_member_id', '$nia', '$nama', '$jenis_kelamin', '$no_hp', '$tanggal_lahir', '$cabang_id', '$tanggal_gabung', 'Unpaid', 'Aktif', '$tingkatan_kelas', $pelatih_id)";
             
             if (mysqli_query($koneksi, $query_insert)) {
                 // 4. Update status_approval di calon_member

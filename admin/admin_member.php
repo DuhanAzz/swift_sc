@@ -11,6 +11,15 @@ include '../includes/invoice_template.php';
 
 $admin_pool_id = $_SESSION['pool_id'] ?? '';
 
+// Fetch Pelatih for this branch
+$pelatihList = [];
+$q_pel = mysqli_query($koneksi, "SELECT id, nama FROM pelatih WHERE id_kolam = '$admin_pool_id'");
+if ($q_pel) {
+    while($rp = mysqli_fetch_assoc($q_pel)) {
+        $pelatihList[] = $rp;
+    }
+}
+
 // Check if we need to show invoice modal (after approve)
 $show_invoice = false;
 $invoice_data = [];
@@ -108,9 +117,21 @@ if (isset($_GET['invoice_id'])) {
                                     </a>
                                 </td>
                                 <td class="px-6 py-4 text-center">
-                                    <form action="admin_member_proses.php" method="POST" class="inline">
+                                    <form action="admin_member_proses.php" method="POST" class="flex flex-col gap-2 items-center">
                                         <input type="hidden" name="id" value="<?= $d['id']; ?>">
-                                        <button type="submit" name="approve" onclick="return confirm('Setujui pendaftar ini menjadi atlet resmi?')" class="bg-algolia-blue hover:bg-algolia-darkblue text-white font-bold py-2 px-4 rounded shadow text-xs uppercase tracking-wider">Approve</button>
+                                        <select name="tingkatan_kelas" class="text-xs border border-gray-300 rounded p-1.5 w-32 focus:ring-blue-500 focus:border-blue-500 bg-white" required>
+                                            <option value="Pemula">Pemula</option>
+                                            <option value="Lanjutan">Lanjutan</option>
+                                            <option value="Prestasi">Prestasi</option>
+                                            <option value="Privat">Privat</option>
+                                        </select>
+                                        <select name="pelatih_id" class="text-xs border border-gray-300 rounded p-1.5 w-32 focus:ring-blue-500 focus:border-blue-500 bg-white">
+                                            <option value="">-- Pelatih --</option>
+                                            <?php foreach($pelatihList as $pel): ?>
+                                                <option value="<?= $pel['id'] ?>"><?= htmlspecialchars($pel['nama']) ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                        <button type="submit" name="approve" onclick="return confirm('Setujui pendaftar ini menjadi atlet resmi?')" class="w-32 bg-algolia-blue hover:bg-algolia-darkblue text-white font-bold py-2 px-4 rounded shadow text-xs uppercase tracking-wider transition-colors mt-1">Approve</button>
                                     </form>
                                 </td>
                             </tr>

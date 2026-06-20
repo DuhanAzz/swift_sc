@@ -12,6 +12,9 @@ if (isset($_POST['tambah'])) {
     $id_kolam = mysqli_real_escape_string($koneksi, $_POST['id_kolam']);
     $tanggal_lahir = mysqli_real_escape_string($koneksi, $_POST['tanggal_lahir'] ?? date('Y-m-d'));
     $tanggal_gabung = date('Y-m-d');
+    
+    $tingkatan_kelas = isset($_POST['tingkatan_kelas']) ? mysqli_real_escape_string($koneksi, $_POST['tingkatan_kelas']) : 'Pemula';
+    $pelatih_id = !empty($_POST['pelatih_id']) ? "'" . mysqli_real_escape_string($koneksi, $_POST['pelatih_id']) . "'" : "NULL";
 
     // Auto-generate NIA: SWF-YYYY-XXXX
     $tahun = date('Y');
@@ -22,7 +25,7 @@ if (isset($_POST['tambah'])) {
     }
     $nia = 'SWF-' . $tahun . '-' . str_pad($next_id, 4, '0', STR_PAD_LEFT);
 
-    $q = mysqli_query($koneksi, "INSERT INTO member (nia, nama, jenis_kelamin, no_hp, tanggal_lahir, cabang_id, tanggal_gabung) VALUES ('$nia', '$nama', '$jenis_kelamin', '$no_hp', '$tanggal_lahir', '$id_kolam', '$tanggal_gabung')");
+    $q = mysqli_query($koneksi, "INSERT INTO member (nia, nama, jenis_kelamin, no_hp, tanggal_lahir, cabang_id, tanggal_gabung, tingkatan_kelas, pelatih_id) VALUES ('$nia', '$nama', '$jenis_kelamin', '$no_hp', '$tanggal_lahir', '$id_kolam', '$tanggal_gabung', '$tingkatan_kelas', $pelatih_id)");
     if($q) {
         header("location:atlet.php?pesan=sukses_tambah");
     } else {
@@ -39,8 +42,11 @@ if (isset($_POST['edit'])) {
     if($jenis_kelamin == 'Perempuan' || strtolower($jenis_kelamin) == 'perempuan') $jenis_kelamin = 'P';
     $no_hp = mysqli_real_escape_string($koneksi, $_POST['no_hp']);
     $id_kolam = mysqli_real_escape_string($koneksi, $_POST['id_kolam']);
+    
+    $tingkatan_kelas = isset($_POST['tingkatan_kelas']) ? mysqli_real_escape_string($koneksi, $_POST['tingkatan_kelas']) : 'Pemula';
+    $pelatih_id = !empty($_POST['pelatih_id']) ? "'" . mysqli_real_escape_string($koneksi, $_POST['pelatih_id']) . "'" : "NULL";
 
-    $q = mysqli_query($koneksi, "UPDATE member SET nama='$nama', jenis_kelamin='$jenis_kelamin', no_hp='$no_hp', cabang_id='$id_kolam' WHERE id='$id' ");
+    $q = mysqli_query($koneksi, "UPDATE member SET nama='$nama', jenis_kelamin='$jenis_kelamin', no_hp='$no_hp', cabang_id='$id_kolam', tingkatan_kelas='$tingkatan_kelas', pelatih_id=$pelatih_id WHERE id='$id' ");
     if($q) {
         header("location:atlet.php?pesan=sukses_edit");
     } else {

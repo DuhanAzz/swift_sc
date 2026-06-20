@@ -25,6 +25,15 @@ include '../includes/koneksi.php';
                       </div>';
             }
         }
+        
+        $admin_pool_id = $_SESSION['pool_id'] ?? '';
+        $pelatihList = [];
+        $q_pel = mysqli_query($koneksi, "SELECT id, nama FROM pelatih WHERE id_kolam = '$admin_pool_id'");
+        if ($q_pel) {
+            while($rp = mysqli_fetch_assoc($q_pel)) {
+                $pelatihList[] = $rp;
+            }
+        }
         ?>
         
         <div class="flex items-center justify-between mb-6">
@@ -107,7 +116,7 @@ include '../includes/koneksi.php';
                                         <input type="text" name="no_hp" value="<?= $data['no_hp']; ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full p-3 shadow-sm transition-all" required>
                                     </div>
                                     
-                                    <div class="mb-6">
+                                    <div class="mb-5">
                                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Cabang Latihan</label>
                                         <select name="id_kolam" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full p-3 shadow-sm transition-all" required>
                                             <?php
@@ -120,6 +129,26 @@ include '../includes/koneksi.php';
                                                 }
                                             }
                                             ?>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-5">
+                                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Tingkatan Kelas</label>
+                                        <select name="tingkatan_kelas" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full p-3 shadow-sm transition-all">
+                                            <option value="Pemula" <?= (($data['tingkatan_kelas'] ?? '') == 'Pemula') ? 'selected' : '' ?>>Pemula</option>
+                                            <option value="Lanjutan" <?= (($data['tingkatan_kelas'] ?? '') == 'Lanjutan') ? 'selected' : '' ?>>Lanjutan</option>
+                                            <option value="Prestasi" <?= (($data['tingkatan_kelas'] ?? '') == 'Prestasi') ? 'selected' : '' ?>>Prestasi</option>
+                                            <option value="Privat" <?= (($data['tingkatan_kelas'] ?? '') == 'Privat') ? 'selected' : '' ?>>Privat</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="mb-6">
+                                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Tugaskan ke Pelatih</label>
+                                        <select name="pelatih_id" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full p-3 shadow-sm transition-all">
+                                            <option value="">-- Tanpa Pelatih --</option>
+                                            <?php foreach($pelatihList as $pel): ?>
+                                                <option value="<?= $pel['id'] ?>" <?= (($data['pelatih_id'] ?? '') == $pel['id']) ? 'selected' : '' ?>><?= htmlspecialchars($pel['nama']) ?></option>
+                                            <?php endforeach; ?>
                                         </select>
                                     </div>
                                     
@@ -175,7 +204,7 @@ include '../includes/koneksi.php';
                     <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Tanggal Lahir</label>
                     <input type="date" name="tanggal_lahir" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm transition-all" required>
                 </div>
-                    <div class="mb-6">
+                    <div class="mb-5">
                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Pilih Cabang Latihan</label>
                         <select name="id_kolam" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm transition-all" required>
                             <option value="" disabled selected>-- Pilih Kolam Renang --</option>
@@ -188,6 +217,26 @@ include '../includes/koneksi.php';
                                 }
                             }
                             ?>
+                        </select>
+                    </div>
+
+                    <div class="mb-5">
+                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Tingkatan Kelas</label>
+                        <select name="tingkatan_kelas" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm transition-all">
+                            <option value="Pemula" selected>Pemula</option>
+                            <option value="Lanjutan">Lanjutan</option>
+                            <option value="Prestasi">Prestasi</option>
+                            <option value="Privat">Privat</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Tugaskan ke Pelatih</label>
+                        <select name="pelatih_id" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm font-medium rounded-xl focus:ring-algolia-blue focus:border-algolia-blue block w-full p-3 shadow-sm transition-all">
+                            <option value="">-- Tanpa Pelatih --</option>
+                            <?php foreach($pelatihList as $pel): ?>
+                                <option value="<?= $pel['id'] ?>"><?= htmlspecialchars($pel['nama']) ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                 
