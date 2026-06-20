@@ -6,11 +6,13 @@ $pool_id = $_SESSION['pool_id'] ?? "NULL";
 
 // PROSES TAMBAH DATA PELATIH
 if(isset($_POST['tambah'])){
-    $nama_pelatih = mysqli_real_escape_string($koneksi, $_POST['nama_pelatih']);
-    $email        = mysqli_real_escape_string($koneksi, $_POST['email']);
-    $password     = password_hash($_POST['password'], PASSWORD_DEFAULT);
-    $lisensi      = mysqli_real_escape_string($koneksi, $_POST['lisensi']);
-    $no_hp        = mysqli_real_escape_string($koneksi, $_POST['no_hp']);
+    $nama_pelatih   = mysqli_real_escape_string($koneksi, $_POST['nama_pelatih']);
+    $email          = mysqli_real_escape_string($koneksi, $_POST['email']);
+    $password       = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $lisensi        = mysqli_real_escape_string($koneksi, $_POST['lisensi']);
+    $kelas_mengajar = mysqli_real_escape_string($koneksi, $_POST['kelas_mengajar']);
+    $no_hp          = mysqli_real_escape_string($koneksi, $_POST['no_hp']);
+    $jabatan        = mysqli_real_escape_string($koneksi, $_POST['jabatan']);
     
     // Default foto
     $foto_name = 'default_coach.jpg';
@@ -26,7 +28,7 @@ if(isset($_POST['tambah'])){
     $q_c = mysqli_query($koneksi, "SELECT nama_cabang FROM cabang WHERE id=$pool_id");
     $nama_c = ($q_c && $r = mysqli_fetch_assoc($q_c)) ? $r['nama_cabang'] : 'Pusat';
 
-    $q2 = mysqli_query($koneksi, "INSERT INTO pelatih (user_id, nama, sertifikasi, jabatan, id_kolam, cabang, foto) VALUES ('$new_user_id', '$nama_pelatih', '$lisensi', '$no_hp', $pool_id, '$nama_c', '$foto_name')");
+    $q2 = mysqli_query($koneksi, "INSERT INTO pelatih (user_id, nama, lisensi, kelas_mengajar, no_hp, jabatan, id_kolam, cabang, foto) VALUES ('$new_user_id', '$nama_pelatih', '$lisensi', '$kelas_mengajar', '$no_hp', '$jabatan', $pool_id, '$nama_c', '$foto_name')");
     
     if($q1 && $q2) {
         header("location:pelatih.php?pesan=sukses_tambah");
@@ -37,13 +39,15 @@ if(isset($_POST['tambah'])){
 
 // PROSES EDIT DATA PELATIH
 if(isset($_POST['edit'])){
-    $id           = mysqli_real_escape_string($koneksi, $_POST['id']);
-    $user_id      = mysqli_real_escape_string($koneksi, $_POST['user_id']);
-    $nama_pelatih = mysqli_real_escape_string($koneksi, $_POST['nama_pelatih']);
-    $email        = mysqli_real_escape_string($koneksi, $_POST['email']);
-    $password_baru= $_POST['password_baru'];
-    $lisensi      = mysqli_real_escape_string($koneksi, $_POST['lisensi']);
-    $no_hp        = mysqli_real_escape_string($koneksi, $_POST['no_hp']);
+    $id             = mysqli_real_escape_string($koneksi, $_POST['id']);
+    $user_id        = mysqli_real_escape_string($koneksi, $_POST['user_id']);
+    $nama_pelatih   = mysqli_real_escape_string($koneksi, $_POST['nama_pelatih']);
+    $email          = mysqli_real_escape_string($koneksi, $_POST['email']);
+    $password_baru  = $_POST['password_baru'];
+    $lisensi        = mysqli_real_escape_string($koneksi, $_POST['lisensi']);
+    $kelas_mengajar = mysqli_real_escape_string($koneksi, $_POST['kelas_mengajar']);
+    $no_hp          = mysqli_real_escape_string($koneksi, $_POST['no_hp']);
+    $jabatan        = mysqli_real_escape_string($koneksi, $_POST['jabatan']);
 
     $q_c = mysqli_query($koneksi, "SELECT nama_cabang FROM cabang WHERE id=$pool_id");
     $nama_c = ($q_c && $r = mysqli_fetch_assoc($q_c)) ? $r['nama_cabang'] : 'Pusat';
@@ -58,7 +62,7 @@ if(isset($_POST['edit'])){
     }
 
     // 1. Update Pelatih
-    $q1 = mysqli_query($koneksi, "UPDATE pelatih SET nama='$nama_pelatih', sertifikasi='$lisensi', jabatan='$no_hp', id_kolam=$pool_id, cabang='$nama_c' WHERE id='$id'");
+    $q1 = mysqli_query($koneksi, "UPDATE pelatih SET nama='$nama_pelatih', lisensi='$lisensi', kelas_mengajar='$kelas_mengajar', no_hp='$no_hp', jabatan='$jabatan', id_kolam=$pool_id, cabang='$nama_c' WHERE id='$id'");
     
     // 2. Update Users
     if($user_id) {

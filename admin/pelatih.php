@@ -112,16 +112,24 @@ include '../includes/koneksi.php';
                                         </div>
                                         <div>
                                             <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Lisensi</label>
-                                            <select name="lisensi" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all" required>
-                                                <option value="Lisensi D" <?= ($data['sertifikasi'] == 'Lisensi D') ? 'selected' : '' ?>>Lisensi D (Pemula)</option>
-                                                <option value="Lisensi C" <?= ($data['sertifikasi'] == 'Lisensi C') ? 'selected' : '' ?>>Lisensi C (Menengah)</option>
-                                                <option value="Lisensi B" <?= ($data['sertifikasi'] == 'Lisensi B') ? 'selected' : '' ?>>Lisensi B (Lanjutan)</option>
-                                                <option value="Lisensi Nasional" <?= ($data['sertifikasi'] == 'Lisensi Nasional') ? 'selected' : '' ?>>Lisensi Nasional</option>
+                                            <input type="text" name="lisensi" value="<?= htmlspecialchars($data['lisensi'] ?? ''); ?>" placeholder="Lisensi Pelatih" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all" required>
+                                        </div>
+                                        <div>
+                                            <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Kelas Mengajar</label>
+                                            <select name="kelas_mengajar" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all" required>
+                                                <option value="Pemula" <?= (($data['kelas_mengajar'] ?? '') == 'Pemula') ? 'selected' : '' ?>>Pemula</option>
+                                                <option value="Reguler" <?= (($data['kelas_mengajar'] ?? '') == 'Reguler') ? 'selected' : '' ?>>Reguler</option>
+                                                <option value="Prestasi" <?= (($data['kelas_mengajar'] ?? '') == 'Prestasi') ? 'selected' : '' ?>>Prestasi</option>
+                                                <option value="Privat" <?= (($data['kelas_mengajar'] ?? '') == 'Privat') ? 'selected' : '' ?>>Privat</option>
                                             </select>
                                         </div>
                                         <div>
-                                            <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">No. HP / Jabatan</label>
-                                            <input type="text" name="no_hp" value="<?= htmlspecialchars($data['jabatan']); ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all" required>
+                                            <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">No. HP</label>
+                                            <input type="tel" name="no_hp" value="<?= htmlspecialchars($data['no_hp'] ?? ''); ?>" placeholder="08xxxxxxxxxx" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all" required>
+                                        </div>
+                                        <div>
+                                            <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Jabatan</label>
+                                            <input type="text" name="jabatan" value="<?= htmlspecialchars($data['jabatan']); ?>" placeholder="Contoh: Head Coach" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all" required>
                                         </div>
                                         <div>
                                             <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Lokasi Melatih</label>
@@ -186,17 +194,25 @@ include '../includes/koneksi.php';
                     </div>
                     <div>
                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Lisensi</label>
-                        <select name="lisensi" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all" required>
-                            <option value="">-- Pilih Lisensi --</option>
-                            <option value="Lisensi D">Lisensi D (Pemula)</option>
-                            <option value="Lisensi C">Lisensi C (Menengah)</option>
-                            <option value="Lisensi B">Lisensi B (Lanjutan)</option>
-                            <option value="Lisensi Nasional">Lisensi Nasional</option>
+                        <input type="text" name="lisensi" placeholder="Lisensi Pelatih" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all" required>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Kelas Mengajar</label>
+                        <select name="kelas_mengajar" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all" required>
+                            <option value="">-- Pilih Kelas --</option>
+                            <option value="Pemula">Pemula</option>
+                            <option value="Reguler">Reguler</option>
+                            <option value="Prestasi">Prestasi</option>
+                            <option value="Privat">Privat</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">No. HP / Jabatan</label>
-                        <input type="text" name="no_hp" placeholder="No. HP / Jabatan" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all" required>
+                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">No. HP</label>
+                        <input type="tel" name="no_hp" placeholder="08xxxxxxxxxx" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all" required>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Jabatan</label>
+                        <input type="text" name="jabatan" placeholder="Contoh: Head Coach" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all" required>
                     </div>
                     <div>
                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Foto Pelatih</label>
