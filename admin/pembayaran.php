@@ -110,11 +110,18 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
                     
                     // WA Invoice
                     $wa_phone = formatPhoneWA($a['no_hp'] ?? '');
-                    $inv_text = generateInvoiceSPP(
-                        $a['nama'], $a['nia'] ?? 'SWF-'.$atlet_id, 
-                        $a['nama_cabang'] ?? 'Swift SC', 
-                        date('m'), date('Y'), $jumlah_hadir, $a['no_hp'] ?? ''
-                    );
+                    
+                    $q_wa = mysqli_query($koneksi, "SELECT MIN(tanggal) as tgl_awal, MAX(tanggal) as tgl_akhir, COUNT(id) as total_sesi FROM absensi WHERE member_id = '$atlet_id' AND status_bayar = 'Unpaid' AND status = 'Hadir'");
+                    $d_wa = mysqli_fetch_assoc($q_wa);
+                    $total_sesi = $d_wa['total_sesi'] ?? 0;
+                    
+                    $eng_months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                    $ind_months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                    
+                    $tgl_awal_indo = !empty($d_wa['tgl_awal']) ? str_replace($eng_months, $ind_months, date('d M Y', strtotime($d_wa['tgl_awal']))) : '-';
+                    $tgl_akhir_indo = !empty($d_wa['tgl_akhir']) ? str_replace($eng_months, $ind_months, date('d M Y', strtotime($d_wa['tgl_akhir']))) : '-';
+                    
+                    $inv_text = "Halo, tagihan SPP ananda " . $a['nama'] . " untuk " . $total_sesi . " kali pertemuan (Periode " . $tgl_awal_indo . " - " . $tgl_akhir_indo . ") telah jatuh tempo. Mohon segera diselesaikan.";
                     
                     // Tambahan Status Cakupan
                     if($total_paid > 0) {

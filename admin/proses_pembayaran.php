@@ -52,7 +52,7 @@ if(isset($_POST['simpan_bayar'])){
         
         // Mark attendances as Paid
         if($is_newly_lunas) {
-            mysqli_query($koneksi, "UPDATE absensi SET status_bayar='Paid' WHERE member_id='$atlet_id' AND status_bayar='Unpaid' AND tanggal >= '$tgl_mulai' AND tanggal <= '$tgl_akhir'");
+            mysqli_query($koneksi, "UPDATE absensi SET status_bayar='Paid' WHERE member_id='$atlet_id' AND status_bayar='Unpaid'");
             
             // Otomatisasi Pemasukan SPP ke Arus Kas
             $admin_id = intval($_SESSION['user_id'] ?? 0);
