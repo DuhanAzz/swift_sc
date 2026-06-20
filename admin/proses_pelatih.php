@@ -61,8 +61,16 @@ if(isset($_POST['edit'])){
         }
     }
 
+    $foto_query = "";
+    if(isset($_FILES['foto_pelatih']) && $_FILES['foto_pelatih']['error'] == 0){
+        $ext = pathinfo($_FILES['foto_pelatih']['name'], PATHINFO_EXTENSION);
+        $foto_name = 'pelatih_' . time() . '.' . $ext;
+        move_uploaded_file($_FILES['foto_pelatih']['tmp_name'], '../uploads/' . $foto_name);
+        $foto_query = ", foto='$foto_name'";
+    }
+
     // 1. Update Pelatih
-    $q1 = mysqli_query($koneksi, "UPDATE pelatih SET nama='$nama_pelatih', lisensi='$lisensi', kelas_mengajar='$kelas_mengajar', no_hp='$no_hp', jabatan='$jabatan', id_kolam=$pool_id, cabang='$nama_c' WHERE id='$id'");
+    $q1 = mysqli_query($koneksi, "UPDATE pelatih SET nama='$nama_pelatih', lisensi='$lisensi', kelas_mengajar='$kelas_mengajar', no_hp='$no_hp', jabatan='$jabatan', id_kolam=$pool_id, cabang='$nama_c' $foto_query WHERE id='$id'");
     
     // 2. Update Users
     if($user_id) {

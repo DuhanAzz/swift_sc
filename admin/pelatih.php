@@ -146,6 +146,11 @@ include '../includes/koneksi.php';
                                                 ?>
                                             </select>
                                         </div>
+                                        <div class="md:col-span-2">
+                                            <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Foto Pelatih Baru (Opsional)</label>
+                                            <input type="file" name="foto_pelatih" accept="image/*" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-3 shadow-sm transition-all">
+                                            <p class="mt-1 text-[10px] text-gray-400">Kosongkan jika tidak ingin diubah.</p>
+                                        </div>
                                     </div>
                                     
                                     <div class="flex justify-end border-t border-gray-100 pt-5 mt-2">

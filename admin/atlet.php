@@ -130,6 +130,10 @@ include '../includes/koneksi.php';
                                             <input type="text" name="no_hp" value="<?= $data['no_hp']; ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all" required>
                                         </div>
                                         <div>
+                                            <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Tanggal Lahir</label>
+                                            <input type="date" name="tanggal_lahir" value="<?= $data['tanggal_lahir'] ?? ''; ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all" required>
+                                        </div>
+                                        <div>
                                             <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Cabang Latihan</label>
                                             <select name="id_kolam" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all" required>
                                                 <?php
