@@ -24,6 +24,23 @@ if(isset($_POST['simpan_tentang'])) {
     header("Location: ceo_cms_web.php?pesan=sukses&tab=tentang"); exit;
 }
 
+// PROSES PAKET BIAYA
+if(isset($_POST['simpan_paket'])) {
+    $id_paket = mysqli_real_escape_string($koneksi, $_POST['id_paket']);
+    $nama_paket = mysqli_real_escape_string($koneksi, $_POST['nama_paket']);
+    $harga = mysqli_real_escape_string($koneksi, $_POST['harga']);
+    $satuan_waktu = mysqli_real_escape_string($koneksi, $_POST['satuan_waktu']);
+    $deskripsi = mysqli_real_escape_string($koneksi, $_POST['deskripsi']);
+    $fitur_1 = mysqli_real_escape_string($koneksi, $_POST['fitur_1']);
+    $fitur_2 = mysqli_real_escape_string($koneksi, $_POST['fitur_2']);
+    $fitur_3 = mysqli_real_escape_string($koneksi, $_POST['fitur_3']);
+    $is_populer = isset($_POST['is_populer']) ? 1 : 0;
+    
+    mysqli_query($koneksi, "UPDATE paket_biaya SET nama_paket='$nama_paket', harga='$harga', satuan_waktu='$satuan_waktu', deskripsi='$deskripsi', fitur_1='$fitur_1', fitur_2='$fitur_2', fitur_3='$fitur_3', is_populer='$is_populer' WHERE id='$id_paket'");
+    
+    header("Location: ceo_cms_web.php?pesan=sukses&tab=paket"); exit;
+}
+
 // PROSES CMS HERO
 if(isset($_POST['simpan_hero'])) {
     $judul = mysqli_real_escape_string($koneksi, $_POST['judul']);
@@ -67,6 +84,10 @@ $tentangData = ['deskripsi' => '', 'visi' => '', 'misi' => '', 'feature_1' => ''
 $q_tentang = mysqli_query($koneksi, "SELECT * FROM tentang_club LIMIT 1");
 if($q_tentang && $row = mysqli_fetch_assoc($q_tentang)) { $tentangData = $row; }
 
+$paketData = [];
+$q_paket = mysqli_query($koneksi, "SELECT * FROM paket_biaya ORDER BY urutan ASC");
+while($row = mysqli_fetch_assoc($q_paket)) { $paketData[] = $row; }
+
 $sliders = [];
 $res_slider = mysqli_query($koneksi, "SELECT * FROM slider ORDER BY urutan ASC");
 while($row = mysqli_fetch_assoc($res_slider)) { $sliders[] = $row; }
@@ -101,6 +122,7 @@ include '../includes/sidebar.php';
             <a href="?tab=hero" class="px-5 py-2.5 rounded-full text-sm font-bold transition-all whitespace-nowrap <?= $active_tab == 'hero' ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200' ?>">Teks Banner Utama</a>
             <a href="?tab=slider" class="px-5 py-2.5 rounded-full text-sm font-bold transition-all whitespace-nowrap <?= $active_tab == 'slider' ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200' ?>">Galeri Slider</a>
             <a href="?tab=tentang" class="px-5 py-2.5 rounded-full text-sm font-bold transition-all whitespace-nowrap <?= $active_tab == 'tentang' ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200' ?>">Visi Misi & Profil</a>
+            <a href="?tab=paket" class="px-5 py-2.5 rounded-full text-sm font-bold transition-all whitespace-nowrap <?= $active_tab == 'paket' ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200' ?>">Paket Biaya</a>
         </div>
 
         <!-- Tab Content: HERO -->
@@ -213,6 +235,53 @@ include '../includes/sidebar.php';
 
                 <button type="submit" name="simpan_tentang" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-8 rounded-xl shadow-lg transition-colors">Simpan Profil Klub</button>
             </form>
+        </div>
+        <?php endif; ?>
+
+        <!-- Tab Content: PAKET BIAYA -->
+        <?php if($active_tab == 'paket'): ?>
+        <div class="mb-12">
+            <h3 class="text-2xl font-black text-slate-800 mb-2">Manajemen Paket Biaya</h3>
+            <p class="text-slate-500 mb-8 font-medium">Ubah nama paket, harga, dan fitur-fitur yang didapatkan.</p>
+            
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                <?php foreach($paketData as $paket): ?>
+                <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-gray-100">
+                    <form action="ceo_cms_web.php" method="POST">
+                        <input type="hidden" name="id_paket" value="<?= $paket['id'] ?>">
+                        <div class="mb-4">
+                            <label class="block text-xs font-bold text-gray-500 mb-1 uppercase">Nama Paket</label>
+                            <input type="text" name="nama_paket" value="<?= htmlspecialchars($paket['nama_paket']) ?>" class="w-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500" required>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1 uppercase">Harga</label>
+                                <input type="text" name="harga" value="<?= htmlspecialchars($paket['harga']) ?>" class="w-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500" required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1 uppercase">Satuan Waktu</label>
+                                <input type="text" name="satuan_waktu" value="<?= htmlspecialchars($paket['satuan_waktu']) ?>" class="w-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500" placeholder="/bln">
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-xs font-bold text-gray-500 mb-1 uppercase">Deskripsi</label>
+                            <textarea name="deskripsi" rows="2" class="w-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500" required><?= htmlspecialchars($paket['deskripsi']) ?></textarea>
+                        </div>
+                        <div class="mb-4 space-y-2">
+                            <label class="block text-xs font-bold text-gray-500 uppercase">3 Fitur Utama</label>
+                            <input type="text" name="fitur_1" value="<?= htmlspecialchars($paket['fitur_1']) ?>" class="w-full border border-gray-300 rounded-xl p-2.5 text-sm" placeholder="Fitur 1">
+                            <input type="text" name="fitur_2" value="<?= htmlspecialchars($paket['fitur_2']) ?>" class="w-full border border-gray-300 rounded-xl p-2.5 text-sm" placeholder="Fitur 2">
+                            <input type="text" name="fitur_3" value="<?= htmlspecialchars($paket['fitur_3']) ?>" class="w-full border border-gray-300 rounded-xl p-2.5 text-sm" placeholder="Fitur 3">
+                        </div>
+                        <div class="mb-6 flex items-center">
+                            <input type="checkbox" name="is_populer" value="1" <?= $paket['is_populer'] ? 'checked' : '' ?> class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500">
+                            <label class="ml-2 text-sm font-bold text-gray-700">Tandai sebagai Terpopuler</label>
+                        </div>
+                        <button type="submit" name="simpan_paket" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl shadow-md transition-colors">Simpan Paket</button>
+                    </form>
+                </div>
+                <?php endforeach; ?>
+            </div>
         </div>
         <?php endif; ?>
 

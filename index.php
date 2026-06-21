@@ -49,6 +49,15 @@ try {
     }
 } catch (\Exception $e) {}
 
+// Fetch Paket Biaya
+$paketData = [];
+try {
+    $q_paket = mysqli_query($koneksi, "SELECT * FROM paket_biaya ORDER BY urutan ASC LIMIT 3");
+    while($row = mysqli_fetch_assoc($q_paket)) {
+        $paketData[] = $row;
+    }
+} catch (\Exception $e) {}
+
 // Fetch Jadwal
 $jadwalData = [];
 try {
@@ -160,7 +169,7 @@ try {
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                         </a>
                         <a href="login.php" class="inline-flex items-center gap-2 px-8 py-4 bg-[#111928]  border-2 border-[#374151]  hover:border-[#008AAB] :border-[#005A70] hover:text-[#008AAB] :text-[#00A7D1] transition-all rounded-xl text-white  font-bold shadow-sm">
-                            Login Member
+                            Login Admin
                         </a>
                     </div>
                 </div>
@@ -350,65 +359,59 @@ try {
             </div>
             
             <div class="grid lg:grid-cols-3 gap-8 lg:gap-0 relative z-10 max-w-5xl mx-auto">
-                
-                <!-- Basic Plan -->
-                <div class="lg:border-y lg:border-l border-[#374151]  lg:rounded-l-[2rem] bg-[#111928]  rounded-[2rem] lg:rounded-r-none p-8 shadow-sm hover:shadow-xl transition-shadow border lg:border-r-0 border-[#374151]  z-10 flex flex-col">
-                    <div class="inline-flex items-center gap-3 mb-6">
-                        <div class="w-10 h-10 rounded-xl bg-[#002b36] /30 flex items-center justify-center text-[#008AAB] "><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg></div>
-                        <span class="text-lg font-bold text-white ">Pemula / Reguler</span>
-                    </div>
-                    <div class="mb-6 border-b border-[#1F2937]  pb-6">
-                        <span class="text-4xl font-black text-white  tracking-tight">Rp 225<span class="text-2xl">rb</span></span>
-                        <span class="text-gray-400  font-semibold">/bln</span>
-                    </div>
-                    <p class="text-gray-300  mb-8 font-medium">Program dasar yang menyenangkan untuk anak-anak.</p>
-                    <ul class="space-y-4 mb-8 flex-1">
-                        <li class="flex gap-3 text-gray-200  font-semibold"><svg class="w-5 h-5 shrink-0 text-[#005A70]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> 8x Sesi Latihan</li>
-                        <li class="flex gap-3 text-gray-200  font-semibold"><svg class="w-5 h-5 shrink-0 text-[#005A70]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Usia Min. 4 Tahun</li>
-                        <li class="flex gap-3 text-gray-200  font-semibold"><svg class="w-5 h-5 shrink-0 text-[#005A70]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Pendaftaran Rp 100rb</li>
-                    </ul>
-                </div>
-
-                <!-- Pro Plan -->
-                <div class="relative z-20">
-                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 px-5 py-1.5 bg-[#008AAB] text-white text-[11px] font-black rounded-full uppercase tracking-widest shadow-lg z-30">
-                        Terpopuler
-                    </div>
-                    <div class="bg-[#008AAB]  rounded-[2rem] p-8 text-white shadow-2xl shadow-[#008AAB]/40 transform lg:scale-105 h-full flex flex-col relative overflow-hidden">
-                        <div class="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 bg-[#111928]/10 rounded-full blur-2xl"></div>
-                        <div class="inline-flex items-center gap-3 mb-6 relative z-10">
-                            <div class="w-10 h-10 rounded-xl bg-[#111928]/20 flex items-center justify-center backdrop-blur-sm"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg></div>
-                            <span class="text-lg font-bold">Kelas Prestasi</span>
+                <?php foreach($paketData as $idx => $paket): ?>
+                    <?php if($paket['is_populer']): ?>
+                    <!-- Populer Plan -->
+                    <div class="relative z-20">
+                        <div class="absolute -top-4 left-1/2 -translate-x-1/2 px-5 py-1.5 bg-[#008AAB] text-white text-[11px] font-black rounded-full uppercase tracking-widest shadow-lg z-30">
+                            Terpopuler
                         </div>
-                        <div class="mb-6 border-b border-[#005A70] pb-6 relative z-10">
-                            <span class="text-4xl font-black tracking-tight">Konsultasi</span>
+                        <div class="bg-[#008AAB]  rounded-[2rem] p-8 text-white shadow-2xl shadow-[#008AAB]/40 transform lg:scale-105 h-full flex flex-col relative overflow-hidden">
+                            <div class="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 bg-[#111928]/10 rounded-full blur-2xl"></div>
+                            <div class="inline-flex items-center gap-3 mb-6 relative z-10">
+                                <div class="w-10 h-10 rounded-xl bg-[#111928]/20 flex items-center justify-center backdrop-blur-sm"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg></div>
+                                <span class="text-lg font-bold"><?= htmlspecialchars($paket['nama_paket']) ?></span>
+                            </div>
+                            <div class="mb-6 border-b border-[#005A70] pb-6 relative z-10">
+                                <span class="text-4xl font-black tracking-tight"><?= htmlspecialchars($paket['harga']) ?></span>
+                                <?php if(!empty($paket['satuan_waktu'])): ?>
+                                <span class="text-[#003847] font-semibold"><?= htmlspecialchars($paket['satuan_waktu']) ?></span>
+                                <?php endif; ?>
+                            </div>
+                            <p class="text-[#003847] mb-8 font-medium relative z-10"><?= htmlspecialchars($paket['deskripsi']) ?></p>
+                            <ul class="space-y-4 mb-8 flex-1 relative z-10">
+                                <?php if(!empty($paket['fitur_1'])): ?><li class="flex gap-3 font-semibold"><svg class="w-5 h-5 shrink-0 text-indigo-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> <?= htmlspecialchars($paket['fitur_1']) ?></li><?php endif; ?>
+                                <?php if(!empty($paket['fitur_2'])): ?><li class="flex gap-3 font-semibold"><svg class="w-5 h-5 shrink-0 text-indigo-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> <?= htmlspecialchars($paket['fitur_2']) ?></li><?php endif; ?>
+                                <?php if(!empty($paket['fitur_3'])): ?><li class="flex gap-3 font-semibold"><svg class="w-5 h-5 shrink-0 text-indigo-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> <?= htmlspecialchars($paket['fitur_3']) ?></li><?php endif; ?>
+                            </ul>
                         </div>
-                        <p class="text-[#003847] mb-8 font-medium relative z-10">Pelatihan intensif untuk atlet persiapan mengikuti berbagai kompetisi kejuaraan.</p>
-                        <ul class="space-y-4 mb-8 flex-1 relative z-10">
-                            <li class="flex gap-3 font-semibold"><svg class="w-5 h-5 shrink-0 text-indigo-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Porsi latihan intens</li>
-                            <li class="flex gap-3 font-semibold"><svg class="w-5 h-5 shrink-0 text-indigo-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Pemantauan limit waktu</li>
-                            <li class="flex gap-3 font-semibold"><svg class="w-5 h-5 shrink-0 text-indigo-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Program periodisasi juara</li>
+                    </div>
+                    <?php else: ?>
+                    <!-- Normal Plan -->
+                    <?php 
+                        $isLeft = ($idx == 0); 
+                        $borderClasses = $isLeft ? "lg:border-y lg:border-l border-[#374151] lg:rounded-l-[2rem] bg-[#111928] rounded-[2rem] lg:rounded-r-none border lg:border-r-0" : "lg:border-y lg:border-r border-[#374151] lg:rounded-r-[2rem] bg-[#111928] rounded-[2rem] lg:rounded-l-none border lg:border-l-0";
+                    ?>
+                    <div class="<?= $borderClasses ?> p-8 shadow-sm hover:shadow-xl transition-shadow z-10 flex flex-col">
+                        <div class="inline-flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-xl bg-[#002b36] /30 flex items-center justify-center text-[#008AAB] "><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg></div>
+                            <span class="text-lg font-bold text-white "><?= htmlspecialchars($paket['nama_paket']) ?></span>
+                        </div>
+                        <div class="mb-6 border-b border-[#1F2937]  pb-6">
+                            <span class="text-4xl font-black text-white  tracking-tight"><?= htmlspecialchars($paket['harga']) ?></span>
+                            <?php if(!empty($paket['satuan_waktu'])): ?>
+                            <span class="text-gray-400  font-semibold"><?= htmlspecialchars($paket['satuan_waktu']) ?></span>
+                            <?php endif; ?>
+                        </div>
+                        <p class="text-gray-300  mb-8 font-medium"><?= htmlspecialchars($paket['deskripsi']) ?></p>
+                        <ul class="space-y-4 mb-8 flex-1">
+                            <?php if(!empty($paket['fitur_1'])): ?><li class="flex gap-3 text-gray-200  font-semibold"><svg class="w-5 h-5 shrink-0 text-[#005A70]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> <?= htmlspecialchars($paket['fitur_1']) ?></li><?php endif; ?>
+                            <?php if(!empty($paket['fitur_2'])): ?><li class="flex gap-3 text-gray-200  font-semibold"><svg class="w-5 h-5 shrink-0 text-[#005A70]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> <?= htmlspecialchars($paket['fitur_2']) ?></li><?php endif; ?>
+                            <?php if(!empty($paket['fitur_3'])): ?><li class="flex gap-3 text-gray-200  font-semibold"><svg class="w-5 h-5 shrink-0 text-[#005A70]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> <?= htmlspecialchars($paket['fitur_3']) ?></li><?php endif; ?>
                         </ul>
                     </div>
-                </div>
-
-                <!-- Enterprise Plan -->
-                <div class="lg:border-y lg:border-r border-[#374151]  lg:rounded-r-[2rem] bg-[#111928]  rounded-[2rem] lg:rounded-l-none p-8 shadow-sm hover:shadow-xl transition-shadow border lg:border-l-0 border-[#374151]  z-10 flex flex-col">
-                    <div class="inline-flex items-center gap-3 mb-6">
-                        <div class="w-10 h-10 rounded-xl bg-[#002b36] /30 flex items-center justify-center text-[#008AAB] "><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></div>
-                        <span class="text-lg font-bold text-white ">Privat & TNI/Polri</span>
-                    </div>
-                    <div class="mb-6 border-b border-[#1F2937]  pb-6">
-                        <span class="text-4xl font-black text-white  tracking-tight">Konsultasi</span>
-                    </div>
-                    <p class="text-gray-300  mb-8 font-medium">1-on-1 coach untuk percepatan & persiapan tes fisik instansi.</p>
-                    <ul class="space-y-4 mb-8 flex-1">
-                        <li class="flex gap-3 text-gray-200  font-semibold"><svg class="w-5 h-5 shrink-0 text-[#005A70]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Waktu fleksibel</li>
-                        <li class="flex gap-3 text-gray-200  font-semibold"><svg class="w-5 h-5 shrink-0 text-[#005A70]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Tanpa batasan usia</li>
-                        <li class="flex gap-3 text-gray-200  font-semibold"><svg class="w-5 h-5 shrink-0 text-[#005A70]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Fokus teknik mendalam</li>
-                    </ul>
-                </div>
-
+                    <?php endif; ?>
+                <?php endforeach; ?>
             </div>
 
             <div class="mt-12 text-center">
