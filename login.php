@@ -38,10 +38,9 @@ if (isset($_SESSION['status']) && $_SESSION['status'] == "sudah_login") {
         <!-- Logo -->
         <div class="text-center mb-8 flex flex-col items-center">
             <a href="index.php" class="inline-flex items-center gap-3 mb-4">
-                <div class="bg-white p-2 rounded-full shadow-md w-14 h-14 flex items-center justify-center">
-                    <img src="assets/logo.png" alt="Swift SC" class="h-10 w-10 object-contain" onerror="this.onerror=null; this.outerHTML='<div class=\'w-10 h-10 rounded-full bg-cyan-600 flex items-center justify-center\'><svg class=\'w-5 h-5 text-white\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2.5\' d=\'M13 10V3L4 14h7v7l9-11h-7z\'></path></svg></div>';">
+                <div class="bg-white p-3 rounded-full shadow-md w-24 h-24 flex items-center justify-center">
+                    <img src="assets/logo.png" alt="Swift SC" class="h-16 w-16 object-contain" onerror="this.onerror=null; this.outerHTML='<div class=\'w-16 h-16 rounded-full bg-cyan-600 flex items-center justify-center\'><svg class=\'w-8 h-8 text-white\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2.5\' d=\'M13 10V3L4 14h7v7l9-11h-7z\'></path></svg></div>';">
                 </div>
-                <span class="font-black italic tracking-tighter text-xl text-slate-900">Swift<span class="text-cyan-500">SC</span></span>
             </a>
             <h1 class="text-xl font-bold text-slate-900">Log in to Swift SC</h1>
             <p class="text-sm text-slate-500 mt-1">Sistem Manajemen Swimming Club</p>

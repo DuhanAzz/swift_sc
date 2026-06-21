@@ -113,7 +113,9 @@ try {
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16 md:h-20">
                 <a href="index.php" class="flex items-center">
-                    <img src="assets/logo.png" alt="Swift SC Logo" class="h-12 md:h-16 w-auto" onerror="this.onerror=null; this.outerHTML='<span class=\'font-bold text-xl tracking-tight italic\'>SWIFT<span class=\'text-[#008AAB]\'>SC</span></span>';">
+                    <div class="bg-white p-2 rounded-full shadow-md w-14 h-14 md:w-19 md:h-19 flex items-center justify-center">
+                        <img src="assets/logo.png" alt="Swift SC Logo" class="h-10 w-10 md:h-14 md:w-14 object-contain" onerror="this.onerror=null; this.outerHTML='<span class=\'font-bold text-xl tracking-tight italic text-black\'>SWIFT</span>';">
+                    </div>
                 </a>
                 <nav class="hidden lg:flex items-center gap-8">
                     <a href="#beranda" class="text-sm font-semibold text-gray-200  hover:text-[#008AAB] :text-[#00A7D1] transition-colors">Beranda</a>
