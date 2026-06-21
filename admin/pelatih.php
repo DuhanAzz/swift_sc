@@ -149,7 +149,17 @@ include '../includes/koneksi.php';
                                         <div class="md:col-span-2">
                                             <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Foto Pelatih Baru (Opsional)</label>
                                             <input type="file" name="foto_pelatih" accept="image/*" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-3 shadow-sm transition-all">
-                                            <p class="mt-1 text-[10px] text-gray-400">Kosongkan jika tidak ingin diubah.</p>
+                                            <p class="text-xs text-gray-500 mt-2 font-medium">Kosongkan jika tidak ingin mengubah foto utama.</p>
+                                        </div>
+                                        <div class="col-span-2 md:col-span-1">
+                                            <label class="block mb-2 text-sm font-bold text-gray-800">Foto Hover 1 (Action) <span class="text-xs text-gray-500 font-medium">(Opsional)</span></label>
+                                            <input type="file" name="foto_hover_pelatih" accept="image/*" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-3 shadow-sm transition-all">
+                                            <p class="text-xs text-gray-500 mt-2 font-medium">Kosongkan jika tidak ingin mengubah foto hover 1.</p>
+                                        </div>
+                                        <div class="col-span-2 md:col-span-1">
+                                            <label class="block mb-2 text-sm font-bold text-gray-800">Foto Hover 2 (Action) <span class="text-xs text-gray-500 font-medium">(Opsional)</span></label>
+                                            <input type="file" name="foto_hover_2" accept="image/*" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-3 shadow-sm transition-all">
+                                            <p class="text-xs text-gray-500 mt-2 font-medium">Kosongkan jika tidak ingin mengubah foto hover 2.</p>
                                         </div>
                                     </div>
                                     
@@ -237,6 +247,14 @@ include '../includes/koneksi.php';
                     <div class="md:col-span-2">
                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Foto Pelatih (Opsional)</label>
                         <input type="file" name="foto_pelatih" accept="image/*" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-3 shadow-sm transition-all">
+                    </div>
+                    <div class="col-span-2 md:col-span-1">
+                        <label class="block mb-2 text-sm font-bold text-gray-800">Foto Hover 1 (Action) <span class="text-red-500">*</span></label>
+                        <input type="file" name="foto_hover_pelatih" accept="image/*" required class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-3 shadow-sm transition-all">
+                    </div>
+                    <div class="col-span-2 md:col-span-1">
+                        <label class="block mb-2 text-sm font-bold text-gray-800">Foto Hover 2 (Action) <span class="text-red-500">*</span></label>
+                        <input type="file" name="foto_hover_2" accept="image/*" required class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-3 shadow-sm transition-all">
                     </div>
                 </div>
                 

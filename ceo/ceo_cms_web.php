@@ -1,155 +1,221 @@
 <?php
 session_start();
-if (!isset($_SESSION['status']) || $_SESSION['status'] != "sudah_login" || $_SESSION['role'] != 'ceo') { 
+if (!isset($_SESSION['role']) || $_SESSION['role'] != 'ceo') { 
     header("location:../login.php"); 
     exit; 
 }
-include '../includes/header.php';
-include '../includes/sidebar.php';
 include '../includes/koneksi.php';
 
-// Proses Update Visi Misi
-if(isset($_POST['update_visi_misi'])) {
+// PROSES TENTANG KLUB
+if(isset($_POST['simpan_tentang'])) {
+    $deskripsi = mysqli_real_escape_string($koneksi, $_POST['deskripsi']);
     $visi = mysqli_real_escape_string($koneksi, $_POST['visi']);
     $misi = mysqli_real_escape_string($koneksi, $_POST['misi']);
-    $tentang = mysqli_real_escape_string($koneksi, $_POST['tentang']);
+    $feature_1 = mysqli_real_escape_string($koneksi, $_POST['feature_1']);
+    $feature_2 = mysqli_real_escape_string($koneksi, $_POST['feature_2']);
+    $feature_3 = mysqli_real_escape_string($koneksi, $_POST['feature_3']);
     
-    $cek = mysqli_query($koneksi, "SELECT id FROM tentang_club LIMIT 1");
-    if(mysqli_num_rows($cek) == 0) {
-        mysqli_query($koneksi, "INSERT INTO tentang_club (visi, misi, deskripsi) VALUES ('$visi', '$misi', '$tentang')");
+    $q_cek = mysqli_query($koneksi, "SELECT * FROM tentang_club LIMIT 1");
+    if(mysqli_num_rows($q_cek) > 0) {
+        mysqli_query($koneksi, "UPDATE tentang_club SET deskripsi='$deskripsi', visi='$visi', misi='$misi', feature_1='$feature_1', feature_2='$feature_2', feature_3='$feature_3'");
     } else {
-        mysqli_query($koneksi, "UPDATE tentang_club SET visi='$visi', misi='$misi', deskripsi='$tentang'");
+        mysqli_query($koneksi, "INSERT INTO tentang_club (deskripsi, visi, misi, feature_1, feature_2, feature_3) VALUES ('$deskripsi', '$visi', '$misi', '$feature_1', '$feature_2', '$feature_3')");
     }
-    
-    header("location:ceo_cms_web.php?pesan=sukses");
-    exit;
+    header("Location: ceo_cms_web.php?pesan=sukses&tab=tentang"); exit;
 }
 
-// Data Loaders
-$q_slider = mysqli_query($koneksi, "SELECT * FROM slider ORDER BY urutan ASC");
-$q_berita = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY id DESC");
-
-$cms_data = ['visi' => '', 'misi' => '', 'tentang_kami' => ''];
-$q_cms = mysqli_query($koneksi, "SELECT * FROM tentang_club LIMIT 1");
-if($q_cms && $row = mysqli_fetch_assoc($q_cms)) {
-    $cms_data['visi'] = $row['visi'];
-    $cms_data['misi'] = $row['misi'];
-    $cms_data['tentang_kami'] = $row['deskripsi'];
+// PROSES CMS HERO
+if(isset($_POST['simpan_hero'])) {
+    $judul = mysqli_real_escape_string($koneksi, $_POST['judul']);
+    $konten = mysqli_real_escape_string($koneksi, $_POST['konten']);
+    $q_cek = mysqli_query($koneksi, "SELECT * FROM cms_landing WHERE tipe='Banner'");
+    if(mysqli_num_rows($q_cek) > 0) {
+        mysqli_query($koneksi, "UPDATE cms_landing SET judul='$judul', konten='$konten', status='Aktif' WHERE tipe='Banner'");
+    } else {
+        mysqli_query($koneksi, "INSERT INTO cms_landing (tipe, judul, konten, status) VALUES ('Banner', '$judul', '$konten', 'Aktif')");
+    }
+    header("Location: ceo_cms_web.php?pesan=sukses&tab=hero"); exit;
 }
+
+// PROSES SLIDER
+if(isset($_POST['tambah_slider'])) {
+    $caption = mysqli_real_escape_string($koneksi, $_POST['caption']);
+    $urutan = (int)$_POST['urutan'];
+    $gambar = '';
+    if(isset($_FILES['gambar']) && $_FILES['gambar']['error'] == 0){
+        $ext = pathinfo($_FILES['gambar']['name'], PATHINFO_EXTENSION);
+        $gambar = 'slider_' . time() . '.' . $ext;
+        move_uploaded_file($_FILES['gambar']['tmp_name'], '../admin/uploads/' . $gambar);
+    }
+    mysqli_query($koneksi, "INSERT INTO slider (gambar, caption, urutan, status) VALUES ('$gambar', '$caption', '$urutan', 'Aktif')");
+    header("Location: ceo_cms_web.php?pesan=sukses&tab=slider"); exit;
+}
+if(isset($_GET['hapus_slider'])) {
+    $id = $_GET['hapus_slider'];
+    $gambar = $_GET['g'];
+    if($gambar && file_exists('../admin/uploads/'.$gambar)) { unlink('../admin/uploads/'.$gambar); }
+    mysqli_query($koneksi, "DELETE FROM slider WHERE id='$id'");
+    header("Location: ceo_cms_web.php?pesan=sukses&tab=slider"); exit;
+}
+
+// LOAD DATA
+$cmsData = ['judul' => '', 'konten' => ''];
+$q_cms = mysqli_query($koneksi, "SELECT judul, konten FROM cms_landing WHERE tipe='Banner' LIMIT 1");
+if($q_cms && $row = mysqli_fetch_assoc($q_cms)) { $cmsData = $row; }
+
+$tentangData = ['deskripsi' => '', 'visi' => '', 'misi' => '', 'feature_1' => '', 'feature_2' => '', 'feature_3' => ''];
+$q_tentang = mysqli_query($koneksi, "SELECT * FROM tentang_club LIMIT 1");
+if($q_tentang && $row = mysqli_fetch_assoc($q_tentang)) { $tentangData = $row; }
+
+$sliders = [];
+$res_slider = mysqli_query($koneksi, "SELECT * FROM slider ORDER BY urutan ASC");
+while($row = mysqli_fetch_assoc($res_slider)) { $sliders[] = $row; }
+
+$active_tab = $_GET['tab'] ?? 'hero';
+
+include '../includes/header.php';
+include '../includes/sidebar.php';
 ?>
-
-<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen">
-    <div class="p-4 lg:p-8 page-content">
+<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen bg-gray-50">
+    <div class="p-4 lg:p-8">
         
-        <?php 
-        if(isset($_GET['pesan']) && $_GET['pesan'] == 'sukses'){
-            echo '<div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 border border-green-200">✅ Konten berhasil diperbarui! Gambar lama tetap dipertahankan jika tidak ada gambar baru yang diunggah.</div>';
-        }
-        ?>
-
-        <div class="mb-6">
-            <h1 class="text-2xl font-bold text-algolia-navy tracking-tight">Manajemen Konten Website (CMS)</h1>
-            <p class="text-base text-gray-500 mt-1">Kelola tampilan halaman publik Swift SC dengan sistem tabulasi.</p>
+        <div class="mb-8 flex flex-col md:flex-row justify-between md:items-end gap-4">
+            <div>
+                <h1 class="text-3xl font-black text-gray-900 tracking-tight">Pusat Kendali CMS</h1>
+                <p class="text-gray-500 mt-1 font-medium">Kelola keseluruhan tampilan publik Landing Page dari satu dasbor terpusat.</p>
+            </div>
+            <a href="../index.php" target="_blank" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-5 rounded-xl shadow-lg shadow-indigo-600/30 text-sm transition-all inline-flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg> Lihat Website
+            </a>
         </div>
 
-        <div class="mb-8 border-b border-[#E8E8EF]">
-            <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="cmsTab" data-tabs-toggle="#cmsTabContent" role="tablist">
-                <li class="mr-2" role="presentation">
-                    <button class="inline-block p-4 border-b-2 rounded-t-lg" id="hero-tab" data-tabs-target="#hero" type="button" role="tab" aria-controls="hero" aria-selected="false">Hero Banner</button>
-                </li>
-                <li class="mr-2" role="presentation">
-                    <button class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-[#E8E8EF]" id="berita-tab" data-tabs-target="#berita" type="button" role="tab" aria-controls="berita" aria-selected="false">Berita & Pengumuman</button>
-                </li>
-                <li class="mr-2" role="presentation">
-                    <button class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-[#E8E8EF]" id="visi-tab" data-tabs-target="#visi" type="button" role="tab" aria-controls="visi" aria-selected="false">Visi Misi & Profil</button>
-                </li>
-            </ul>
+        <?php if(isset($_GET['pesan']) && $_GET['pesan'] == 'sukses'): ?>
+            <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl font-medium text-sm flex items-center gap-3">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                Perubahan berhasil disimpan dan sudah tayang di Landing Page!
+            </div>
+        <?php endif; ?>
+
+        <!-- Tabs Navigation -->
+        <div class="flex gap-2 overflow-x-auto pb-4 mb-6 border-b border-gray-200">
+            <a href="?tab=hero" class="px-5 py-2.5 rounded-full text-sm font-bold transition-all whitespace-nowrap <?= $active_tab == 'hero' ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200' ?>">Teks Banner Utama</a>
+            <a href="?tab=slider" class="px-5 py-2.5 rounded-full text-sm font-bold transition-all whitespace-nowrap <?= $active_tab == 'slider' ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200' ?>">Galeri Slider</a>
+            <a href="?tab=tentang" class="px-5 py-2.5 rounded-full text-sm font-bold transition-all whitespace-nowrap <?= $active_tab == 'tentang' ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200' ?>">Visi Misi & Profil</a>
         </div>
 
-        <div id="cmsTabContent">
-            
-            <!-- TAB: HERO BANNER -->
-            <div class="hidden p-4 rounded-lg bg-gray-50" id="hero" role="tabpanel" aria-labelledby="hero-tab">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-lg font-bold">Pengaturan Hero Banner</h2>
-                    <a href="ceo_cms_slider.php" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-all shadow-sm">Kelola Gambar Banner Lanjutan &rarr;</a>
+        <!-- Tab Content: HERO -->
+        <?php if($active_tab == 'hero'): ?>
+        <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-8">
+            <h3 class="text-xl font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Pengaturan Teks Hero</h3>
+            <form action="" method="POST" class="max-w-3xl">
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Judul Utama (Hero Title)</label>
+                    <input type="text" name="judul" value="<?= htmlspecialchars($cmsData['judul']) ?>" class="w-full border border-gray-300 rounded-xl p-3.5 text-sm font-bold focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all" required>
+                    <p class="text-xs text-gray-500 mt-2">Gunakan kalimat pendek dan meyakinkan. Contoh: Berlatih Layaknya Sang Juara.</p>
                 </div>
-                <div class="bg-blue-50 p-4 rounded border border-blue-200 text-sm text-blue-800 mb-4">
-                    <strong>Info Logika Fallback Gambar:</strong> Saat memperbarui banner di modul lanjutan, jika form upload gambar dibiarkan kosong, sistem secara otomatis mendeteksi <code>$_FILES['gambar']['error'] !== 0</code> dan akan mempertahankan file gambar lama di database tanpa me-replace-nya dengan NULL.
+                <div class="mb-8">
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Deskripsi Sub-judul (Hero Description)</label>
+                    <textarea name="konten" rows="3" class="w-full border border-gray-300 rounded-xl p-3.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all" required><?= htmlspecialchars($cmsData['konten']) ?></textarea>
                 </div>
-                
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <?php if($q_slider) { while($sl = mysqli_fetch_assoc($q_slider)) { ?>
-                    <div class="rounded-xl overflow-hidden border border-[#E8E8EF] bg-white shadow-sm">
-                        <img src="../admin/uploads/<?= htmlspecialchars($sl['gambar']) ?>" class="w-full h-32 object-cover" onerror="this.src='https://placehold.co/400x200?text=No+Image'">
-                        <div class="p-3 text-center">
-                            <span class="text-xs font-bold bg-gray-100 px-2 py-1 rounded">Urutan: <?= $sl['urutan'] ?></span>
+                <button type="submit" name="simpan_hero" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors">Simpan Teks Banner</button>
+            </form>
+        </div>
+        <?php endif; ?>
+
+        <!-- Tab Content: SLIDER -->
+        <?php if($active_tab == 'slider'): ?>
+        <div class="mb-8 flex justify-between items-center bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm">
+            <div>
+                <h3 class="text-xl font-bold text-gray-900">Galeri Slider</h3>
+                <p class="text-gray-500 text-sm mt-1">Kelola gambar yang berputar pada sisi kanan Hero Landing.</p>
+            </div>
+            <button onclick="document.getElementById('modalSlider').classList.remove('hidden')" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 px-6 rounded-xl shadow-lg transition-colors flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> Tambah Slider
+            </button>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-6">
+            <?php foreach($sliders as $s): ?>
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden group">
+                    <div class="relative h-48 overflow-hidden bg-gray-100">
+                        <img src="../admin/uploads/<?= $s['gambar'] ?>" alt="Slider" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <a href="?hapus_slider=<?= $s['id'] ?>&g=<?= $s['gambar'] ?>" onclick="return confirm('Hapus gambar ini?')" class="bg-red-500 text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-red-600">Hapus</a>
                         </div>
+                        <div class="absolute top-3 left-3 bg-white/90 backdrop-blur text-gray-900 text-xs font-black px-2 py-1 rounded-md shadow">#<?= $s['urutan'] ?></div>
                     </div>
-                    <?php } } ?>
+                    <div class="p-4">
+                        <p class="text-sm font-semibold text-gray-800 line-clamp-2"><?= htmlspecialchars($s['caption'] ?? 'Tidak ada caption') ?></p>
+                    </div>
                 </div>
-            </div>
-
-            <!-- TAB: BERITA / PENGUMUMAN -->
-            <div class="hidden p-4 rounded-lg bg-gray-50" id="berita" role="tabpanel" aria-labelledby="berita-tab">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-lg font-bold">Daftar Berita & Pengumuman</h2>
-                    <a href="ceo_cms_berita.php" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-all shadow-sm">+ Tulis / Edit Berita &rarr;</a>
-                </div>
-                <div class="bg-blue-50 p-4 rounded border border-blue-200 text-sm text-blue-800 mb-4">
-                    <strong>Info Logika Fallback Gambar:</strong> Saat meng-edit berita melalui form, query SQL menggunakan logika dinamis <code>$q_gambar = ""; if(!empty(upload)) { $q_gambar = ", gambar='...'"; }</code> sehingga gambar lama 100% aman jika input file kosong.
-                </div>
-
-                <div class="card overflow-hidden">
-                    <table class="table-algolia w-full text-left">
-                        <thead class="text-xs text-gray-500 uppercase bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 border-b">Tanggal</th>
-                                <th class="px-6 py-3 border-b">Kategori</th>
-                                <th class="px-6 py-3 border-b">Judul</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php if($q_berita) { while($br = mysqli_fetch_assoc($q_berita)) { ?>
-                            <tr class="border-b hover:bg-slate-50 bg-white">
-                                <td class="px-6 py-3 text-sm text-gray-500"><?= $br['tanggal'] ?></td>
-                                <td class="px-6 py-3 text-sm"><span class="bg-gray-100 font-bold px-2 py-1 rounded"><?= $br['kategori'] ?></span></td>
-                                <td class="px-6 py-3 text-sm font-bold text-algolia-navy"><?= $br['judul'] ?></td>
-                            </tr>
-                            <?php } } ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- TAB: VISI MISI -->
-            <div class="hidden p-4 rounded-lg bg-gray-50" id="visi" role="tabpanel" aria-labelledby="visi-tab">
-                <h2 class="text-lg font-bold mb-4">Edit Profil Klub (Visi & Misi)</h2>
-                <div class="card p-6 bg-white">
-                    <form action="ceo_cms_web.php" method="POST">
-                        <div class="mb-4">
-                            <label class="block text-sm font-bold text-gray-700 mb-2">Tentang Klub (Deskripsi Singkat)</label>
-                            <textarea name="tentang" rows="4" class="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-algolia-blue"><?= htmlspecialchars($cms_data['tentang_kami'] ?? '') ?></textarea>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                            <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-2">Visi</label>
-                                <textarea name="visi" rows="5" class="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-algolia-blue"><?= htmlspecialchars($cms_data['visi'] ?? '') ?></textarea>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-2">Misi</label>
-                                <textarea name="misi" rows="5" class="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-algolia-blue"><?= htmlspecialchars($cms_data['misi'] ?? '') ?></textarea>
-                            </div>
-                        </div>
-                        <button type="submit" name="update_visi_misi" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-lg text-sm w-full md:w-auto shadow-md">Simpan Perubahan Profil</button>
-                    </form>
-                </div>
-            </div>
-
+            <?php endforeach; ?>
         </div>
+
+        <!-- Modal Tambah Slider -->
+        <div id="modalSlider" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center">
+            <div class="bg-white rounded-[2rem] w-full max-w-md p-8 shadow-2xl">
+                <h3 class="font-bold text-2xl mb-6 text-gray-900">Upload Gambar Slider</h3>
+                <form action="" method="POST" enctype="multipart/form-data">
+                    <div class="mb-5">
+                        <label class="block text-sm font-bold mb-2">Pilih Gambar</label>
+                        <input type="file" name="gambar" accept="image/*" required class="w-full border border-gray-300 rounded-xl p-2.5 text-sm">
+                    </div>
+                    <div class="mb-5">
+                        <label class="block text-sm font-bold mb-2">Caption <span class="text-gray-400 font-normal">(Muncul di pojok gambar)</span></label>
+                        <input type="text" name="caption" class="w-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div class="mb-8">
+                        <label class="block text-sm font-bold mb-2">Urutan Tampil</label>
+                        <input type="number" name="urutan" value="<?= count($sliders)+1 ?>" required class="w-full border border-gray-300 rounded-xl p-3 text-sm">
+                    </div>
+                    <div class="flex justify-end gap-3">
+                        <button type="button" onclick="document.getElementById('modalSlider').classList.add('hidden')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 px-6 py-3 rounded-xl font-bold transition-colors">Batal</button>
+                        <button type="submit" name="tambah_slider" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-colors">Simpan & Upload</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <!-- Tab Content: TENTANG -->
+        <?php if($active_tab == 'tentang'): ?>
+        <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-8">
+            <h3 class="text-xl font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Profil, Visi & Misi</h3>
+            <form action="" method="POST">
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Deskripsi Klub</label>
+                    <textarea name="deskripsi" rows="3" class="w-full border border-gray-300 rounded-xl p-4 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" required><?= htmlspecialchars($tentangData['deskripsi']) ?></textarea>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Visi</label>
+                        <textarea name="visi" rows="5" class="w-full border border-gray-300 rounded-xl p-4 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" required><?= htmlspecialchars($tentangData['visi']) ?></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Misi</label>
+                        <textarea name="misi" rows="5" class="w-full border border-gray-300 rounded-xl p-4 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" required><?= htmlspecialchars($tentangData['misi']) ?></textarea>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 mt-8 border-t border-gray-100 pt-6">
+                    <div class="col-span-full mb-2">
+                        <label class="block text-sm font-bold text-gray-700">3 Poin Keunggulan Utama (Features)</label>
+                        <p class="text-xs text-gray-500">Muncul di samping teks Tentang Klub di halaman utama.</p>
+                    </div>
+                    <div>
+                        <input type="text" name="feature_1" value="<?= htmlspecialchars($tentangData['feature_1'] ?? '') ?>" class="w-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Poin 1" required>
+                    </div>
+                    <div>
+                        <input type="text" name="feature_2" value="<?= htmlspecialchars($tentangData['feature_2'] ?? '') ?>" class="w-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Poin 2" required>
+                    </div>
+                    <div>
+                        <input type="text" name="feature_3" value="<?= htmlspecialchars($tentangData['feature_3'] ?? '') ?>" class="w-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Poin 3" required>
+                    </div>
+                </div>
+
+                <button type="submit" name="simpan_tentang" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-8 rounded-xl shadow-lg transition-colors">Simpan Profil Klub</button>
+            </form>
+        </div>
+        <?php endif; ?>
 
     </div>
 </div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
 <?php include '../includes/footer.php'; ?>

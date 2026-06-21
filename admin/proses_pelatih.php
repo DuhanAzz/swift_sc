@@ -2,7 +2,9 @@
 session_start();
 include '../includes/koneksi.php';
 
-$pool_id = $_SESSION['pool_id'] ?? "NULL";
+// Check admin authorization
+if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], ['admin', 'ceo'])) { header("location:../login.php"); exit; }
+$pool_id = !empty($_SESSION['pool_id']) ? $_SESSION['pool_id'] : "NULL";
 
 // PROSES TAMBAH DATA PELATIH
 if(isset($_POST['tambah'])){
@@ -19,7 +21,21 @@ if(isset($_POST['tambah'])){
     if(isset($_FILES['foto_pelatih']) && $_FILES['foto_pelatih']['error'] == 0){
         $ext = pathinfo($_FILES['foto_pelatih']['name'], PATHINFO_EXTENSION);
         $foto_name = 'pelatih_' . time() . '.' . $ext;
-        move_uploaded_file($_FILES['foto_pelatih']['tmp_name'], '../uploads/' . $foto_name);
+        move_uploaded_file($_FILES['foto_pelatih']['tmp_name'], 'uploads/' . $foto_name);
+    }
+
+    $foto_hover_name = NULL;
+    if(isset($_FILES['foto_hover_pelatih']) && $_FILES['foto_hover_pelatih']['error'] == 0){
+        $ext_h = pathinfo($_FILES['foto_hover_pelatih']['name'], PATHINFO_EXTENSION);
+        $foto_hover_name = 'pelatih_hover_1_' . time() . '.' . $ext_h;
+        move_uploaded_file($_FILES['foto_hover_pelatih']['tmp_name'], 'uploads/' . $foto_hover_name);
+    }
+
+    $foto_hover_2_name = NULL;
+    if(isset($_FILES['foto_hover_2']) && $_FILES['foto_hover_2']['error'] == 0){
+        $ext_h2 = pathinfo($_FILES['foto_hover_2']['name'], PATHINFO_EXTENSION);
+        $foto_hover_2_name = 'pelatih_hover_2_' . time() . '.' . $ext_h2;
+        move_uploaded_file($_FILES['foto_hover_2']['tmp_name'], 'uploads/' . $foto_hover_2_name);
     }
 
     $q1 = mysqli_query($koneksi, "INSERT INTO users (username, email, password, role, cabang_id) VALUES ('$nama_pelatih', '$email', '$password', 'Pelatih', $pool_id)");
@@ -28,7 +44,9 @@ if(isset($_POST['tambah'])){
     $q_c = mysqli_query($koneksi, "SELECT nama_cabang FROM cabang WHERE id=$pool_id");
     $nama_c = ($q_c && $r = mysqli_fetch_assoc($q_c)) ? $r['nama_cabang'] : 'Pusat';
 
-    $q2 = mysqli_query($koneksi, "INSERT INTO pelatih (user_id, nama, lisensi, kelas_mengajar, no_hp, jabatan, id_kolam, cabang, foto) VALUES ('$new_user_id', '$nama_pelatih', '$lisensi', '$kelas_mengajar', '$no_hp', '$jabatan', $pool_id, '$nama_c', '$foto_name')");
+    $f_hover_val = $foto_hover_name ? "'$foto_hover_name'" : "NULL";
+    $f_hover_2_val = $foto_hover_2_name ? "'$foto_hover_2_name'" : "NULL";
+    $q2 = mysqli_query($koneksi, "INSERT INTO pelatih (user_id, nama, lisensi, kelas_mengajar, no_hp, jabatan, id_kolam, cabang, foto, foto_hover_1, foto_hover_2) VALUES ('$new_user_id', '$nama_pelatih', '$lisensi', '$kelas_mengajar', '$no_hp', '$jabatan', $pool_id, '$nama_c', '$foto_name', $f_hover_val, $f_hover_2_val)");
     
     if($q1 && $q2) {
         header("location:pelatih.php?pesan=sukses_tambah");
@@ -65,8 +83,22 @@ if(isset($_POST['edit'])){
     if(isset($_FILES['foto_pelatih']) && $_FILES['foto_pelatih']['error'] == 0){
         $ext = pathinfo($_FILES['foto_pelatih']['name'], PATHINFO_EXTENSION);
         $foto_name = 'pelatih_' . time() . '.' . $ext;
-        move_uploaded_file($_FILES['foto_pelatih']['tmp_name'], '../uploads/' . $foto_name);
-        $foto_query = ", foto='$foto_name'";
+        move_uploaded_file($_FILES['foto_pelatih']['tmp_name'], 'uploads/' . $foto_name);
+        $foto_query .= ", foto='$foto_name'";
+    }
+
+    if(isset($_FILES['foto_hover_pelatih']) && $_FILES['foto_hover_pelatih']['error'] == 0){
+        $ext_h = pathinfo($_FILES['foto_hover_pelatih']['name'], PATHINFO_EXTENSION);
+        $foto_hover_name = 'pelatih_hover_1_' . time() . '.' . $ext_h;
+        move_uploaded_file($_FILES['foto_hover_pelatih']['tmp_name'], 'uploads/' . $foto_hover_name);
+        $foto_query .= ", foto_hover_1='$foto_hover_name'";
+    }
+
+    if(isset($_FILES['foto_hover_2']) && $_FILES['foto_hover_2']['error'] == 0){
+        $ext_h2 = pathinfo($_FILES['foto_hover_2']['name'], PATHINFO_EXTENSION);
+        $foto_hover_2_name = 'pelatih_hover_2_' . time() . '.' . $ext_h2;
+        move_uploaded_file($_FILES['foto_hover_2']['tmp_name'], 'uploads/' . $foto_hover_2_name);
+        $foto_query .= ", foto_hover_2='$foto_hover_2_name'";
     }
 
     // 1. Update Pelatih

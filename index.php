@@ -1,36 +1,70 @@
-<?php 
+<?php
 include 'includes/koneksi.php'; 
 
-// Ambil CMS Content
+// Fetch CMS Data
 $cmsData = [
-    'hero_title' => "Jump in. let's swim!",
-    'hero_subtitle' => "SWIFT SC",
-    'hero_desc' => "Klub renang resmi dan tersertifikasi dengan fasilitas pelatih berlisensi nasional & internasional.",
-    'about_text' => "Swift Swimming Club adalah klub renang yang resmi dan telah tersertifikasi. Dengan fasilitas pelatih berlisensi nasional maupun internasional dan peralatan renang yang memadai."
+    'hero_title' => "Berlatih Layaknya Sang Juara",
+    'hero_desc' => "Klub renang resmi dan tersertifikasi dengan fasilitas pelatih berlisensi nasional & internasional."
 ];
-
-// Load CMS Landing (Banner text)
 try {
     $q_cms = mysqli_query($koneksi, "SELECT judul, konten FROM cms_landing WHERE tipe='Banner' AND status='Aktif' LIMIT 1");
     if($q_cms && $row_cms = mysqli_fetch_assoc($q_cms)) {
-        $cmsData['hero_title'] = $row_cms['judul'];
-        $cmsData['hero_desc'] = $row_cms['konten'];
+        if(!empty($row_cms['judul'])) $cmsData['hero_title'] = $row_cms['judul'];
+        if(!empty($row_cms['konten'])) $cmsData['hero_desc'] = $row_cms['konten'];
     }
 } catch (\Exception $e) {}
 
-// Load tentang_club (deskripsi)
+// Fetch Slider
+$sliders = [];
+try {
+    $q_sliders = mysqli_query($koneksi, "SELECT * FROM slider WHERE status='Aktif' ORDER BY urutan ASC");
+    while($row = mysqli_fetch_assoc($q_sliders)) {
+        $sliders[] = $row;
+    }
+} catch (\Exception $e) {}
+if(empty($sliders)) {
+    $sliders[] = ['gambar' => 'default.jpg', 'caption' => '']; // Fallback
+}
+
+// Fetch Tentang Club
+$tentangData = ['deskripsi' => 'Swift Swimming Club adalah klub renang resmi.', 'visi' => 'Menjadi klub renang terbaik.', 'misi' => '1. Berlatih keras\n2. Juara'];
 try {
     $q_tentang = mysqli_query($koneksi, "SELECT * FROM tentang_club LIMIT 1");
-    if($q_tentang && $row_tentang = mysqli_fetch_assoc($q_tentang)) {
-        if(!empty($row_tentang['deskripsi'])) $cmsData['about_text'] = $row_tentang['deskripsi'];
+    if($q_tentang && $row = mysqli_fetch_assoc($q_tentang)) {
+        if(!empty($row['deskripsi'])) $tentangData['deskripsi'] = $row['deskripsi'];
+        if(!empty($row['visi'])) $tentangData['visi'] = $row['visi'];
+        if(!empty($row['misi'])) $tentangData['misi'] = $row['misi'];
+        if(!empty($row['feature_1'])) $tentangData['feature_1'] = $row['feature_1'];
+        if(!empty($row['feature_2'])) $tentangData['feature_2'] = $row['feature_2'];
+        if(!empty($row['feature_3'])) $tentangData['feature_3'] = $row['feature_3'];
     }
 } catch (\Exception $e) {}
 
-// Load slider untuk dynamic hero slider (menggabungkan gambar & teks)
-$banners = [];
+// Fetch Berita
+$beritaData = [];
 try {
-    $q_banners = mysqli_query($koneksi, "SELECT * FROM slider WHERE status='Aktif' ORDER BY urutan ASC");
-    if($q_banners) { while($b = mysqli_fetch_assoc($q_banners)) { $banners[] = $b; } }
+    $q_berita = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY id DESC LIMIT 12");
+    while($row = mysqli_fetch_assoc($q_berita)) {
+        $beritaData[] = $row;
+    }
+} catch (\Exception $e) {}
+
+// Fetch Jadwal
+$jadwalData = [];
+try {
+    $q_jadwal = mysqli_query($koneksi, "SELECT j.*, c.nama_cabang, c.lokasi as alamat_cabang FROM jadwal j LEFT JOIN cabang c ON j.cabang_id = c.id ORDER BY j.cabang_id, FIELD(j.hari, 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu')");
+    while($row = mysqli_fetch_assoc($q_jadwal)) {
+        $jadwalData[$row['nama_cabang'] ?? 'Umum'][] = $row;
+    }
+} catch (\Exception $e) {}
+
+// Fetch Pelatih
+$pelatihData = [];
+try {
+    $q_pelatih = mysqli_query($koneksi, "SELECT * FROM pelatih ORDER BY is_highlighted DESC, id ASC LIMIT 8");
+    while($row = mysqli_fetch_assoc($q_pelatih)) {
+        $pelatihData[] = $row;
+    }
 } catch (\Exception $e) {}
 ?>
 <!DOCTYPE html>
@@ -38,376 +72,397 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Swift SC - Jump in. let's swim!</title>
+    <title>Swift SC - <?= htmlspecialchars($cmsData['hero_title']) ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+                    colors: {
+                        indigo: { 50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc', 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 800: '#3730a3', 900: '#312e81', 950: '#1e1b4b' },
+                        cyan: { 400: '#22d3ee', 500: '#06b6d4' }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        
-        .glass-panel {
-            background: rgba(15, 23, 42, 0.45);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .bg-ocean {
-            background-color: #0b162c;
-            background-image: 
-                radial-gradient(ellipse at top right, rgba(13, 148, 136, 0.25) 0%, transparent 60%),
-                radial-gradient(ellipse at bottom left, rgba(249, 115, 22, 0.15) 0%, transparent 60%);
-            background-size: cover;
-            background-repeat: no-repeat;
-            /* background-attachment: fixed; dihapus untuk cegah lag */
-        }
-        .bg-ocean-glow {
-            background-image: 
-                radial-gradient(circle at 0% 0%, rgba(13, 148, 136, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 100% 100%, rgba(249, 115, 22, 0.1) 0%, transparent 50%);
-            animation: soft-pulse 8s infinite alternate ease-in-out;
-        }
-        @keyframes soft-pulse {
-            from { opacity: 0.7; transform: scale(1); }
-            to { opacity: 1; transform: scale(1.05); }
-        }
-        .badge-cyan {
-            background-color: #06b6d4;
-            color: #ffffff;
-            box-shadow: 0 4px 14px 0 rgba(6, 182, 212, 0.39);
-        }
+        .mobile-menu { display: none; }
+        .mobile-menu.active { display: block; }
+        .hero-slide { transition: opacity 1s ease-in-out; }
+        .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     </style>
 </head>
-<body class="bg-ocean text-slate-100 antialiased relative overflow-x-hidden min-h-screen">
-    
-    <!-- Background Decorative Elements (Optimized) -->
-    <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none bg-ocean-glow"></div>
+<body class="bg-[#111928]  text-white  antialiased selection:bg-[#005A70]/30 selection:text-indigo-900 :text-[#003847] relative overflow-x-hidden">
 
-    <nav class="glass-panel sticky top-0 z-50 border-b border-slate-700/50 shadow-sm">
-        <div class="container mx-auto flex justify-between items-center px-4 py-3">
-            
-            <!-- Logo (Left Side) -->
-            <a href="index.php" class="flex items-center gap-3 group">
-                <div class="bg-white p-2 w-12 h-12 flex items-center justify-center rounded-full shadow-lg shadow-cyan-900/20">
-                    <img src="assets/logo.png" alt="Swift SC Logo" class="w-full h-full object-contain transition-transform group-hover:scale-105" onerror="this.onerror=null; this.outerHTML='<span class=\'text-xs font-black italic tracking-tighter text-slate-900\'>SWIFT<span class=\'text-cyan-500\'>_SC</span></span>';">
-                </div>
-                <span class="font-black italic tracking-tighter text-xl hidden sm:block">SWIFT<span class="text-cyan-400">_SC</span></span>
-            </a>
-
-            <!-- Navigation Links (Right Side) -->
-            <div class="hidden md:flex gap-6 font-semibold text-sm items-center ml-auto">
-                <a href="#tentang" class="text-slate-300 hover:text-cyan-400 transition-colors">Profil</a>
-                <a href="#program" class="text-slate-300 hover:text-cyan-400 transition-colors">Program & Sertifikasi</a>
-                <a href="#jadwal" class="text-slate-300 hover:text-cyan-400 transition-colors">Jadwal & Biaya</a>
-                <a href="#pelatih" class="text-slate-300 hover:text-cyan-400 transition-colors">Pelatih</a>
-                <a href="login.php" class="bg-cyan-500/20 border border-cyan-500/50 text-cyan-400 px-5 py-2 rounded-full font-bold hover:bg-cyan-500 hover:text-white transition-all shadow-lg hover:shadow-cyan-500/25 ml-4">Login Portal</a>
-            </div>
-
-            <!-- Hamburger Button for Mobile -->
-            <button id="mobileMenuBtn" class="md:hidden text-slate-300 hover:text-white ml-4 focus:outline-none">
-                <svg id="menuIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                <svg id="closeIcon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-            
-        </div>
-        
-        <!-- Mobile Menu Dropdown -->
-        <div id="mobileMenu" class="hidden md:hidden absolute top-full left-0 w-full bg-slate-900/95 backdrop-blur-xl border-b border-slate-700/50 shadow-2xl flex flex-col transition-all duration-300 transform origin-top">
-            <a href="#tentang" class="mobile-link block px-6 py-4 text-slate-300 hover:text-cyan-400 hover:bg-slate-800/50 font-semibold border-b border-slate-800/50">Profil</a>
-            <a href="#program" class="mobile-link block px-6 py-4 text-slate-300 hover:text-cyan-400 hover:bg-slate-800/50 font-semibold border-b border-slate-800/50">Program & Sertifikasi</a>
-            <a href="#jadwal" class="mobile-link block px-6 py-4 text-slate-300 hover:text-cyan-400 hover:bg-slate-800/50 font-semibold border-b border-slate-800/50">Jadwal & Biaya</a>
-            <a href="#pelatih" class="mobile-link block px-6 py-4 text-slate-300 hover:text-cyan-400 hover:bg-slate-800/50 font-semibold border-b border-slate-800/50">Pelatih</a>
-            <div class="p-6">
-                <a href="login.php" class="block text-center bg-cyan-500/20 border border-cyan-500/50 text-cyan-400 px-5 py-3 rounded-full font-bold hover:bg-cyan-500 hover:text-white transition-all shadow-lg hover:shadow-cyan-500/25">Login Portal</a>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hero Section (True Split-Screen & Mobile Optimized) -->
-    <header class="relative w-full min-h-[100dvh] flex flex-col md:flex-row" id="heroHeader">
-        
-        <!-- Sisi Kiri: Rata Kiri, Full Blur, Teks -->
-        <div class="relative w-full md:w-1/2 flex-[1.2] md:flex-none md:min-h-screen flex flex-col justify-center overflow-hidden">
-            <!-- Background Kiri (Statis) -->
-            <?php $first_bg = count($banners) > 0 ? "admin/uploads/".$banners[0]['gambar'] : "https://images.unsplash.com/photo-1572334057861-6d72dbb688d2?auto=format&fit=crop&w=1920&q=80"; ?>
-            <div id="heroLeftBg" class="absolute inset-0 bg-cover bg-center transition-opacity duration-1000" style="background-image: url('<?= htmlspecialchars($first_bg) ?>');"></div>
-            
-            <!-- Overlay Blur & Teks Rata Kiri (Permanen) -->
-            <div class="absolute inset-0 bg-slate-900/70 md:bg-slate-900/60 backdrop-blur-xl z-10 flex flex-col justify-center px-6 sm:px-12 md:px-16 lg:px-24">
-                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 to-transparent"></div>
-                <div class="absolute top-20 -left-10 w-64 h-64 bg-cyan-500/20 rounded-full filter blur-[60px] -z-10"></div>
-                
-                <h2 class="text-xl sm:text-3xl md:text-4xl mb-2 sm:mb-4 text-cyan-300 font-extrabold drop-shadow-md tracking-wider">
-                    Jump in. let's swim!
-                </h2>
-                <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black mb-4 sm:mb-6 uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white via-slate-100 to-cyan-400 drop-shadow-2xl leading-[1.1]">
-                    SWIFT SC
-                </h1>
-                <p class="text-sm sm:text-base md:text-xl text-slate-200 font-medium mb-8 sm:mb-10 leading-relaxed max-w-lg drop-shadow">
-                    Klub renang resmi dan tersertifikasi dengan fasilitas pelatih berlisensi nasional & internasional.
-                </p>
-                <div>
-                    <a href="pendaftaran.php" class="bg-cyan-600 hover:bg-cyan-500 text-white px-6 py-3 sm:px-8 sm:py-4 rounded-full font-bold text-sm sm:text-base md:text-lg transition-all inline-flex items-center gap-3 transform hover:-translate-y-1 hover:scale-105 border border-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.4)]">
-                        DAFTAR SEKARANG
-                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </a>
+    <!-- HEADER -->
+    <header class="sticky top-0 z-50 bg-[#111928]/80 /80 backdrop-blur-xl border-b border-[#1F2937]  shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 md:h-20">
+                <a href="index.php" class="flex items-center">
+                    <img src="assets/logo.png" alt="Swift SC Logo" class="h-12 md:h-16 w-auto" onerror="this.onerror=null; this.outerHTML='<span class=\'font-bold text-xl tracking-tight italic\'>SWIFT<span class=\'text-[#008AAB]\'>SC</span></span>';">
+                </a>
+                <nav class="hidden lg:flex items-center gap-8">
+                    <a href="#beranda" class="text-sm font-semibold text-gray-200  hover:text-[#008AAB] :text-[#00A7D1] transition-colors">Beranda</a>
+                    <a href="#berita" class="text-sm font-semibold text-gray-200  hover:text-[#008AAB] :text-[#00A7D1] transition-colors">Berita</a>
+                    <a href="#tentang" class="text-sm font-semibold text-gray-200  hover:text-[#008AAB] :text-[#00A7D1] transition-colors">Tentang</a>
+                    <a href="#lokasi" class="text-sm font-semibold text-gray-200  hover:text-[#008AAB] :text-[#00A7D1] transition-colors">Lokasi & Jadwal</a>
+                    <a href="#biaya" class="text-sm font-semibold text-gray-200  hover:text-[#008AAB] :text-[#00A7D1] transition-colors">Biaya</a>
+                    <a href="#pelatih" class="text-sm font-semibold text-gray-200  hover:text-[#008AAB] :text-[#00A7D1] transition-colors">Pelatih</a>
+                </nav>
+                <div class="flex items-center gap-2">
+                    <a href="pendaftaran.php" class="hidden sm:flex h-10 px-6 bg-white hover:bg-gray-100 text-[#0B1120] text-sm font-bold rounded-xl transition-colors items-center shadow-sm">Daftar Sekarang</a>
+                    <a href="login.php" class="hidden sm:flex h-10 px-6 bg-[#1F2937] hover:bg-[#374151] text-white text-sm font-bold rounded-xl transition-colors items-center shadow-sm">Login Admin</a>
+                    <button onclick="document.getElementById('mobileMenu').classList.toggle('active');" class="lg:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5 rounded-xl hover:bg-[#1F2937] transition-colors">
+                        <span class="w-5 h-0.5 bg-white rounded-full"></span>
+                        <span class="w-5 h-0.5 bg-white rounded-full"></span>
+                        <span class="w-5 h-0.5 bg-white rounded-full"></span>
+                    </button>
                 </div>
             </div>
         </div>
-
-        <!-- Sisi Kanan: Gambar Dinamis Bergeser -->
-        <div class="relative w-full md:w-1/2 flex-1 md:flex-none md:min-h-screen bg-slate-900 overflow-hidden">
-            <!-- Shadow gradient di perbatasan untuk pemisah yang halus -->
-            <div class="absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-slate-900/50 to-transparent z-10 hidden md:block"></div>
-            <div class="absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-slate-900/50 to-transparent z-10 block md:hidden"></div>
-            
-            <div id="heroRightBg" class="absolute inset-0 bg-cover bg-center transition-all duration-[5000ms] ease-linear transform scale-110" style="background-image: url('<?= htmlspecialchars($first_bg) ?>');"></div>
+        <div id="mobileMenu" class="mobile-menu lg:hidden bg-[#111928]  border-t border-[#1F2937]  shadow-2xl absolute w-full left-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 py-4 space-y-1">
+                <a href="#beranda" class="block px-4 py-3 text-gray-200  hover:bg-[#1F2937] :bg-neutral-800 rounded-xl font-bold transition-colors" onclick="document.getElementById('mobileMenu').classList.remove('active');">Beranda</a>
+                <a href="#berita" class="block px-4 py-3 text-gray-200  hover:bg-[#1F2937] :bg-neutral-800 rounded-xl font-bold transition-colors" onclick="document.getElementById('mobileMenu').classList.remove('active');">Berita</a>
+                <a href="#tentang" class="block px-4 py-3 text-gray-200  hover:bg-[#1F2937] :bg-neutral-800 rounded-xl font-bold transition-colors" onclick="document.getElementById('mobileMenu').classList.remove('active');">Tentang</a>
+                <a href="#lokasi" class="block px-4 py-3 text-gray-200  hover:bg-[#1F2937] :bg-neutral-800 rounded-xl font-bold transition-colors" onclick="document.getElementById('mobileMenu').classList.remove('active');">Lokasi & Jadwal</a>
+                <a href="#biaya" class="block px-4 py-3 text-gray-200  hover:bg-[#1F2937] :bg-neutral-800 rounded-xl font-bold transition-colors" onclick="document.getElementById('mobileMenu').classList.remove('active');">Biaya</a>
+                <a href="#pelatih" class="block px-4 py-3 text-gray-200  hover:bg-[#1F2937] :bg-neutral-800 rounded-xl font-bold transition-colors" onclick="document.getElementById('mobileMenu').classList.remove('active');">Pelatih</a>
+                <div class="pt-4 mt-4 border-t border-[#1F2937] flex flex-col gap-2">
+                    <a href="pendaftaran.php" class="flex items-center justify-center w-full h-12 bg-white hover:bg-gray-100 text-[#0B1120] font-bold rounded-xl transition-colors shadow-sm">Daftar Sekarang</a>
+                    <a href="login.php" class="flex items-center justify-center w-full h-12 bg-[#1F2937] hover:bg-[#374151] text-white font-bold rounded-xl transition-colors shadow-sm">Login Admin</a>
+                </div>
+            </div>
         </div>
     </header>
 
-    <main class="container mx-auto py-16 px-4 space-y-24 max-w-6xl relative z-10">
-        
-        <!-- PROFIL & PROGRAM -->
-        <section id="tentang" class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <div>
-                <h3 class="text-3xl font-black uppercase text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400 mb-6 drop-shadow">Tentang Swift SC</h3>
-                <p class="text-slate-300 mb-6 leading-relaxed text-justify text-lg font-light">
-                    <?= nl2br(htmlspecialchars($cmsData['about_text'])) ?>
-                </p>
-                
-                <h4 class="text-xl font-bold text-white mb-4 mt-8 flex items-center gap-2">
-                    <span class="w-2 h-6 bg-cyan-500 rounded-full"></span> Menerima Siswa-Siswi Baru:
-                </h4>
-                <div class="space-y-4">
-                    <div class="flex items-center gap-3 bg-slate-800/40 p-3 rounded-xl border border-slate-700/50">
-                        <div class="bg-cyan-500/20 text-cyan-400 p-2 rounded-lg"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg></div>
-                        <span class="font-bold text-white text-lg">Grup <span class="text-slate-400 font-normal text-sm ml-2">(Min. usia 4 tahun)</span></span>
-                    </div>
-                    <div class="flex items-center gap-3 bg-slate-800/40 p-3 rounded-xl border border-slate-700/50">
-                        <div class="bg-cyan-500/20 text-cyan-400 p-2 rounded-lg"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></div>
-                        <span class="font-bold text-white text-lg">Privat <span class="text-slate-400 font-normal text-sm ml-2">(Tidak ada Min. usia)</span></span>
-                    </div>
-                    <div class="flex items-center gap-3 bg-slate-800/40 p-3 rounded-xl border border-slate-700/50">
-                        <div class="bg-cyan-500/20 text-cyan-400 p-2 rounded-lg"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg></div>
-                        <span class="font-bold text-white text-lg">Persiapan TNI/Polri</span>
+    <!-- HERO -->
+    <section id="beranda" class="py-16 sm:py-24 overflow-hidden relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+                <!-- Left Content -->
+                <div class="z-10 relative">
+                    
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white  leading-[1.15] mb-6 tracking-tight">
+                        <?= nl2br(htmlspecialchars($cmsData['hero_title'])) ?>
+                    </h1>
+                    <p class="text-lg text-gray-300  mb-8 leading-relaxed font-medium">
+                        <?= nl2br(htmlspecialchars($cmsData['hero_desc'])) ?>
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="pendaftaran.php" class="inline-flex items-center gap-2 px-8 py-4 bg-[#008AAB] hover:bg-[#005A70] transition-all transform hover:-translate-y-1 rounded-xl text-white font-bold shadow-xl shadow-[#008AAB]/30">
+                            Daftar Sekarang
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                        <a href="login.php" class="inline-flex items-center gap-2 px-8 py-4 bg-[#111928]  border-2 border-[#374151]  hover:border-[#008AAB] :border-[#005A70] hover:text-[#008AAB] :text-[#00A7D1] transition-all rounded-xl text-white  font-bold shadow-sm">
+                            Login Member
+                        </a>
                     </div>
                 </div>
-            </div>
-            
-            <div id="program" class="glass-panel p-8 rounded-3xl border border-slate-600 shadow-2xl relative">
-                <div class="absolute -top-4 -right-4 bg-cyan-500 text-white font-black px-4 py-1 rounded-full shadow-lg transform rotate-3">TERSERTIFIKASI</div>
-                <h4 class="text-2xl font-bold mb-6 text-white text-center">Badan Sertifikasi Resmi</h4>
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-center">
-                    <div class="bg-slate-800/50 p-3 rounded-xl border border-slate-700">
-                        <div class="h-16 flex items-center justify-center mb-2 px-2 bg-slate-900 rounded-lg">
-                            <span class="font-bold text-teal-400 text-xs">Swim Clinic</span>
-                        </div>
-                    </div>
-                    <div class="bg-slate-800/50 p-3 rounded-xl border border-slate-700">
-                        <div class="h-16 flex items-center justify-center mb-2 px-2 bg-slate-900 rounded-lg">
-                            <span class="font-bold text-teal-400 text-xs">ASCA Lv. 1</span>
-                        </div>
-                    </div>
-                    <div class="bg-slate-800/50 p-3 rounded-xl border border-slate-700">
-                        <div class="h-16 flex items-center justify-center mb-2 px-2 bg-slate-900 rounded-lg">
-                            <span class="font-bold text-teal-400 text-xs">ASCA Lv. 2</span>
-                        </div>
-                    </div>
-                    <div class="bg-slate-800/50 p-3 rounded-xl border border-slate-700">
-                        <div class="h-16 flex items-center justify-center mb-2 px-2 bg-slate-900 rounded-lg">
-                            <span class="font-bold text-teal-400 text-xs text-balance">SK Club Swift Sleman</span>
-                        </div>
-                    </div>
-                    <div class="bg-slate-800/50 p-3 rounded-xl border border-slate-700 md:col-span-2">
-                        <div class="h-16 flex items-center justify-center mb-2 px-2 bg-slate-900 rounded-lg">
-                            <span class="font-bold text-cyan-400 text-sm">Lisensi Kategori C Nasional</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
 
-        <!-- JADWAL DAN BIAYA -->
-        <section id="jadwal">
-            <h3 class="text-4xl font-black text-center mb-12 uppercase text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">Jadwal dan Lokasi Latihan</h3>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="lg:col-span-2 overflow-x-auto rounded-2xl border border-slate-700/50 shadow-xl">
-                    <table class="w-full text-left">
-                        <thead class="bg-slate-800 text-cyan-400 text-sm uppercase tracking-wider border-b border-slate-700">
-                            <tr>
-                                <th class="p-5 font-bold">Lokasi Kolam Renang</th>
-                                <th class="p-5 font-bold">Jadwal Latihan</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-800/50 bg-slate-900/60 backdrop-blur-md text-slate-200">
-                            <?php
-                            $schedules = [];
-                            try {
-                                $q_jadwal = mysqli_query($koneksi, "SELECT * FROM jadwal ORDER BY id ASC");
-                                while($row = mysqli_fetch_assoc($q_jadwal)) {
-                                    $schedules[] = $row;
-                                }
-                            } catch (\Exception $e) {}
-                            if(count($schedules) > 0) {
-                                foreach($schedules as $s) {
-                            ?>
-                            <tr class="hover:bg-slate-800 transition-colors">
-                                <td class="p-5 font-semibold"><?= htmlspecialchars($s['lokasi']) ?></td>
-                                <td class="p-5"><?= htmlspecialchars($s['hari']) ?> <span class="block text-slate-400 text-sm">(<?= date('H:i', strtotime($s['jam_mulai'])) ?> - <?= date('H:i', strtotime($s['jam_selesai'])) ?> WIB)</span></td>
-                            </tr>
-                            <?php } } else { ?>
-                            <tr class="hover:bg-slate-800 transition-colors">
-                                <td colspan="2" class="p-5 text-center text-slate-400 italic">Jadwal latihan belum tersedia.</td>
-                            </tr>
-                            <?php } ?>
-                        </tbody>
-                    </table>
-                </div>
-                
-                <!-- BIAYA -->
-                <div class="glass-panel p-8 rounded-2xl flex flex-col justify-between border-t-4 border-cyan-500 shadow-[0_10px_30px_rgba(6,182,212,0.15)] relative">
-                    <div class="absolute top-0 right-0 p-4 opacity-10">
-                        <svg class="w-24 h-24 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z"/></svg>
-                    </div>
-                    <div>
-                        <h4 class="text-3xl font-black mb-6 text-white uppercase tracking-wider">Biaya</h4>
-                        
-                        <div class="space-y-6">
-                            <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700">
-                                <h5 class="text-slate-400 text-sm font-bold uppercase mb-1">Paket Reguler (Semua Kolam)</h5>
-                                <div class="flex justify-between items-end border-b border-slate-700 pb-2 mb-2">
-                                    <span class="text-white font-medium">Pendaftaran</span>
-                                    <span class="font-bold text-cyan-400">Rp. 100.000</span>
-                                </div>
-                                <div class="flex justify-between items-end">
-                                    <span class="text-white font-medium">SPP (8 Sesi Latihan)</span>
-                                    <span class="font-bold text-cyan-400">Rp. 225.000</span>
-                                </div>
-                            </div>
-                            
-                            <div class="bg-cyan-900/20 p-4 rounded-xl border border-cyan-500/30 ring-1 ring-cyan-500/10">
-                                <h5 class="text-cyan-400 text-sm font-bold uppercase mb-1">* Khusus Umbang Tirta</h5>
-                                <div class="flex justify-between items-end border-b border-cyan-800/30 pb-2 mb-2 text-xs">
-                                    <span class="text-slate-300">Pendaftaran</span>
-                                    <span class="font-bold text-cyan-300">Rp. 100.000</span>
-                                </div>
-                                <div class="flex justify-between items-end border-b border-cyan-800/30 pb-2 mb-2 text-xs">
-                                    <span class="text-slate-300">Paket 4 Sesi/bulan</span>
-                                    <span class="font-bold text-cyan-300">Rp. 150.000</span>
-                                </div>
-                                <div class="flex justify-between items-end text-xs">
-                                    <span class="text-slate-300">Paket 8 Sesi/bulan</span>
-                                    <span class="font-bold text-cyan-300">Rp. 200.000</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mt-8 text-center">
-                        <a href="pendaftaran.php" class="w-full text-center block badge-cyan hover:bg-cyan-600 px-6 py-4 rounded-xl font-black text-xl transition-all shadow-lg hover:shadow-cyan-500/50 mb-4">DAFTAR SEKARANG</a>
-                        <?php
-                        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
-                        $domainName = $_SERVER['HTTP_HOST'];
-                        $dir = dirname($_SERVER['PHP_SELF']);
-                        $pendaftaranUrl = $protocol . $domainName . $dir . '/pendaftaran.php';
-                        $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=120x120&color=0f172a&data=" . urlencode($pendaftaranUrl);
+                <!-- Right Dynamic Slider -->
+                <div class="relative h-[400px] lg:h-[550px] rounded-[2rem] overflow-hidden shadow-2xl group border border-[#374151]/50 /50">
+                    <div id="heroSlider" class="w-full h-full relative">
+                        <?php foreach($sliders as $idx => $sld): 
+                            $imgSrc = !empty($sld['gambar']) && file_exists('admin/uploads/'.$sld['gambar']) ? 'admin/uploads/'.$sld['gambar'] : 'https://images.unsplash.com/photo-1572334057861-6d72dbb688d2?auto=format&fit=crop&w=1200&q=80';
                         ?>
-                        <div class="flex flex-col items-center justify-center bg-white p-3 rounded-xl border-4 border-cyan-100 shadow-inner w-max mx-auto">
-                            <img src="<?= $qrUrl ?>" alt="QR Code Pendaftaran" class="w-24 h-24 rounded">
-                            <p class="text-[10px] text-slate-800 font-bold mt-1 uppercase">Scan untuk Daftar</p>
+                        <div class="hero-slide absolute inset-0 w-full h-full <?= $idx === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0' ?>">
+                            <img src="<?= $imgSrc ?>" alt="Slide" class="w-full h-full object-cover">
+                            
+                            <!-- Semi-transparent gradient overlay at the bottom -->
+                            <div class="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+                            
+                            <?php if(!empty($sld['caption'])): ?>
+                            <div class="absolute bottom-6 left-6 right-6 z-20">
+                                <div class="bg-black/40 backdrop-blur-md border border-white/10 rounded-xl p-4 inline-block shadow-2xl">
+                                    <p class="text-white font-semibold text-sm sm:text-base drop-shadow-md">
+                                        <?= htmlspecialchars($sld['caption']) ?>
+                                    </p>
+                                </div>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BERITA TERBARU (3 Columns, Full Width Img, Load More) -->
+    <section id="berita" class="py-16 sm:py-24 bg-[#0B1120]  border-y border-[#374151] ">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-12 text-center md:text-left flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-white  tracking-tight">Berita & Informasi</h2>
+                    <p class="text-gray-300  mt-3 font-medium text-lg">Update prestasi, kegiatan, dan pengumuman dari Swift SC.</p>
+                </div>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="beritaGrid">
+                <?php if(count($beritaData) > 0): foreach($beritaData as $i => $b): 
+                    $bImg = !empty($b['gambar']) && file_exists('admin/'.$b['gambar']) ? 'admin/'.$b['gambar'] : 'https://images.unsplash.com/photo-1572334057861-6d72dbb688d2?w=800&q=80';
+                    $hiddenClass = $i > 2 ? 'hidden berita-hidden' : '';
+                ?>
+                <div class="bg-[#111928]  border border-[#374151]  rounded-[2rem] overflow-hidden hover:border-[#005A70]/50 :border-[#005A70]/50 transition-all duration-300 shadow-sm hover:shadow-2xl group flex flex-col <?= $hiddenClass ?>">
+                    <div class="h-56 overflow-hidden relative">
+                        <img src="<?= $bImg ?>" alt="<?= htmlspecialchars($b['judul']) ?>" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
+                        <div class="absolute top-4 left-4 bg-[#008AAB]/90 backdrop-blur text-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shadow-lg"><?= htmlspecialchars($b['kategori']) ?></div>
+                    </div>
+                    <div class="p-6 md:p-8 flex flex-col flex-1 relative bg-[#111928] ">
+                        <p class="text-xs text-[#008AAB]  mb-3 font-bold uppercase tracking-widest"><?= date('d M Y', strtotime($b['tanggal'])) ?></p>
+                        <h3 class="text-white  font-bold text-xl mb-3 leading-snug line-clamp-2 group-hover:text-[#008AAB] :text-[#00A7D1] transition-colors"><?= htmlspecialchars($b['judul']) ?></h3>
+                        <p class="text-gray-300  text-sm line-clamp-3 mb-6 leading-relaxed"><?= strip_tags($b['isi']) ?></p>
+                        <div class="mt-auto">
+                            <span class="inline-flex items-center gap-2 text-[#008AAB]  text-sm font-bold group-hover:gap-3 transition-all duration-300">Baca selengkapnya <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg></span>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
-
-        <!-- TOP PERFORMER PELATIH (Dynamic Check) -->
-        <section id="pelatih">
-            <h3 class="text-4xl font-black text-center mb-16 uppercase text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-400 drop-shadow-sm">Tim Kepelatihan</h3>
-            <div class="flex flex-wrap justify-center gap-8 md:gap-12 px-4">
-                <?php
-                $pelatihList = [];
-                try {
-                    $q_pelatih = mysqli_query($koneksi, "SELECT * FROM pelatih WHERE is_highlighted=1 LIMIT 3");
-                    // jika kurang dari 3 atau tidak ada, fallback ambil aja sembarang
-                    if(!$q_pelatih || mysqli_num_rows($q_pelatih) == 0) {
-                        $q_pelatih = mysqli_query($koneksi, "SELECT * FROM pelatih LIMIT 3");
-                    }
-                    while($row = mysqli_fetch_assoc($q_pelatih)) {
-                        $pelatihList[] = $row;
-                    }
-                } catch (\Exception $e) {}
-                
-                if (count($pelatihList) > 0) :
-                    // Variasi rotasi untuk efek organik
-                    $rotations = ['-rotate-3', 'rotate-2', '-rotate-1'];
-                    foreach($pelatihList as $index => $p) :
-                        $rotClass = $rotations[$index % count($rotations)];
-                        $foto_pelatih = !empty($p['foto']) && file_exists("admin/uploads/" . $p['foto']) ? "admin/uploads/" . $p['foto'] : "https://ui-avatars.com/api/?name=" . urlencode($p['nama']) . "&background=0f172a&color=fff&size=512";
-                ?>
-                <!-- Bingkai Polaroid -->
-                <div class="bg-slate-50 p-3 pb-16 md:p-4 md:pb-20 shadow-2xl rounded-sm transform transition-all duration-500 hover:-translate-y-4 hover:scale-105 hover:rotate-0 hover:shadow-[0_20px_50px_rgba(6,182,212,0.3)] relative group w-64 <?= $rotClass ?> z-10 hover:z-30">
-                    <div class="aspect-[3/4] bg-slate-200 overflow-hidden shadow-inner relative">
-                        <img src="<?= $foto_pelatih ?>" class="w-full h-full object-cover filter brightness-95 contrast-125 grayscale-[30%] group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-700" alt="<?= htmlspecialchars($p['nama']) ?>">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    </div>
-                    
-                    <!-- Area Teks Bawah Polaroid -->
-                    <div class="absolute bottom-0 left-0 w-full px-4 pb-4 pt-2 text-center flex flex-col items-center justify-end h-16 md:h-20">
-                        <h4 class="text-xl font-black text-slate-800 tracking-tight leading-tight line-clamp-1"><?= htmlspecialchars($p['nama']); ?></h4>
-                        <p class="text-xs font-bold text-cyan-700 uppercase tracking-widest mt-0.5 line-clamp-1"><?= htmlspecialchars($p['jabatan']); ?></p>
-                        <p class="text-[10px] text-slate-500 mt-1 line-clamp-1 italic"><?= htmlspecialchars($p['sertifikasi']); ?></p>
-                    </div>
-                    
-                    <!-- Pin Hiasan Opsional -->
-                    <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full bg-slate-300/80 shadow-sm opacity-50 z-20"></div>
-                </div>
-                <?php 
-                    endforeach; 
-                else : 
-                ?>
-                    <p class="text-slate-500 italic text-center w-full">Belum ada data pelatih di sistem.</p>
+                <?php endforeach; else: ?>
+                    <p class="text-gray-400 col-span-3 text-center py-10 font-medium">Belum ada berita.</p>
                 <?php endif; ?>
             </div>
-        </section>
 
-        <!-- BERITA / LATEST NEWS -->
-        <section id="berita" class="pt-8 bg-slate-900/30 rounded-3xl p-8 border border-slate-700/30 shadow-2xl">
-            <h3 class="text-3xl font-black text-center mb-10 uppercase text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">Berita Terkini</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <?php
-                $beritaList = [];
-                try {
-                    $q_berita = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY id DESC LIMIT 3");
-                    while($row = mysqli_fetch_assoc($q_berita)) {
-                        $beritaList[] = $row;
-                    }
-                } catch (\Exception $e) {}
+            <?php if(count($beritaData) > 3): ?>
+            <div class="mt-12 text-center" id="loadMoreContainer">
+                <button onclick="loadMoreBerita()" class="inline-flex items-center gap-2 px-6 py-3 bg-[#1F2937] hover:bg-[#374151]  :bg-neutral-700 text-white  font-bold rounded-xl transition-colors shadow-sm">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    Muat Lebih Banyak
+                </button>
+            </div>
+            <?php endif; ?>
+        </div>
+    </section>
+
+    <!-- TENTANG, VISI & MISI -->
+    <section id="tentang" class="py-20 sm:py-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-12 gap-12 lg:gap-16 items-start">
                 
-                if (count($beritaList) > 0) :
-                    foreach($beritaList as $b) :
-                        $foto_berita = (!empty($b['gambar']) && file_exists("admin/" . $b['gambar'])) ? "admin/" . $b['gambar'] : "https://images.unsplash.com/photo-1572334057861-6d72dbb688d2?auto=format&fit=crop&w=800&q=80";
-                ?>
-                <div class="glass-panel overflow-hidden rounded-2xl shadow-lg border border-slate-700/50 hover:-translate-y-2 transition-all duration-300 group">
-                    <div class="h-48 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" style="background-image: url('<?= $foto_berita ?>');"></div>
-                    <div class="p-6 relative bg-slate-900/40">
-                        <span class="absolute -top-3 left-6 badge-cyan px-3 py-1 rounded-full text-xs font-bold shadow-[0_4px_10px_rgba(6,182,212,0.5)]"><?= $b['cabang'] ?? 'Umum' ?></span>
-                        <h4 class="text-xl font-bold text-white mb-2 leading-tight"> <?= htmlspecialchars($b['judul']) ?> </h4>
-                        <p class="text-slate-400 text-sm line-clamp-3 mb-4"><?= strip_tags($b['isi'] ?? '') ?></p>
-                        <p class="text-teal-500 font-bold text-xs uppercase tracking-wider">Oleh: Swift Admin</p>
+                <!-- Left Column - Header -->
+                <div class="lg:col-span-5 lg:sticky lg:top-32">
+                    <span class="text-[#008AAB]  text-sm font-bold tracking-widest uppercase bg-[#002b36] /30 px-3 py-1 rounded-full">Tentang Klub</span>
+                    <h2 class="mt-6 text-4xl lg:text-5xl font-black text-white  leading-[1.1]">
+                        Mencetak Atlet <span class="text-[#008AAB] ">Berprestasi</span>.
+                    </h2>
+                    <p class="mt-6 text-lg text-gray-300  leading-relaxed text-justify font-medium">
+                        <?= nl2br(htmlspecialchars($tentangData['deskripsi'])) ?>
+                    </p>
+                    <div class="mt-10 p-6 bg-[#0B1120]  border border-[#374151]  rounded-2xl shadow-sm">
+                        <ul class="space-y-4 font-semibold text-gray-200 ">
+                            <li class="flex items-center gap-4">
+                                <div class="w-10 h-10 bg-green-100 /40 text-green-600  rounded-full flex items-center justify-center shrink-0"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div>
+                                <?= htmlspecialchars($tentangData['feature_1'] ?? 'Berlisensi Nasional (ASCA & PRSI)') ?>
+                            </li>
+                            <li class="flex items-center gap-4">
+                                <div class="w-10 h-10 bg-green-100 /40 text-green-600  rounded-full flex items-center justify-center shrink-0"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div>
+                                <?= htmlspecialchars($tentangData['feature_2'] ?? 'Pelatih Profesional & Tersertifikasi') ?>
+                            </li>
+                            <li class="flex items-center gap-4">
+                                <div class="w-10 h-10 bg-green-100 /40 text-green-600  rounded-full flex items-center justify-center shrink-0"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div>
+                                <?= htmlspecialchars($tentangData['feature_3'] ?? 'Pendekatan Program Terstruktur') ?>
+                            </li>
+                        </ul>
                     </div>
                 </div>
-                <?php 
-                    endforeach; 
-                else: 
-                ?>
-                    <p class="text-slate-500 italic col-span-3 text-center py-8">Belum ada berita yang dipublikasikan.</p>
+
+                <!-- Right Column - Cards Grid for Visi Misi -->
+                <div class="lg:col-span-7 grid sm:grid-cols-2 gap-8">
+                    <!-- Visi Card -->
+                    <div class="p-8 bg-[#008AAB]  border border-[#005A70] rounded-[2rem] shadow-2xl shadow-[#008AAB]/20 text-white hover:-translate-y-2 transition-transform duration-300 relative overflow-hidden">
+                        <div class="absolute -right-6 -top-6 text-white/10">
+                            <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2zm0 4.5l6.5 13.5h-13L12 6.5z"/></svg>
+                        </div>
+                        <div class="w-14 h-14 rounded-2xl bg-[#111928]/20 backdrop-blur text-white flex items-center justify-center mb-6 relative z-10">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                        </div>
+                        <h4 class="text-3xl font-black mb-4 relative z-10 tracking-tight">Visi Klub</h4>
+                        <p class="text-[#003847] leading-relaxed text-lg font-medium relative z-10">
+                            <?= nl2br(htmlspecialchars($tentangData['visi'])) ?>
+                        </p>
+                    </div>
+
+                    <!-- Misi Card -->
+                    <div class="p-8 bg-[#111928]  border border-[#374151]  rounded-[2rem] shadow-xl hover:-translate-y-2 transition-transform duration-300 sm:translate-y-12 relative overflow-hidden">
+                        <div class="w-14 h-14 rounded-2xl bg-[#002b36] /30 text-[#008AAB]  flex items-center justify-center mb-6 relative z-10">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        </div>
+                        <h4 class="text-3xl font-black text-white  mb-4 tracking-tight relative z-10">Misi Kami</h4>
+                        <div class="text-gray-300  leading-relaxed text-base font-medium space-y-2 relative z-10">
+                            <?= nl2br(htmlspecialchars($tentangData['misi'])) ?>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- JADWAL DAN LOKASI -->
+    <section id="lokasi" class="py-20 sm:py-24 bg-[#0B1120]  border-y border-[#374151] ">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-[#008AAB]  text-sm font-bold tracking-widest uppercase mb-3 block">Lokasi & Jadwal Latihan</span>
+                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-white  tracking-tight">Pilih Tempat Terdekat</h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <?php if(count($jadwalData) > 0): foreach($jadwalData as $namaCabang => $jadwals): ?>
+                <div class="bg-[#111928]  border border-[#374151]  rounded-[2rem] p-8 shadow-sm hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="flex items-center gap-5 mb-8 pb-6 border-b border-[#1F2937] ">
+                        <div class="w-14 h-14 bg-[#002b36] /30 rounded-2xl flex items-center justify-center text-[#008AAB]  shrink-0">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-black text-xl text-white  leading-tight"><?= htmlspecialchars($namaCabang) ?></h3>
+                            <p class="text-sm text-gray-400 font-medium mt-1 line-clamp-1"><?= htmlspecialchars($jadwals[0]['alamat_cabang'] ?? 'Kolam Renang') ?></p>
+                        </div>
+                    </div>
+                    <ul class="space-y-4">
+                        <?php foreach($jadwals as $j): ?>
+                        <li class="flex justify-between items-center text-sm group">
+                            <span class="font-bold text-gray-200  bg-[#0B1120]  border border-[#374151]  px-4 py-2 rounded-lg group-hover:bg-[#002b36] :bg-indigo-900/30 group-hover:text-[#008AAB] :text-[#00A7D1] group-hover:border-indigo-200 :border-indigo-800 transition-colors"><?= htmlspecialchars($j['hari']) ?></span>
+                            <span class="text-gray-300  font-mono text-sm font-semibold"><?= date('H:i', strtotime($j['jam_mulai'])) ?> - <?= date('H:i', strtotime($j['jam_selesai'])) ?></span>
+                        </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+                <?php endforeach; else: ?>
+                    <p class="text-center col-span-3 text-gray-400 font-medium">Belum ada jadwal yang dimasukkan.</p>
                 <?php endif; ?>
             </div>
-        </section>
+        </div>
+    </section>
 
-    </main>
+    <!-- BIAYA (Pricing Minimal Centered) -->
+    <section id="biaya" class="py-20 sm:py-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-[#008AAB]  text-sm font-bold tracking-widest uppercase mb-4 block">Paket Biaya</span>
+                <h2 class="text-4xl sm:text-5xl font-black text-white  mb-6 tracking-tight">Investasi Masa Depan Juara</h2>
+                <p class="text-lg text-gray-300  font-medium">Pilih program kelas yang sesuai dengan kebutuhan dan target.</p>
+            </div>
+            
+            <div class="grid lg:grid-cols-3 gap-8 lg:gap-0 relative z-10 max-w-5xl mx-auto">
+                
+                <!-- Basic Plan -->
+                <div class="lg:border-y lg:border-l border-[#374151]  lg:rounded-l-[2rem] bg-[#111928]  rounded-[2rem] lg:rounded-r-none p-8 shadow-sm hover:shadow-xl transition-shadow border lg:border-r-0 border-[#374151]  z-10 flex flex-col">
+                    <div class="inline-flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-[#002b36] /30 flex items-center justify-center text-[#008AAB] "><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg></div>
+                        <span class="text-lg font-bold text-white ">Pemula / Reguler</span>
+                    </div>
+                    <div class="mb-6 border-b border-[#1F2937]  pb-6">
+                        <span class="text-4xl font-black text-white  tracking-tight">Rp 225<span class="text-2xl">rb</span></span>
+                        <span class="text-gray-400  font-semibold">/bln</span>
+                    </div>
+                    <p class="text-gray-300  mb-8 font-medium">Program dasar yang menyenangkan untuk anak-anak.</p>
+                    <ul class="space-y-4 mb-8 flex-1">
+                        <li class="flex gap-3 text-gray-200  font-semibold"><svg class="w-5 h-5 shrink-0 text-[#005A70]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> 8x Sesi Latihan</li>
+                        <li class="flex gap-3 text-gray-200  font-semibold"><svg class="w-5 h-5 shrink-0 text-[#005A70]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Usia Min. 4 Tahun</li>
+                        <li class="flex gap-3 text-gray-200  font-semibold"><svg class="w-5 h-5 shrink-0 text-[#005A70]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Pendaftaran Rp 100rb</li>
+                    </ul>
+                </div>
 
+                <!-- Pro Plan -->
+                <div class="relative z-20">
+                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 px-5 py-1.5 bg-[#008AAB] text-white text-[11px] font-black rounded-full uppercase tracking-widest shadow-lg z-30">
+                        Terpopuler
+                    </div>
+                    <div class="bg-[#008AAB]  rounded-[2rem] p-8 text-white shadow-2xl shadow-[#008AAB]/40 transform lg:scale-105 h-full flex flex-col relative overflow-hidden">
+                        <div class="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 bg-[#111928]/10 rounded-full blur-2xl"></div>
+                        <div class="inline-flex items-center gap-3 mb-6 relative z-10">
+                            <div class="w-10 h-10 rounded-xl bg-[#111928]/20 flex items-center justify-center backdrop-blur-sm"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg></div>
+                            <span class="text-lg font-bold">Kelas Prestasi</span>
+                        </div>
+                        <div class="mb-6 border-b border-[#005A70] pb-6 relative z-10">
+                            <span class="text-4xl font-black tracking-tight">Konsultasi</span>
+                        </div>
+                        <p class="text-[#003847] mb-8 font-medium relative z-10">Pelatihan intensif untuk atlet persiapan mengikuti berbagai kompetisi kejuaraan.</p>
+                        <ul class="space-y-4 mb-8 flex-1 relative z-10">
+                            <li class="flex gap-3 font-semibold"><svg class="w-5 h-5 shrink-0 text-indigo-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Porsi latihan intens</li>
+                            <li class="flex gap-3 font-semibold"><svg class="w-5 h-5 shrink-0 text-indigo-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Pemantauan limit waktu</li>
+                            <li class="flex gap-3 font-semibold"><svg class="w-5 h-5 shrink-0 text-indigo-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Program periodisasi juara</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Enterprise Plan -->
+                <div class="lg:border-y lg:border-r border-[#374151]  lg:rounded-r-[2rem] bg-[#111928]  rounded-[2rem] lg:rounded-l-none p-8 shadow-sm hover:shadow-xl transition-shadow border lg:border-l-0 border-[#374151]  z-10 flex flex-col">
+                    <div class="inline-flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-[#002b36] /30 flex items-center justify-center text-[#008AAB] "><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></div>
+                        <span class="text-lg font-bold text-white ">Privat & TNI/Polri</span>
+                    </div>
+                    <div class="mb-6 border-b border-[#1F2937]  pb-6">
+                        <span class="text-4xl font-black text-white  tracking-tight">Konsultasi</span>
+                    </div>
+                    <p class="text-gray-300  mb-8 font-medium">1-on-1 coach untuk percepatan & persiapan tes fisik instansi.</p>
+                    <ul class="space-y-4 mb-8 flex-1">
+                        <li class="flex gap-3 text-gray-200  font-semibold"><svg class="w-5 h-5 shrink-0 text-[#005A70]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Waktu fleksibel</li>
+                        <li class="flex gap-3 text-gray-200  font-semibold"><svg class="w-5 h-5 shrink-0 text-[#005A70]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Tanpa batasan usia</li>
+                        <li class="flex gap-3 text-gray-200  font-semibold"><svg class="w-5 h-5 shrink-0 text-[#005A70]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Fokus teknik mendalam</li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <div class="mt-12 text-center">
+                <a href="pendaftaran.php" class="inline-flex items-center gap-2 px-10 py-4 bg-[#008AAB] hover:bg-[#005A70] text-white text-lg font-bold rounded-xl transition-all shadow-xl shadow-[#008AAB]/30 hover:-translate-y-1">
+                    Daftar Sekarang
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- PELATIH (Polaroid Hover Effect) -->
+    <section id="pelatih" class="py-20 sm:py-24 bg-[#0B1120]  border-t border-[#374151]  overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-[#008AAB]  text-sm font-bold tracking-widest uppercase mb-3 block">Coach & Instruktur</span>
+                <h2 class="text-4xl sm:text-5xl font-black text-white  tracking-tight">Tim Ahli di Balik Layar</h2>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-10">
+                <?php if(count($pelatihData) > 0): foreach($pelatihData as $idx => $p): 
+                    $fMain = (!empty($p['foto']) && file_exists('admin/uploads/'.$p['foto'])) ? 'admin/uploads/'.$p['foto'] : "https://ui-avatars.com/api/?name=".urlencode($p['nama'])."&background=e0e7ff&color=4f46e5&size=512";
+                    // Fallback berantai agar tidak blank
+                    $fHover1 = (!empty($p['foto_hover_1']) && file_exists('admin/uploads/'.$p['foto_hover_1'])) ? 'admin/uploads/'.$p['foto_hover_1'] : $fMain;
+                    $fHover2 = (!empty($p['foto_hover_2']) && file_exists('admin/uploads/'.$p['foto_hover_2'])) ? 'admin/uploads/'.$p['foto_hover_2'] : $fHover1;
+                    // Sedikit rotasi acak untuk efek polaroid organik
+                    $rotates = ['-rotate-2', 'rotate-2', '-rotate-3', 'rotate-1'];
+                    $rot = $rotates[$idx % 4];
+                ?>
+                <div class="bg-white p-3 pb-8 md:pb-12 shadow-xl hover:shadow-2xl <?= $rot ?> hover:rotate-0 hover:-translate-y-2 transition-all duration-500 rounded-sm border border-gray-200 group relative z-10 hover:z-30">
+                    <div class="aspect-[3/4] overflow-hidden relative bg-gray-100 shadow-inner rounded-sm">
+                        <!-- Main Image (Top Layer, fades out first) -->
+                        <img src="<?= $fMain ?>" alt="<?= htmlspecialchars($p['nama']) ?>" class="w-full h-full object-cover relative z-30 transition-opacity duration-[1000ms] group-hover:opacity-0 grayscale group-hover:grayscale-0">
+                        <!-- Hover Image 1 (Middle Layer, always visible, revealed when Main fades) -->
+                        <img src="<?= $fHover1 ?>" alt="<?= htmlspecialchars($p['nama']) ?> Action 1" class="w-full h-full object-cover absolute inset-0 z-20">
+                        <!-- Hover Image 2 (Top Layer, fades in later) -->
+                        <img src="<?= $fHover2 ?>" alt="<?= htmlspecialchars($p['nama']) ?> Action 2" class="w-full h-full object-cover absolute inset-0 z-40 opacity-0 group-hover:opacity-100 transition-opacity duration-[1000ms] delay-[1000ms]">
+                    </div>
+                    <div class="pt-5 text-center px-2">
+                        <h4 class="font-black text-gray-900 text-lg tracking-tight line-clamp-1"><?= htmlspecialchars($p['nama']) ?></h4>
+                        <p class="text-[#005A70] text-[10px] sm:text-xs font-bold mt-1.5 uppercase tracking-widest line-clamp-1"><?= htmlspecialchars($p['jabatan']) ?></p>
+                        <p class="text-gray-500 text-[11px] mt-2 line-clamp-1 italic font-medium"><?= htmlspecialchars($p['lisensi'] ?? '') ?></p>
+                    </div>
+                </div>
+                <?php endforeach; else: ?>
+                    <p class="text-center col-span-4 text-gray-400 font-medium">Belum ada pelatih yang terdaftar.</p>
+                <?php endif; ?>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER ORISINAL -->
     <footer id="kontak" class="border-t border-slate-800/80 mt-12 bg-[#081223] relative z-10 pt-16 pb-8">
-        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-12">
             <div>
                 <img src="assets/logo.png" alt="Swift SC Logo" class="h-16 mb-6" onerror="this.onerror=null; this.outerHTML='<span class=\'text-3xl font-black italic tracking-tighter text-white block mb-6\'>SWIFT<span class=\'text-cyan-500\'>_SC</span></span>';">
                 <p class="text-sm text-slate-400">Mencetak atlet renang berprestasi dengan fasilitas dan metode kepelatihan terbaik di kelasnya. Jump in. let's swim!</p>
@@ -434,84 +489,40 @@ try {
                         <span class="bg-green-500 text-white p-2 rounded-lg"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></span>
                         <a href="https://wa.me/6289668366724" target="_blank" class="hover:text-green-400 font-semibold text-lg">+62 896-6836-6724</a>
                     </li>
-                    <li class="mt-4"><p class="text-xs text-slate-500 italic">Silakan klik nomor admin untuk chat langsung dan melakukan pendaftaran.</p></li>
+                    <li class="mt-4"><p class="text-xs text-gray-400 italic">Silakan klik nomor admin untuk chat langsung dan melakukan pendaftaran.</p></li>
                 </ul>
             </div>
         </div>
-        <div class="container mx-auto px-4 text-center text-xs mt-12 pt-8 border-t border-slate-800 text-slate-600">
-            <p>&copy; <?= date('Y'); ?> Swift Swimming Club. All Rights Reserved.</p>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 border-t border-slate-800 text-gray-300 flex justify-between items-center">
+            <p class="text-xs">&copy; <?= date('Y'); ?> Swift Swimming Club. All Rights Reserved.</p>
+            <a href="login.php" class="text-xs hover:text-white transition-colors">Admin Area</a>
         </div>
     </footer>
 
-    <!-- Scripts -->
     <script>
-        // Mobile Menu Toggle Logic
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-        const menuIcon = document.getElementById('menuIcon');
-        const closeIcon = document.getElementById('closeIcon');
-        const mobileLinks = document.querySelectorAll('.mobile-link');
-
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-            menuIcon.classList.toggle('hidden');
-            closeIcon.classList.toggle('hidden');
+        // Hero Slider Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const slides = document.querySelectorAll('.hero-slide');
+            if(slides.length > 1) {
+                let current = 0;
+                setInterval(() => {
+                    slides[current].classList.remove('opacity-100', 'z-10');
+                    slides[current].classList.add('opacity-0', 'z-0');
+                    current = (current + 1) % slides.length;
+                    slides[current].classList.remove('opacity-0', 'z-0');
+                    slides[current].classList.add('opacity-100', 'z-10');
+                }, 5000);
+            }
         });
 
-        mobileLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                mobileMenu.classList.add('hidden');
-                menuIcon.classList.remove('hidden');
-                closeIcon.classList.add('hidden');
+        // Load More Berita
+        function loadMoreBerita() {
+            const hiddenItems = document.querySelectorAll('.berita-hidden');
+            hiddenItems.forEach(item => {
+                item.classList.remove('hidden');
+                item.classList.remove('berita-hidden');
             });
-        });
-
-        // Dynamic Split-Screen Slider Logic
-        const heroBanners = <?= json_encode($banners) ?>;
-        const heroLeftBg = document.getElementById('heroLeftBg');
-        const heroRightBg = document.getElementById('heroRightBg');
-
-        if(heroBanners && heroBanners.length > 1) {
-            let leftIndex = 0;
-            let rightIndex = 1;
-
-            // Initial Setup
-            heroLeftBg.style.backgroundImage = `url('admin/uploads/${heroBanners[leftIndex].gambar}')`;
-            heroRightBg.style.backgroundImage = `url('admin/uploads/${heroBanners[rightIndex].gambar}')`;
-            
-            // Start right pan
-            setTimeout(() => {
-                heroRightBg.style.transition = 'transform 5s linear';
-                heroRightBg.style.transform = 'scale(1.1) translateX(-5%)';
-            }, 50);
-
-            // Change slide every 5 seconds
-            setInterval(() => {
-                // Right becomes Left
-                leftIndex = rightIndex;
-                rightIndex = (rightIndex + 1) % heroBanners.length;
-                
-                // Instantly update Left to match what Right was
-                heroLeftBg.style.backgroundImage = `url('admin/uploads/${heroBanners[leftIndex].gambar}')`;
-                
-                // Instantly reset Right position and update its image
-                heroRightBg.style.transition = 'none';
-                heroRightBg.style.transform = 'scale(1.1) translateX(5%)';
-                heroRightBg.style.backgroundImage = `url('admin/uploads/${heroBanners[rightIndex].gambar}')`;
-                
-                // Start Right panning again
-                setTimeout(() => {
-                    heroRightBg.style.transition = 'transform 5s linear';
-                    heroRightBg.style.transform = 'scale(1.1) translateX(-5%)';
-                }, 50);
-
-            }, 5000); // 5s interval
-        } else if (heroRightBg) {
-            // Infinite pan for single image
-            setTimeout(() => {
-                heroRightBg.style.transition = 'transform 15s alternate infinite linear';
-                heroRightBg.style.transform = 'scale(1.15) translateX(-5%)';
-            }, 100);
+            document.getElementById('loadMoreContainer').style.display = 'none';
         }
     </script>
 </body>
