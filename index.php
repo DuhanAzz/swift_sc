@@ -500,7 +500,7 @@ try {
         </div>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 border-t border-slate-800 text-gray-300 flex justify-between items-center">
             <p class="text-xs">&copy; <?= date('Y'); ?> Swift Swimming Club. All Rights Reserved.</p>
-            <a href="index.php" class="text-xs hover:text-white transition-colors">Made with ♾️ by @mduhanazz</a>
+            <a href="https://www.instagram.com/mduhanazz/" class="text-xs hover:text-white transition-colors">Made with ♾️ by @mduhanazz</a>
         </div>
     </footer>
 
