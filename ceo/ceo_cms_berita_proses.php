@@ -13,10 +13,14 @@ if(isset($_POST['tambah'])){
 
     $gambar = '';
     if (isset($_FILES['gambar']) && $_FILES['gambar']['error'] === 0) {
-        $ext = strtolower(pathinfo($_FILES['gambar']['name'], PATHINFO_EXTENSION));
-        $filename = uniqid('news_') . '.' . $ext;
-        if (move_uploaded_file($_FILES['gambar']['tmp_name'], $uploadDir . $filename)) {
-            $gambar = 'uploads/' . $filename;
+        if(validasi_gambar($_FILES['gambar'])) {
+            $ext = strtolower(pathinfo($_FILES['gambar']['name'], PATHINFO_EXTENSION));
+            $filename = uniqid('news_') . '.' . $ext;
+            if (move_uploaded_file($_FILES['gambar']['tmp_name'], $uploadDir . $filename)) {
+                $gambar = 'uploads/' . $filename;
+            }
+        } else {
+            header("location:ceo_cms_berita.php?pesan=gagal&msg=FormatGambarTidakValid"); exit;
         }
     }
 
@@ -34,11 +38,15 @@ if(isset($_POST['edit'])){
 
     $q_gambar = "";
     if (isset($_FILES['gambar']) && $_FILES['gambar']['error'] === 0) {
-        $ext = strtolower(pathinfo($_FILES['gambar']['name'], PATHINFO_EXTENSION));
-        $filename = uniqid('news_') . '.' . $ext;
-        if (move_uploaded_file($_FILES['gambar']['tmp_name'], $uploadDir . $filename)) {
-            $gambar = 'uploads/' . $filename;
-            $q_gambar = ", gambar='$gambar'";
+        if(validasi_gambar($_FILES['gambar'])) {
+            $ext = strtolower(pathinfo($_FILES['gambar']['name'], PATHINFO_EXTENSION));
+            $filename = uniqid('news_') . '.' . $ext;
+            if (move_uploaded_file($_FILES['gambar']['tmp_name'], $uploadDir . $filename)) {
+                $gambar = 'uploads/' . $filename;
+                $q_gambar = ", gambar='$gambar'";
+            }
+        } else {
+            header("location:ceo_cms_berita.php?pesan=gagal&msg=FormatGambarTidakValid"); exit;
         }
     }
 

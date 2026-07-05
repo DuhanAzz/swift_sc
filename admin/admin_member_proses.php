@@ -68,6 +68,42 @@ if (isset($_POST['approve'])) {
         header("location:admin_member.php?pesan=gagal");
         exit;
     }
+} else if (isset($_GET['action']) && $_GET['action'] == 'mark_paid' && isset($_GET['id'])) {
+    $member_id = bersihkan_input($_GET['id']);
+    
+    try {
+        // Cek status saat ini
+        $q_cek = mysqli_query($koneksi, "SELECT * FROM member WHERE id = '$member_id'");
+        if ($q_cek && mysqli_num_rows($q_cek) > 0) {
+            $member_data = mysqli_fetch_assoc($q_cek);
+            
+            if ($member_data['payment_status'] == 'Unpaid') {
+                // Update tabel member
+                $q_upd = mysqli_query($koneksi, "UPDATE member SET payment_status = 'Paid' WHERE id = '$member_id'");
+                
+                if ($q_upd) {
+                    // Masukkan ke Arus Kas (Pendaftaran 100.000)
+                    $admin_id = intval($_SESSION['user_id'] ?? 0);
+                    $cabang_id = intval($member_data['cabang_id'] ?? 0);
+                    $nominal_pendaftaran = 100000;
+                    $nama_atlet = mysqli_real_escape_string($koneksi, $member_data['nama']);
+                    $ket_kas = "Biaya Pendaftaran a/n " . $nama_atlet;
+                    $tgl_sekarang = date('Y-m-d');
+                    
+                    mysqli_query($koneksi, "INSERT INTO arus_kas (cabang_id, jenis, category, nominal, keterangan, tanggal, user_id) 
+                                            VALUES ('$cabang_id', 'Pemasukan', 'Pendaftaran', '$nominal_pendaftaran', '$ket_kas', '$tgl_sekarang', '$admin_id')");
+                    
+                    header("location:admin_member.php?pesan=sukses_bayar");
+                    exit;
+                }
+            }
+        }
+        header("location:admin_member.php");
+        exit;
+    } catch (\Exception $e) {
+        header("location:admin_member.php?pesan=gagal_bayar");
+        exit;
+    }
 } else {
     header("location:admin_member.php");
     exit;

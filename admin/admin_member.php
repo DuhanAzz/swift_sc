@@ -195,7 +195,14 @@ if (isset($_GET['invoice_id'])) {
                                 <td class="px-6 py-4"><?= ($d['jenis_kelamin'] ?? '') == 'L' ? 'Laki-laki' : 'Perempuan'; ?></td>
                                 <td class="px-6 py-4"><?= isset($d['tanggal_gabung']) ? date('d M Y', strtotime($d['tanggal_gabung'])) : '-'; ?></td>
                                 <td class="px-6 py-4">
-                                    <span class="px-3 py-1 rounded-full text-xs font-bold uppercase <?= $badgeColor ?>"><?= $payment_status ?></span>
+                                    <?php if($payment_status == 'Unpaid'): ?>
+                                        <a href="admin_member_proses.php?action=mark_paid&id=<?= $d['id'] ?>" onclick="return confirm('Tandai biaya pendaftaran sebesar Rp 100.000 telah lunas? Ini akan otomatis tercatat di arus kas.')" class="px-3 py-1.5 rounded-full text-xs font-bold uppercase bg-red-100 text-red-800 hover:bg-green-600 hover:text-white transition-colors cursor-pointer inline-flex items-center gap-1 shadow-sm">
+                                            <span>Unpaid</span>
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                        </a>
+                                    <?php else: ?>
+                                        <span class="px-3 py-1 rounded-full text-xs font-bold uppercase <?= $badgeColor ?>"><?= $payment_status ?></span>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                             <?php } } else { echo "<tr><td colspan='5' class='px-6 py-8 text-center text-slate-500 italic'>Belum ada member aktif di cabang ini.</td></tr>"; } ?>
