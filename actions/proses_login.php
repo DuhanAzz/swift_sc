@@ -19,6 +19,9 @@ if (isset($_POST['login'])) {
 
             // Verifikasi password
             if (password_verify($password, $userData['password'])) {
+                // Prevent Session Fixation
+                session_regenerate_id(true);
+                
                 // Set Session
                 $_SESSION['user_id'] = $userData['id'];
                 $_SESSION['email'] = $userData['email'];
