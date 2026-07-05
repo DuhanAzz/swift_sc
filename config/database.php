@@ -29,4 +29,26 @@ function bersihkan_input($data) {
     $data = htmlspecialchars($data);
     return mysqli_real_escape_string($koneksi, $data);
 }
+
+// Fungsi untuk mengamankan upload file (Mencegah Eksekusi Kode Jarak Jauh / RCE)
+function validasi_gambar($file_arr) {
+    if(!isset($file_arr['tmp_name']) || empty($file_arr['tmp_name']) || $file_arr['error'] != 0) return false;
+    
+    // Cek Ekstensi File
+    $allowed_exts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+    $ext = strtolower(pathinfo($file_arr['name'], PATHINFO_EXTENSION));
+    if(!in_array($ext, $allowed_exts)) return false;
+    
+    // Cek MIME Type Sebenarnya (Mencegah file PHP yang di-rename menjadi .jpg)
+    if(file_exists($file_arr['tmp_name'])) {
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mime = finfo_file($finfo, $file_arr['tmp_name']);
+        finfo_close($finfo);
+        
+        $allowed_mimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        if(!in_array($mime, $allowed_mimes)) return false;
+    }
+    
+    return true;
+}
 ?>

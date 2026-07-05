@@ -19,23 +19,35 @@ if(isset($_POST['tambah'])){
     // Default foto
     $foto_name = 'default_coach.jpg';
     if(isset($_FILES['foto_pelatih']) && $_FILES['foto_pelatih']['error'] == 0){
-        $ext = pathinfo($_FILES['foto_pelatih']['name'], PATHINFO_EXTENSION);
-        $foto_name = 'pelatih_' . time() . '.' . $ext;
-        move_uploaded_file($_FILES['foto_pelatih']['tmp_name'], 'uploads/' . $foto_name);
+        if(validasi_gambar($_FILES['foto_pelatih'])) {
+            $ext = pathinfo($_FILES['foto_pelatih']['name'], PATHINFO_EXTENSION);
+            $foto_name = 'pelatih_' . time() . '.' . $ext;
+            move_uploaded_file($_FILES['foto_pelatih']['tmp_name'], 'uploads/' . $foto_name);
+        } else {
+            echo "Format gambar foto_pelatih tidak valid!"; exit;
+        }
     }
 
     $foto_hover_name = NULL;
     if(isset($_FILES['foto_hover_pelatih']) && $_FILES['foto_hover_pelatih']['error'] == 0){
-        $ext_h = pathinfo($_FILES['foto_hover_pelatih']['name'], PATHINFO_EXTENSION);
-        $foto_hover_name = 'pelatih_hover_1_' . time() . '.' . $ext_h;
-        move_uploaded_file($_FILES['foto_hover_pelatih']['tmp_name'], 'uploads/' . $foto_hover_name);
+        if(validasi_gambar($_FILES['foto_hover_pelatih'])) {
+            $ext_h = pathinfo($_FILES['foto_hover_pelatih']['name'], PATHINFO_EXTENSION);
+            $foto_hover_name = 'pelatih_hover_1_' . time() . '.' . $ext_h;
+            move_uploaded_file($_FILES['foto_hover_pelatih']['tmp_name'], 'uploads/' . $foto_hover_name);
+        } else {
+            echo "Format gambar foto_hover_pelatih tidak valid!"; exit;
+        }
     }
 
     $foto_hover_2_name = NULL;
     if(isset($_FILES['foto_hover_2']) && $_FILES['foto_hover_2']['error'] == 0){
-        $ext_h2 = pathinfo($_FILES['foto_hover_2']['name'], PATHINFO_EXTENSION);
-        $foto_hover_2_name = 'pelatih_hover_2_' . time() . '.' . $ext_h2;
-        move_uploaded_file($_FILES['foto_hover_2']['tmp_name'], 'uploads/' . $foto_hover_2_name);
+        if(validasi_gambar($_FILES['foto_hover_2'])) {
+            $ext_h2 = pathinfo($_FILES['foto_hover_2']['name'], PATHINFO_EXTENSION);
+            $foto_hover_2_name = 'pelatih_hover_2_' . time() . '.' . $ext_h2;
+            move_uploaded_file($_FILES['foto_hover_2']['tmp_name'], 'uploads/' . $foto_hover_2_name);
+        } else {
+            echo "Format gambar foto_hover_2 tidak valid!"; exit;
+        }
     }
 
     $q1 = mysqli_query($koneksi, "INSERT INTO users (username, email, password, role, cabang_id) VALUES ('$nama_pelatih', '$email', '$password', 'Pelatih', $pool_id)");
@@ -81,24 +93,30 @@ if(isset($_POST['edit'])){
 
     $foto_query = "";
     if(isset($_FILES['foto_pelatih']) && $_FILES['foto_pelatih']['error'] == 0){
-        $ext = pathinfo($_FILES['foto_pelatih']['name'], PATHINFO_EXTENSION);
-        $foto_name = 'pelatih_' . time() . '.' . $ext;
-        move_uploaded_file($_FILES['foto_pelatih']['tmp_name'], 'uploads/' . $foto_name);
-        $foto_query .= ", foto='$foto_name'";
+        if(validasi_gambar($_FILES['foto_pelatih'])) {
+            $ext = pathinfo($_FILES['foto_pelatih']['name'], PATHINFO_EXTENSION);
+            $foto_name = 'pelatih_' . time() . '.' . $ext;
+            move_uploaded_file($_FILES['foto_pelatih']['tmp_name'], 'uploads/' . $foto_name);
+            $foto_query .= ", foto='$foto_name'";
+        }
     }
 
     if(isset($_FILES['foto_hover_pelatih']) && $_FILES['foto_hover_pelatih']['error'] == 0){
-        $ext_h = pathinfo($_FILES['foto_hover_pelatih']['name'], PATHINFO_EXTENSION);
-        $foto_hover_name = 'pelatih_hover_1_' . time() . '.' . $ext_h;
-        move_uploaded_file($_FILES['foto_hover_pelatih']['tmp_name'], 'uploads/' . $foto_hover_name);
-        $foto_query .= ", foto_hover_1='$foto_hover_name'";
+        if(validasi_gambar($_FILES['foto_hover_pelatih'])) {
+            $ext_h = pathinfo($_FILES['foto_hover_pelatih']['name'], PATHINFO_EXTENSION);
+            $foto_hover_name = 'pelatih_hover_1_' . time() . '.' . $ext_h;
+            move_uploaded_file($_FILES['foto_hover_pelatih']['tmp_name'], 'uploads/' . $foto_hover_name);
+            $foto_query .= ", foto_hover_1='$foto_hover_name'";
+        }
     }
 
     if(isset($_FILES['foto_hover_2']) && $_FILES['foto_hover_2']['error'] == 0){
-        $ext_h2 = pathinfo($_FILES['foto_hover_2']['name'], PATHINFO_EXTENSION);
-        $foto_hover_2_name = 'pelatih_hover_2_' . time() . '.' . $ext_h2;
-        move_uploaded_file($_FILES['foto_hover_2']['tmp_name'], 'uploads/' . $foto_hover_2_name);
-        $foto_query .= ", foto_hover_2='$foto_hover_2_name'";
+        if(validasi_gambar($_FILES['foto_hover_2'])) {
+            $ext_h2 = pathinfo($_FILES['foto_hover_2']['name'], PATHINFO_EXTENSION);
+            $foto_hover_2_name = 'pelatih_hover_2_' . time() . '.' . $ext_h2;
+            move_uploaded_file($_FILES['foto_hover_2']['tmp_name'], 'uploads/' . $foto_hover_2_name);
+            $foto_query .= ", foto_hover_2='$foto_hover_2_name'";
+        }
     }
 
     // 1. Update Pelatih
