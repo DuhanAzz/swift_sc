@@ -125,7 +125,7 @@ if (isset($_GET['invoice_id'])) {
                                             <option value="Prestasi">Prestasi</option>
                                             <option value="Privat">Privat</option>
                                         </select>
-                                        <select name="pelatih_id" class="text-xs border border-gray-300 rounded p-1.5 w-32 focus:ring-blue-500 focus:border-blue-500 bg-white">
+                                        <select name="pelatih_id" class="text-xs border border-gray-300 rounded p-1.5 w-32 focus:ring-blue-500 focus:border-blue-500 bg-white" required>
                                             <option value="">-- Pelatih --</option>
                                             <?php foreach($pelatihList as $pel): ?>
                                                 <option value="<?= $pel['id'] ?>"><?= htmlspecialchars($pel['nama']) ?></option>
@@ -143,16 +143,27 @@ if (isset($_GET['invoice_id'])) {
 
             <!-- TAB 2: Data Member Aktif (Atlet) -->
             <div class="hidden p-4 rounded-xl bg-gray-50" id="active" role="tabpanel" aria-labelledby="active-tab">
+                <?php $filter_aktif = $_GET['filter_aktif'] ?? 'Aktif'; ?>
+                <div class="mb-4 flex justify-end">
+                    <form action="" method="GET" class="flex items-center gap-2">
+                        <label class="text-xs font-semibold text-gray-500 uppercase">Filter Status:</label>
+                        <select name="filter_aktif" onchange="this.form.submit()" class="text-sm border border-gray-300 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500 bg-white">
+                            <option value="Semua" <?= $filter_aktif == 'Semua' ? 'selected' : '' ?>>Semua</option>
+                            <option value="Aktif" <?= $filter_aktif == 'Aktif' ? 'selected' : '' ?>>Aktif</option>
+                            <option value="Nonaktif" <?= $filter_aktif == 'Nonaktif' ? 'selected' : '' ?>>Nonaktif</option>
+                        </select>
+                    </form>
+                </div>
                 <div class="card overflow-hidden">
                     <table class="table-algolia">
                         <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
                             <tr>
                                 <th class="px-6 py-4">NIA / ID</th>
-                                <th class="px-6 py-4">Nama Atlet</th>
+                                <th class="px-6 py-4">Nama Atlet & Sekolah</th>
                                 <th class="px-6 py-4">Kelas & Pelatih</th>
                                 <th class="px-6 py-4">Jenis Kelamin</th>
                                 <th class="px-6 py-4">Tgl Bergabung</th>
-                                <th class="px-6 py-4">Status Pembayaran</th>
+                                <th class="px-6 py-4">Status & Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -160,8 +171,11 @@ if (isset($_GET['invoice_id'])) {
                             $activeMembers = [];
                             try {
                                 $query_active = "SELECT m.*, p.nama as nama_pelatih FROM member m LEFT JOIN pelatih p ON m.pelatih_id = p.id WHERE 1=1";
-                                if(!empty($admin_pool_id)) $query_active .= " AND cabang_id = '$admin_pool_id'";
-                                $query_active .= " ORDER BY nama ASC";
+                                if(!empty($admin_pool_id)) $query_active .= " AND m.cabang_id = '$admin_pool_id'";
+                                if($filter_aktif != 'Semua') {
+                                    $query_active .= " AND m.status_aktif = '$filter_aktif'";
+                                }
+                                $query_active .= " ORDER BY m.nama ASC";
                                 $res_active = mysqli_query($koneksi, $query_active);
                                 if ($res_active) {
                                     while ($row = mysqli_fetch_assoc($res_active)) {
@@ -178,7 +192,10 @@ if (isset($_GET['invoice_id'])) {
                             ?>
                             <tr class="bg-white border-b hover:bg-slate-50">
                                 <td class="px-6 py-4 font-mono font-bold text-slate-700"><?= strtoupper($nia); ?></td>
-                                <td class="px-6 py-4 font-bold text-gray-800"><?= htmlspecialchars($d['nama'] ?? ''); ?></td>
+                                <td class="px-6 py-4">
+                                    <div class="font-bold text-gray-800"><?= htmlspecialchars($d['nama'] ?? ''); ?></div>
+                                    <div class="text-[10px] text-gray-500 mt-1"><?= htmlspecialchars($d['sekolah'] ?? '-'); ?></div>
+                                </td>
                                 <td class="px-6 py-4">
                                     <span class="inline-block px-2.5 py-1 rounded-full text-[10px] font-bold bg-teal-100 text-teal-800 mb-1">
                                         <?= htmlspecialchars($d['tingkatan_kelas'] ?? 'Pemula'); ?>
@@ -195,23 +212,78 @@ if (isset($_GET['invoice_id'])) {
                                 <td class="px-6 py-4"><?= ($d['jenis_kelamin'] ?? '') == 'L' ? 'Laki-laki' : 'Perempuan'; ?></td>
                                 <td class="px-6 py-4"><?= isset($d['tanggal_gabung']) ? date('d M Y', strtotime($d['tanggal_gabung'])) : '-'; ?></td>
                                 <td class="px-6 py-4">
-                                    <?php if($payment_status == 'Unpaid'): ?>
-                                        <a href="admin_member_proses.php?action=mark_paid&id=<?= $d['id'] ?>" onclick="return confirm('Tandai biaya pendaftaran sebesar Rp 100.000 telah lunas? Ini akan otomatis tercatat di arus kas.')" class="px-3 py-1.5 rounded-full text-xs font-bold uppercase bg-red-100 text-red-800 hover:bg-green-600 hover:text-white transition-colors cursor-pointer inline-flex items-center gap-1 shadow-sm">
-                                            <span>Unpaid</span>
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                        </a>
-                                    <?php else: ?>
-                                        <span class="px-3 py-1 rounded-full text-xs font-bold uppercase <?= $badgeColor ?>"><?= $payment_status ?></span>
-                                    <?php endif; ?>
+                                    <div class="flex flex-col gap-2">
+                                        <?php if($payment_status == 'Unpaid'): ?>
+                                            <a href="admin_member_proses.php?action=mark_paid&id=<?= $d['id'] ?>" onclick="return confirm('Tandai biaya pendaftaran sebesar Rp 100.000 telah lunas? Ini akan otomatis tercatat di arus kas.')" class="px-3 py-1.5 rounded-full text-[10px] font-bold uppercase bg-red-100 text-red-800 hover:bg-green-600 hover:text-white transition-colors cursor-pointer inline-flex items-center gap-1 shadow-sm w-max">
+                                                <span>Unpaid</span>
+                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                            </a>
+                                        <?php else: ?>
+                                            <span class="px-3 py-1.5 rounded-full text-[10px] font-bold uppercase bg-green-100 text-green-800 inline-flex items-center gap-1 w-max">
+                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Paid
+                                            </span>
+                                        <?php endif; ?>
+                                        <div class="flex gap-1 mt-1">
+                                            <button onclick="openEditSekolahModal(<?= $d['id'] ?>, '<?= htmlspecialchars($d['sekolah'] ?? '', ENT_QUOTES) ?>')" class="px-2 py-1 bg-yellow-100 text-yellow-800 hover:bg-yellow-200 rounded text-[10px] font-bold uppercase transition-colors">Edit Sekolah</button>
+                                            <button onclick="openMutasiPelatihModal(<?= $d['id'] ?>, <?= $d['pelatih_id'] ?? 'null' ?>)" class="px-2 py-1 bg-blue-100 text-blue-800 hover:bg-blue-200 rounded text-[10px] font-bold uppercase transition-colors">Mutasi Pelatih</button>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
-                            <?php } } else { echo "<tr><td colspan='5' class='px-6 py-8 text-center text-slate-500 italic'>Belum ada member aktif di cabang ini.</td></tr>"; } ?>
+                            <?php } } else { echo "<tr><td colspan='6' class='px-6 py-8 text-center text-slate-500 italic'>Belum ada member aktif di cabang ini.</td></tr>"; } ?>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
 
+    </div>
+</div>
+
+<!-- ===== EDIT SEKOLAH MODAL ===== -->
+<div id="editSekolahModal" class="fixed inset-0 bg-black/50 z-[999] hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-auto overflow-hidden flex flex-col">
+        <form action="admin_member_proses.php" method="POST">
+            <input type="hidden" name="action" value="edit_sekolah">
+            <input type="hidden" name="member_id" id="edit_sekolah_id">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-base font-bold">Edit Asal Sekolah</h3>
+            </div>
+            <div class="px-6 py-4">
+                <label class="block text-xs font-semibold text-gray-500 mb-1">Nama Sekolah</label>
+                <input type="text" name="sekolah" id="edit_sekolah_input" class="w-full border border-gray-300 rounded p-2 focus:ring-blue-500 focus:border-blue-500" required>
+            </div>
+            <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end gap-2">
+                <button type="button" onclick="closeEditSekolahModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded font-bold text-xs uppercase">Batal</button>
+                <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-bold text-xs uppercase">Simpan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ===== MUTASI PELATIH MODAL ===== -->
+<div id="mutasiPelatihModal" class="fixed inset-0 bg-black/50 z-[999] hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-auto overflow-hidden flex flex-col">
+        <form action="admin_member_proses.php" method="POST">
+            <input type="hidden" name="action" value="mutasi_pelatih">
+            <input type="hidden" name="member_id" id="mutasi_pelatih_id">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-base font-bold">Mutasi Pelatih</h3>
+            </div>
+            <div class="px-6 py-4">
+                <label class="block text-xs font-semibold text-gray-500 mb-1">Pilih Pelatih Baru</label>
+                <select name="pelatih_id" id="mutasi_pelatih_select" class="w-full border border-gray-300 rounded p-2 focus:ring-blue-500 focus:border-blue-500" required>
+                    <option value="">-- Pilih Pelatih --</option>
+                    <?php foreach($pelatihList as $pel): ?>
+                        <option value="<?= $pel['id'] ?>"><?= htmlspecialchars($pel['nama']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end gap-2">
+                <button type="button" onclick="closeMutasiPelatihModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded font-bold text-xs uppercase">Batal</button>
+                <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-bold text-xs uppercase">Simpan</button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -274,6 +346,32 @@ if (isset($_GET['invoice_id'])) {
 </div>
 
 <script>
+function openEditSekolahModal(id, currentSekolah) {
+    document.getElementById('edit_sekolah_id').value = id;
+    document.getElementById('edit_sekolah_input').value = currentSekolah;
+    document.getElementById('editSekolahModal').classList.remove('hidden');
+    document.getElementById('editSekolahModal').classList.add('flex');
+}
+function closeEditSekolahModal() {
+    document.getElementById('editSekolahModal').classList.add('hidden');
+    document.getElementById('editSekolahModal').classList.remove('flex');
+}
+
+function openMutasiPelatihModal(id, currentPelatihId) {
+    document.getElementById('mutasi_pelatih_id').value = id;
+    if (currentPelatihId) {
+        document.getElementById('mutasi_pelatih_select').value = currentPelatihId;
+    } else {
+        document.getElementById('mutasi_pelatih_select').value = '';
+    }
+    document.getElementById('mutasiPelatihModal').classList.remove('hidden');
+    document.getElementById('mutasiPelatihModal').classList.add('flex');
+}
+function closeMutasiPelatihModal() {
+    document.getElementById('mutasiPelatihModal').classList.add('hidden');
+    document.getElementById('mutasiPelatihModal').classList.remove('flex');
+}
+
 function closeInvoiceModal() {
     document.getElementById('invoiceModal').style.display = 'none';
     // Clean URL

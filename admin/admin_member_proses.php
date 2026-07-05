@@ -32,14 +32,15 @@ if (isset($_POST['approve'])) {
             $no_hp = $pendingData['no_hp'];
             $tanggal_lahir = $pendingData['tanggal_lahir'];
             $tanggal_gabung = date('Y-m-d');
+            $sekolah = mysqli_real_escape_string($koneksi, $pendingData['sekolah'] ?? '');
             
             // Tangkap data tambahan (Kelas & Pelatih)
             $tingkatan_kelas = isset($_POST['tingkatan_kelas']) ? mysqli_real_escape_string($koneksi, $_POST['tingkatan_kelas']) : 'Pemula';
             $pelatih_id = !empty($_POST['pelatih_id']) ? "'" . mysqli_real_escape_string($koneksi, $_POST['pelatih_id']) . "'" : "NULL";
             
             // 3. Masukkan ke tabel member
-            $query_insert = "INSERT INTO member (calon_member_id, nia, nama, jenis_kelamin, no_hp, tanggal_lahir, cabang_id, tanggal_gabung, payment_status, status_aktif, tingkatan_kelas, pelatih_id) 
-                             VALUES ('$calon_member_id', '$nia', '$nama', '$jenis_kelamin', '$no_hp', '$tanggal_lahir', '$cabang_id', '$tanggal_gabung', 'Unpaid', 'Aktif', '$tingkatan_kelas', $pelatih_id)";
+            $query_insert = "INSERT INTO member (calon_member_id, nia, nama, jenis_kelamin, no_hp, sekolah, tanggal_lahir, cabang_id, tanggal_gabung, payment_status, status_aktif, tingkatan_kelas, pelatih_id) 
+                             VALUES ('$calon_member_id', '$nia', '$nama', '$jenis_kelamin', '$no_hp', '$sekolah', '$tanggal_lahir', '$cabang_id', '$tanggal_gabung', 'Unpaid', 'Aktif', '$tingkatan_kelas', $pelatih_id)";
             
             if (mysqli_query($koneksi, $query_insert)) {
                 // 4. Update status_approval di calon_member
@@ -102,6 +103,23 @@ if (isset($_POST['approve'])) {
         exit;
     } catch (\Exception $e) {
         header("location:admin_member.php?pesan=gagal_bayar");
+        exit;
+    }
+} elseif (isset($_POST['action'])) {
+    if ($_POST['action'] === 'edit_sekolah' && isset($_POST['member_id']) && isset($_POST['sekolah'])) {
+        $member_id = intval($_POST['member_id']);
+        $sekolah = mysqli_real_escape_string($koneksi, $_POST['sekolah']);
+        mysqli_query($koneksi, "UPDATE member SET sekolah = '$sekolah' WHERE id = '$member_id'");
+        header("location:admin_member.php?pesan=sukses_edit");
+        exit;
+    } elseif ($_POST['action'] === 'mutasi_pelatih' && isset($_POST['member_id']) && isset($_POST['pelatih_id'])) {
+        $member_id = intval($_POST['member_id']);
+        $pelatih_id = intval($_POST['pelatih_id']);
+        mysqli_query($koneksi, "UPDATE member SET pelatih_id = '$pelatih_id' WHERE id = '$member_id'");
+        header("location:admin_member.php?pesan=sukses_mutasi");
+        exit;
+    } else {
+        header("location:admin_member.php");
         exit;
     }
 } else {

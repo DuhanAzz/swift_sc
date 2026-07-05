@@ -16,7 +16,7 @@ if (isset($_POST['tambah'])) {
     $judul = mysqli_real_escape_string($koneksi, $_POST['judul']);
     $tanggal = mysqli_real_escape_string($koneksi, $_POST['tanggal']);
     $isi = mysqli_real_escape_string($koneksi, $_POST['isi']);
-    $cabang = ($user_role === 'admin' && isset($_POST['cabang'])) ? mysqli_real_escape_string($koneksi, $_POST['cabang']) : $user_cabang;
+    $cabang = $user_cabang;
     
     $gambar = 'default_news.jpg';
     if (isset($_FILES['gambar']) && $_FILES['gambar']['error'] === 0) {
@@ -42,8 +42,8 @@ if (isset($_POST['tambah'])) {
 
 // Logika Hapus Berita
 if (isset($_GET['hapus'])) {
-    $id = $_GET['hapus'];
-    mysqli_query($koneksi, "DELETE FROM berita WHERE id='$id'");
+    $id = intval($_GET['hapus']);
+    mysqli_query($koneksi, "DELETE FROM berita WHERE id='$id' AND cabang='$user_cabang'");
     header("Location: manage_berita.php");
     exit;
 }
@@ -75,16 +75,7 @@ if (isset($_GET['hapus'])) {
                     <div class="bg-white p-6 rounded-2xl card-hover sticky top-24">
                         <h3 class="text-xl font-bold mb-4 border-b pb-2">Buat Berita Baru</h3>
                         <form action="" method="POST" enctype="multipart/form-data" class="space-y-4">
-                            <?php if ($user_role === 'admin'): ?>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1">Cabang / Pool</label>
-                                <select name="cabang" required class="w-full border border-[#E8E8EF] rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                                    <option value="Pusat">Pusat</option>
-                                    <option value="Cabang Utara">Cabang Utara</option>
-                                    <option value="Cabang Selatan">Cabang Selatan</option>
-                                </select>
-                            </div>
-                            <?php endif; ?>
+                            <input type="hidden" name="cabang" value="<?= htmlspecialchars($user_cabang) ?>">
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Kategori</label>
                                 <select name="kategori" required class="w-full border border-[#E8E8EF] rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-blue-500 transition-all duration-200">
@@ -128,11 +119,7 @@ if (isset($_GET['hapus'])) {
                             </thead>
                             <tbody class="divide-y divide-gray-100">
                                 <?php
-                                $q_str = "SELECT * FROM berita";
-                                if ($user_role !== 'admin') {
-                                    $q_str .= " WHERE cabang = '$user_cabang'";
-                                }
-                                $q_str .= " ORDER BY tanggal DESC, id DESC";
+                                $q_str = "SELECT * FROM berita WHERE cabang = '$user_cabang' ORDER BY tanggal DESC, id DESC";
                                 $query = mysqli_query($koneksi, $q_str);
                                 while ($row = mysqli_fetch_assoc($query)) :
                                 ?>

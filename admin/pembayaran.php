@@ -285,14 +285,20 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
                                 </div>
                             </div>
                             <?php elseif($sudah_lunas): ?>
-                            <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-2.5 flex items-start gap-2">
-                                <span class="text-emerald-500 text-sm mt-0.5">✅</span>
-                                <div>
-                                    <p class="text-xs font-bold text-emerald-800">Lunas — Dibayar <?= $tgl_bayar ? date('d M Y, H:i', strtotime($tgl_bayar)) : '' ?></p>
-                                    <?php if(!empty($ket)): ?>
-                                    <p class="text-[10px] text-emerald-600"><?= htmlspecialchars($ket) ?></p>
-                                    <?php endif; ?>
+                            <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-2.5 flex items-start justify-between gap-2">
+                                <div class="flex items-start gap-2">
+                                    <span class="text-emerald-500 text-sm mt-0.5">✅</span>
+                                    <div>
+                                        <p class="text-xs font-bold text-emerald-800">Lunas — Dibayar <?= $tgl_bayar ? date('d M Y, H:i', strtotime($tgl_bayar)) : '' ?></p>
+                                        <?php if(!empty($ket)): ?>
+                                        <p class="text-[10px] text-emerald-600"><?= htmlspecialchars($ket) ?></p>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
+                                <a href="invoice_cetak.php?member_id=<?= $atlet_id ?>&bulan=<?= $bln ?>&tahun=<?= $thn ?>" target="_blank" class="px-2 py-1 bg-white border border-emerald-300 text-emerald-700 rounded text-[10px] font-bold hover:bg-emerald-100 transition-colors inline-flex items-center gap-1 shadow-sm shrink-0">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                                    Kwitansi
+                                </a>
                             </div>
                             <?php endif; ?>
                         </div>
@@ -403,7 +409,7 @@ function buildInvoiceText(id, nama, nia, cabang) {
     inv_text += `TOTAL   : *Rp ${nominalStr}*\n\n`;
     inv_text += "Mohon segera melakukan pembayaran.\n";
     inv_text += "via:\n";
-    inv_text += "- Transfer Bank (hubungi admin)\n";
+    inv_text += "- Transfer Bank: BCA - 123456789 a/n Swift Swimming Club\n";
     inv_text += "- Tunai saat latihan\n\n";
     inv_text += "Terima kasih,\n";
     inv_text += "*Admin Swift SC*\n";
