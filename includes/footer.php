@@ -42,5 +42,6 @@
     }
     mql.addEventListener('change', handleResize);
 </script>
+<?php include_once __DIR__ . '/swal_helper.php'; ?>
 </body>
 </html>

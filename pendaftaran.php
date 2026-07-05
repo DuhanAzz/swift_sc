@@ -161,17 +161,12 @@ try {
             
             const form = this;
             const btnSubmit = document.getElementById('btn-submit');
-            const alertContainer = document.getElementById('alert-container');
-            const alertTitle = document.getElementById('alert-title');
-            const alertMessage = document.getElementById('alert-message');
             
             // Loading state
             btnSubmit.disabled = true;
             btnSubmit.classList.add('opacity-75', 'cursor-not-allowed');
             const originalText = btnSubmit.innerHTML;
             btnSubmit.innerHTML = `<svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> <span>Memproses...</span>`;
-            
-            alertContainer.classList.add('hidden');
             
             const formData = new FormData(form);
             
@@ -181,24 +176,31 @@ try {
             })
             .then(response => response.json())
             .then(data => {
-                alertContainer.classList.remove('hidden', 'bg-green-50', 'border-green-200', 'text-green-700', 'bg-red-50', 'border-red-200', 'text-red-700');
-                
-                if (data.status === 'sukses') {
-                    alertContainer.classList.add('bg-green-50', 'border-green-200', 'text-green-700');
-                    alertTitle.textContent = 'Pendaftaran Berhasil!';
-                    alertMessage.textContent = data.message;
-                    form.reset();
+                if (data.status === 'success') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Pendaftaran Berhasil!',
+                        text: data.message,
+                        confirmButtonColor: '#2563eb'
+                    }).then(() => {
+                        form.reset();
+                    });
                 } else {
-                    alertContainer.classList.add('bg-red-50', 'border-red-200', 'text-red-700');
-                    alertTitle.textContent = 'Terjadi Kesalahan';
-                    alertMessage.textContent = data.message;
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Terjadi Kesalahan',
+                        text: data.message,
+                        confirmButtonColor: '#2563eb'
+                    });
                 }
             })
             .catch(error => {
-                alertContainer.classList.remove('hidden');
-                alertContainer.classList.add('bg-red-50', 'border-red-200', 'text-red-700');
-                alertTitle.textContent = 'Terjadi Kesalahan';
-                alertMessage.textContent = 'Koneksi ke server gagal. Silakan coba lagi.';
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal Terhubung',
+                    text: 'Koneksi ke server gagal. Silakan coba lagi.',
+                    confirmButtonColor: '#2563eb'
+                });
             })
             .finally(() => {
                 // Reset button state
@@ -208,5 +210,6 @@ try {
             });
         });
     </script>
+    <?php include_once __DIR__ . '/includes/swal_helper.php'; ?>
 </body>
 </html>

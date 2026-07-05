@@ -100,5 +100,6 @@ if (isset($_SESSION['status']) && $_SESSION['status'] == "sudah_login") {
             </a>
         </div>
     </div>
+    <?php include_once __DIR__ . '/includes/swal_helper.php'; ?>
 </body>
 </html>

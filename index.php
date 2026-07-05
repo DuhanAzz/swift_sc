@@ -530,5 +530,6 @@ try {
             document.getElementById('loadMoreContainer').style.display = 'none';
         }
     </script>
+    <?php include_once __DIR__ . '/includes/swal_helper.php'; ?>
 </body>
 </html>
