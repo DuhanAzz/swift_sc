@@ -74,60 +74,7 @@ include '../includes/koneksi.php';
                         </td>
                     </tr>
 
-                    <div id="modalEditAdmin<?= $data['id']; ?>" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-                        <div class="relative p-4 w-full max-w-md max-h-full">
-                            <div class="relative bg-white rounded-2xl shadow-xl border border-gray-100">
-                                <div class="flex items-center justify-between p-5 border-b">
-                                    <h3 class="text-lg font-bold text-gray-800">Edit Pengguna</h3>
-                                    <button type="button" class="text-gray-400 bg-gray-50 hover:bg-red-50 hover:text-red-600 rounded-xl text-sm w-8 h-8 ms-auto" data-modal-toggle="modalEditAdmin<?= $data['id']; ?>">✖</button>
-                                </div>
-                                <form action="proses_admin.php" method="POST" class="p-6 text-left">
-                                    <input type="hidden" name="id" value="<?= $data['id']; ?>">
-                                    <div class="mb-4">
-                                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Nama Lengkap</label>
-                                        <input type="text" name="name" value="<?= htmlspecialchars($data['username']); ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
-                                    </div>
-                                    <div class="mb-4">
-                                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Email</label>
-                                        <input type="email" name="email" value="<?= htmlspecialchars($data['email']); ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
-                                    </div>
-                                    
-                                    <div class="grid grid-cols-2 gap-4 mb-4">
-                                        <div>
-                                            <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Role</label>
-                                            <select name="role" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
-                                                <option value="CEO" <?= ($role == 'CEO') ? 'selected' : '' ?>>Super Admin (CEO)</option>
-                                                <option value="Admin" <?= ($role == 'Admin') ? 'selected' : '' ?>>Manajer Kolam (Admin)</option>
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Akses Kolam</label>
-                                            <select name="cabang_id" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3">
-                                                <option value="">-- Semua Cabang --</option>
-                                                <?php
-                                                $q_kolam = mysqli_query($koneksi, "SELECT * FROM cabang");
-                                                if($q_kolam) {
-                                                    while($k = mysqli_fetch_assoc($q_kolam)) {
-                                                        $k_id = $k['id'];
-                                                        $select = ($k_id == ($data['cabang_id'] ?? '')) ? 'selected' : '';
-                                                        echo "<option value='".$k_id."' $select>".htmlspecialchars($k['nama_cabang'])."</option>";
-                                                    }
-                                                }
-                                                ?>
-                                            </select>
-                                        </div>
-                                    </div>
 
-                                    <p class="text-xs text-red-500 mb-4">*Kosongkan password jika tidak ingin diubah.</p>
-                                    <div class="mb-6">
-                                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Password Baru</label>
-                                        <input type="password" name="password" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" placeholder="Masukkan password baru">
-                                    </div>
-                                    <button type="submit" name="edit" class="w-full text-white bg-slate-800 hover:bg-slate-900 font-bold rounded-xl text-sm px-5 py-3">Update Pengguna</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
                     <?php 
                         } 
                     } else {
@@ -139,6 +86,70 @@ include '../includes/koneksi.php';
         </div>
     </div>
 </div>
+
+<?php
+if(count($usersArray) > 0) {
+    foreach($usersArray as $data) {
+        $role = $data['role'];
+?>
+<div id="modalEditAdmin<?= $data['id']; ?>" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative p-4 w-full max-w-md max-h-full">
+        <div class="relative bg-white rounded-2xl shadow-xl border border-gray-100">
+            <div class="flex items-center justify-between p-5 border-b">
+                <h3 class="text-lg font-bold text-gray-800">Edit Pengguna</h3>
+                <button type="button" class="text-gray-400 bg-gray-50 hover:bg-red-50 hover:text-red-600 rounded-xl text-sm w-8 h-8 ms-auto" data-modal-toggle="modalEditAdmin<?= $data['id']; ?>">✖</button>
+            </div>
+            <form action="proses_admin.php" method="POST" class="p-6 text-left">
+                <input type="hidden" name="id" value="<?= $data['id']; ?>">
+                <div class="mb-4">
+                    <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Nama Lengkap</label>
+                    <input type="text" name="name" value="<?= htmlspecialchars($data['username']); ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Email</label>
+                    <input type="email" name="email" value="<?= htmlspecialchars($data['email']); ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Role</label>
+                        <select name="role" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                            <option value="CEO" <?= ($role == 'CEO') ? 'selected' : '' ?>>Super Admin (CEO)</option>
+                            <option value="Admin" <?= ($role == 'Admin') ? 'selected' : '' ?>>Manajer Kolam (Admin)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Akses Kolam</label>
+                        <select name="cabang_id" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3">
+                            <option value="">-- Semua Cabang --</option>
+                            <?php
+                            $q_kolam = mysqli_query($koneksi, "SELECT * FROM cabang");
+                            if($q_kolam) {
+                                while($k = mysqli_fetch_assoc($q_kolam)) {
+                                    $k_id = $k['id'];
+                                    $select = ($k_id == ($data['cabang_id'] ?? '')) ? 'selected' : '';
+                                    echo "<option value='".$k_id."' $select>".htmlspecialchars($k['nama_cabang'])."</option>";
+                                }
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+
+                <p class="text-xs text-red-500 mb-4">*Kosongkan password jika tidak ingin diubah.</p>
+                <div class="mb-6">
+                    <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Password Baru</label>
+                    <input type="password" name="password" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" placeholder="Masukkan password baru">
+                </div>
+                <button type="submit" name="edit" class="w-full text-white bg-slate-800 hover:bg-slate-900 font-bold rounded-xl text-sm px-5 py-3">Update Pengguna</button>
+            </form>
+        </div>
+    </div>
+</div>
+<?php 
+    }
+}
+?>
 
 <div id="modalTambahAdmin" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
     <div class="relative p-4 w-full max-w-md max-h-full">

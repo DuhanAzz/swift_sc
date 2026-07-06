@@ -77,100 +77,7 @@ include '../includes/koneksi.php';
                         </td>
                     </tr>
 
-                    <div id="modalEditPerforma<?= $data['id']; ?>" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-                        <div class="relative p-4 w-full max-w-lg max-h-full">
-                            <div class="relative bg-white rounded-2xl shadow-xl border border-gray-100">
-                                <div class="flex items-center justify-between p-5 border-b">
-                                    <h3 class="text-lg font-bold text-gray-800">Edit Waktu Performa</h3>
-                                    <button type="button" class="text-gray-400 bg-gray-50 hover:bg-red-50 hover:text-red-600 rounded-xl text-sm w-8 h-8 ms-auto" data-modal-toggle="modalEditPerforma<?= $data['id']; ?>">✖</button>
-                                </div>
-                                
-                                <?php
-                                $waktu_pecah = explode(':', $data['waktu_formatted']);
-                                $menit_edit = (int)$waktu_pecah[0];
-                                
-                                $detik_ms_pecah = explode('.', $waktu_pecah[1]);
-                                $detik_edit = (int)$detik_ms_pecah[0];
-                                $ms_edit = (int)$detik_ms_pecah[1];
-                                ?>
 
-                                <form action="proses_performa.php" method="POST" class="p-6 text-left">
-                                    <input type="hidden" name="id" value="<?= $data['id']; ?>">
-                                    
-                                    <div class="mb-4">
-                                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Atlet</label>
-                                        <select name="member_id" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
-                                            <?php
-                                            $q_atlet_edit = mysqli_query($koneksi, "SELECT * FROM member WHERE 1=1");
-                                            if($q_atlet_edit) {
-                                                while($a_data = mysqli_fetch_assoc($q_atlet_edit)) {
-                                                    $a_id = $a_data['id'];
-                                                    $selected = ($a_id == $data['member_id']) ? 'selected' : '';
-                                                    echo "<option value='".$a_id."' $selected>".htmlspecialchars($a_data['nama'])."</option>";
-                                                }
-                                            }
-                                            ?>
-                                        </select>
-                                    </div>
-                                    
-                                    <div class="grid grid-cols-2 gap-4 mb-4">
-                                        <div>
-                                            <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Tanggal Tes</label>
-                                            <input type="date" name="tanggal_rekor" value="<?= $data['tanggal_rekor']; ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
-                                        </div>
-                                        <div>
-                                            <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Tipe Kolam</label>
-                                            <select name="tipe_kolam" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
-                                                <option value="25m" <?= ($data['tipe_kolam'] == '25m') ? 'selected' : ''; ?>>Short Course (25m)</option>
-                                                <option value="50m" <?= ($data['tipe_kolam'] == '50m') ? 'selected' : ''; ?>>Long Course (50m)</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="grid grid-cols-2 gap-4 mb-4">
-                                        <div>
-                                            <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Gaya Renang</label>
-                                            <select name="gaya_renang" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
-                                                <option value="Bebas" <?= ($data['gaya_renang'] == 'Bebas') ? 'selected' : ''; ?>>Gaya Bebas</option>
-                                                <option value="Dada" <?= ($data['gaya_renang'] == 'Dada') ? 'selected' : ''; ?>>Gaya Dada</option>
-                                                <option value="Punggung" <?= ($data['gaya_renang'] == 'Punggung') ? 'selected' : ''; ?>>Gaya Punggung</option>
-                                                <option value="Kupu-kupu" <?= ($data['gaya_renang'] == 'Kupu-kupu') ? 'selected' : ''; ?>>Gaya Kupu-kupu</option>
-                                                <option value="Ganti" <?= ($data['gaya_renang'] == 'Ganti') ? 'selected' : ''; ?>>Gaya Ganti (IM)</option>
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Jarak (Meter)</label>
-                                            <input type="number" name="jarak" value="<?= $data['jarak']; ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-4">
-                                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Waktu Tempuh</label>
-                                        <div class="grid grid-cols-3 gap-2">
-                                            <div>
-                                                <input type="number" name="menit" value="<?= $menit_edit; ?>" min="0" max="59" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-center text-sm rounded-xl block w-full p-3" required>
-                                                <div class="text-[10px] text-gray-400 text-center mt-1">Menit</div>
-                                            </div>
-                                            <div>
-                                                <input type="number" name="detik" value="<?= $detik_edit; ?>" min="0" max="59" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-center text-sm rounded-xl block w-full p-3" required>
-                                                <div class="text-[10px] text-gray-400 text-center mt-1">Detik</div>
-                                            </div>
-                                            <div>
-                                                <input type="number" name="milidetik" value="<?= $ms_edit; ?>" min="0" max="99" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-center text-sm rounded-xl block w-full p-3" required>
-                                                <div class="text-[10px] text-gray-400 text-center mt-1">1/100 dtk</div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-6">
-                                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Catatan Pelatih</label>
-                                        <textarea name="catatan" rows="2" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3"><?= htmlspecialchars($data['catatan']); ?></textarea>
-                                    </div>
-                                    <button type="submit" name="edit" class="w-full text-white bg-algolia-blue hover:bg-algolia-darkblue font-bold rounded-xl text-sm px-5 py-3 shadow-lg">Update Rekor</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
                     <?php 
                         } 
                     } else {
@@ -180,8 +87,112 @@ include '../includes/koneksi.php';
                 </tbody>
             </table>
         </div>
+        </div>
     </div>
 </div>
+
+<?php
+if(count($performaArray) > 0) {
+    foreach($performaArray as $data) {
+?>
+<div id="modalEditPerforma<?= $data['id']; ?>" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative p-4 w-full max-w-lg max-h-full">
+        <div class="relative bg-white rounded-2xl shadow-xl border border-gray-100">
+            <div class="flex items-center justify-between p-5 border-b">
+                <h3 class="text-lg font-bold text-gray-800">Edit Waktu Performa</h3>
+                <button type="button" class="text-gray-400 bg-gray-50 hover:bg-red-50 hover:text-red-600 rounded-xl text-sm w-8 h-8 ms-auto" data-modal-toggle="modalEditPerforma<?= $data['id']; ?>">✖</button>
+            </div>
+            
+            <?php
+            $waktu_pecah = explode(':', $data['waktu_formatted']);
+            $menit_edit = (int)$waktu_pecah[0];
+            
+            $detik_ms_pecah = explode('.', $waktu_pecah[1]);
+            $detik_edit = (int)$detik_ms_pecah[0];
+            $ms_edit = (int)$detik_ms_pecah[1];
+            ?>
+
+            <form action="proses_performa.php" method="POST" class="p-6 text-left">
+                <input type="hidden" name="id" value="<?= $data['id']; ?>">
+                
+                <div class="mb-4">
+                    <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Atlet</label>
+                    <select name="member_id" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                        <?php
+                        $q_atlet_edit = mysqli_query($koneksi, "SELECT * FROM member WHERE 1=1");
+                        if($q_atlet_edit) {
+                            while($a_data = mysqli_fetch_assoc($q_atlet_edit)) {
+                                $a_id = $a_data['id'];
+                                $selected = ($a_id == $data['member_id']) ? 'selected' : '';
+                                echo "<option value='".$a_id."' $selected>".htmlspecialchars($a_data['nama'])."</option>";
+                            }
+                        }
+                        ?>
+                    </select>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Tanggal Tes</label>
+                        <input type="date" name="tanggal_rekor" value="<?= $data['tanggal_rekor']; ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Tipe Kolam</label>
+                        <select name="tipe_kolam" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                            <option value="25m" <?= ($data['tipe_kolam'] == '25m') ? 'selected' : ''; ?>>Short Course (25m)</option>
+                            <option value="50m" <?= ($data['tipe_kolam'] == '50m') ? 'selected' : ''; ?>>Long Course (50m)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Gaya Renang</label>
+                        <select name="gaya_renang" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                            <option value="Bebas" <?= ($data['gaya_renang'] == 'Bebas') ? 'selected' : ''; ?>>Gaya Bebas</option>
+                            <option value="Dada" <?= ($data['gaya_renang'] == 'Dada') ? 'selected' : ''; ?>>Gaya Dada</option>
+                            <option value="Punggung" <?= ($data['gaya_renang'] == 'Punggung') ? 'selected' : ''; ?>>Gaya Punggung</option>
+                            <option value="Kupu-kupu" <?= ($data['gaya_renang'] == 'Kupu-kupu') ? 'selected' : ''; ?>>Gaya Kupu-kupu</option>
+                            <option value="Ganti" <?= ($data['gaya_renang'] == 'Ganti') ? 'selected' : ''; ?>>Gaya Ganti (IM)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Jarak (Meter)</label>
+                        <input type="number" name="jarak" value="<?= $data['jarak']; ?>" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3" required>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Waktu Tempuh</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <div>
+                            <input type="number" name="menit" value="<?= $menit_edit; ?>" min="0" max="59" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-center text-sm rounded-xl block w-full p-3" required>
+                            <div class="text-[10px] text-gray-400 text-center mt-1">Menit</div>
+                        </div>
+                        <div>
+                            <input type="number" name="detik" value="<?= $detik_edit; ?>" min="0" max="59" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-center text-sm rounded-xl block w-full p-3" required>
+                            <div class="text-[10px] text-gray-400 text-center mt-1">Detik</div>
+                        </div>
+                        <div>
+                            <input type="number" name="milidetik" value="<?= $ms_edit; ?>" min="0" max="99" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-center text-sm rounded-xl block w-full p-3" required>
+                            <div class="text-[10px] text-gray-400 text-center mt-1">1/100 dtk</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block mb-2 text-xs font-bold text-gray-500 uppercase">Catatan Pelatih</label>
+                    <textarea name="catatan" rows="2" class="bg-gray-50 border border-[#E8E8EF] text-gray-900 text-sm rounded-xl block w-full p-3"><?= htmlspecialchars($data['catatan']); ?></textarea>
+                </div>
+                <button type="submit" name="edit" class="w-full text-white bg-algolia-blue hover:bg-algolia-darkblue font-bold rounded-xl text-sm px-5 py-3 shadow-lg">Update Rekor</button>
+            </form>
+        </div>
+    </div>
+</div>
+<?php 
+    }
+}
+?>
 
 <div id="modalTambahPerforma" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
     <div class="relative p-4 w-full max-w-lg max-h-full">

@@ -169,58 +169,73 @@ if (isset($_GET['hapus'])) {
                                     </td>
                                 </tr>
 
-                                <!-- Edit Modal (Pure Tailwind/JS wrapper) -->
-                                <div id="modalEdit<?= $row['id'] ?>" class="hidden fixed inset-0 z-50 overflow-y-auto overflow-x-hidden bg-slate-900/50 backdrop-blur-sm flex justify-center items-center px-4">
-                                    <div class="relative w-full max-w-lg bg-white rounded-2xl shadow-xl">
-                                        <div class="flex items-center justify-between p-4 border-b rounded-t">
-                                            <h3 class="text-lg font-bold text-gray-900">Edit Data Pelatih</h3>
-                                            <button onclick="document.getElementById('modalEdit<?= $row['id'] ?>').classList.add('hidden')" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 focus:outline-none flex justify-center items-center">
-                                                ✖
-                                            </button>
-                                        </div>
-                                        <div class="p-5 text-left">
-                                            <form action="" method="POST" enctype="multipart/form-data" class="space-y-4">
-                                                <input type="hidden" name="id" value="<?= $row['id']; ?>">
-                                                
-                                                <?php if ($user_role === 'admin'): ?>
-                                                <div>
-                                                    <label class="block text-sm font-semibold text-gray-700 mb-1">Cabang / Pool</label>
-                                                    <select name="cabang" required class="w-full border border-[#E8E8EF] rounded-lg p-2">
-                                                        <option value="Pusat" <?= $row['cabang'] == 'Pusat' ? 'selected' : '' ?>>Pusat</option>
-                                                        <option value="Cabang Utara" <?= $row['cabang'] == 'Cabang Utara' ? 'selected' : '' ?>>Cabang Utara</option>
-                                                        <option value="Cabang Selatan" <?= $row['cabang'] == 'Cabang Selatan' ? 'selected' : '' ?>>Cabang Selatan</option>
-                                                    </select>
-                                                </div>
-                                                <?php else: ?>
-                                                <input type="hidden" name="cabang" value="<?= $row['cabang']; ?>">
-                                                <?php endif; ?>
-                                                
-                                                <div>
-                                                    <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Lengkap</label>
-                                                    <input type="text" name="nama" value="<?= $row['nama']; ?>" required class="w-full border border-[#E8E8EF] rounded-lg p-2">
-                                                </div>
-                                                <div>
-                                                    <label class="block text-sm font-semibold text-gray-700 mb-1">Jabatan / Posisi</label>
-                                                    <input type="text" name="jabatan" value="<?= $row['jabatan']; ?>" required class="w-full border border-[#E8E8EF] rounded-lg p-2">
-                                                </div>
-                                                <div>
-                                                    <label class="block text-sm font-semibold text-gray-700 mb-1">Ganti Foto <span class="text-xs font-normal text-slate-400">(Biarkan kosong jika tidak diganti)</span></label>
-                                                    <input type="file" name="foto" accept=".jpg,.jpeg,.png,.webp" class="w-full border border-[#E8E8EF] rounded-lg p-2 file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
-                                                </div>
-                                                <div>
-                                                    <label class="block text-sm font-semibold text-gray-700 mb-1">Sertifikasi</label>
-                                                    <textarea name="sertifikasi" rows="4" required class="w-full border border-[#E8E8EF] rounded-lg p-2"><?= htmlspecialchars($row['sertifikasi']); ?></textarea>
-                                                </div>
-                                                
-                                                <div class="pt-3 flex justify-end gap-3">
-                                                    <button type="button" onclick="document.getElementById('modalEdit<?= $row['id'] ?>').classList.add('hidden')" class="bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors">Batal</button>
-                                                    <button type="submit" name="edit" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 shadow transition-colors">Simpan Perubahan</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
                                 <?php endwhile; ?>
+                            </tbody>
+                        </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <?php
+    $query = mysqli_query($koneksi, $q_str);
+    while ($row = mysqli_fetch_assoc($query)) :
+    ?>
+    <!-- Edit Modal (Pure Tailwind/JS wrapper) -->
+    <div id="modalEdit<?= $row['id'] ?>" class="hidden fixed inset-0 z-50 overflow-y-auto overflow-x-hidden bg-slate-900/50 backdrop-blur-sm flex justify-center items-center px-4">
+        <div class="relative w-full max-w-lg bg-white rounded-2xl shadow-xl">
+            <div class="flex items-center justify-between p-4 border-b rounded-t">
+                <h3 class="text-lg font-bold text-gray-900">Edit Data Pelatih</h3>
+                <button onclick="document.getElementById('modalEdit<?= $row['id'] ?>').classList.add('hidden')" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 focus:outline-none flex justify-center items-center">
+                    ✖
+                </button>
+            </div>
+            <div class="p-5 text-left">
+                <form action="" method="POST" enctype="multipart/form-data" class="space-y-4">
+                    <input type="hidden" name="id" value="<?= $row['id']; ?>">
+                    
+                    <?php if ($user_role === 'admin'): ?>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Cabang / Pool</label>
+                        <select name="cabang" required class="w-full border border-[#E8E8EF] rounded-lg p-2">
+                            <option value="Pusat" <?= $row['cabang'] == 'Pusat' ? 'selected' : '' ?>>Pusat</option>
+                            <option value="Cabang Utara" <?= $row['cabang'] == 'Cabang Utara' ? 'selected' : '' ?>>Cabang Utara</option>
+                            <option value="Cabang Selatan" <?= $row['cabang'] == 'Cabang Selatan' ? 'selected' : '' ?>>Cabang Selatan</option>
+                        </select>
+                    </div>
+                    <?php else: ?>
+                    <input type="hidden" name="cabang" value="<?= $row['cabang']; ?>">
+                    <?php endif; ?>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Lengkap</label>
+                        <input type="text" name="nama" value="<?= $row['nama']; ?>" required class="w-full border border-[#E8E8EF] rounded-lg p-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Jabatan / Posisi</label>
+                        <input type="text" name="jabatan" value="<?= $row['jabatan']; ?>" required class="w-full border border-[#E8E8EF] rounded-lg p-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Ganti Foto <span class="text-xs font-normal text-slate-400">(Biarkan kosong jika tidak diganti)</span></label>
+                        <input type="file" name="foto" accept=".jpg,.jpeg,.png,.webp" class="w-full border border-[#E8E8EF] rounded-lg p-2 file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Sertifikasi</label>
+                        <textarea name="sertifikasi" rows="4" required class="w-full border border-[#E8E8EF] rounded-lg p-2"><?= htmlspecialchars($row['sertifikasi']); ?></textarea>
+                    </div>
+                    
+                    <div class="pt-3 flex justify-end gap-3">
+                        <button type="button" onclick="document.getElementById('modalEdit<?= $row['id'] ?>').classList.add('hidden')" class="bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors">Batal</button>
+                        <button type="submit" name="edit" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 shadow transition-colors">Simpan Perubahan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <?php endwhile; ?>
                             </tbody>
                         </table>
                         </div>
