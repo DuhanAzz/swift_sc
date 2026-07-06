@@ -232,7 +232,7 @@ include '../includes/koneksi.php';
                                         </div>
                                     </div>
                                     
-                                    <div class="flex justify-end border-t border-gray-100 pt-5 mt-4">
+                                    <div class="flex justify-end border-t border-gray-100 pt-5 mt-2">
                                         <button type="submit" name="edit" class="text-white bg-teal-600 hover:bg-teal-700 font-bold rounded-xl text-sm px-8 py-3.5 shadow-md hover:shadow-lg transition-all focus:ring-4 focus:ring-teal-200">Simpan Perubahan</button>
                                     </div>
                                 </form>
@@ -319,7 +319,7 @@ include '../includes/koneksi.php';
                     </div>
                 </div>
                 
-                <div class="flex justify-end border-t border-gray-100 pt-5 mt-4">
+                <div class="flex justify-end border-t border-gray-100 pt-5 mt-2">
                     <button type="submit" name="tambah" class="text-white bg-teal-600 hover:bg-teal-700 font-bold rounded-xl text-sm px-8 py-3.5 shadow-md hover:shadow-lg transition-all focus:ring-4 focus:ring-teal-200">Simpan Data Atlet</button>
                 </div>
             </form>
