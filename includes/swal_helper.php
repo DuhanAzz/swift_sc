@@ -20,8 +20,11 @@
                     text: message,
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonColor: '#2563eb', // Blue-600
-                    cancelButtonColor: '#dc2626',  // Red-600
+                    customClass: {
+                        confirmButton: 'bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-300 mr-2 transition-all',
+                        cancelButton: 'bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-4 focus:ring-red-300 transition-all'
+                    },
+                    buttonsStyling: false,
                     confirmButtonText: 'Ya, Lanjutkan!',
                     cancelButtonText: 'Batal'
                 }).then((result) => {
@@ -131,7 +134,10 @@ if (isset($_GET['pesan'])) {
                     icon: '{$icon}',
                     title: '{$title}',
                     text: '{$text}',
-                    confirmButtonColor: '#2563eb'
+                    customClass: {
+                        confirmButton: 'bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all'
+                    },
+                    buttonsStyling: false
                 }).then(() => {
                     // Clean URL parameters
                     const url = new URL(window.location);
