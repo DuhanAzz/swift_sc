@@ -163,9 +163,15 @@ if (isset($_GET['hapus'])) {
                                     <td class="p-4 text-sm text-orange-600 font-bold"><?= $row['cabang'] ?? 'Pusat'; ?></td>
                                     <td class="p-4 text-sm text-blue-600 font-semibold"><?= $row['jabatan']; ?></td>
                                     <td class="p-4 text-xs text-slate-500 whitespace-pre-wrap"><?= $row['sertifikasi']; ?></td>
-                                    <td class="p-4 text-center space-y-2 whitespace-nowrap">
-                                        <button onclick="document.getElementById('modalEdit<?= $row['id'] ?>').classList.remove('hidden')" class="bg-blue-100 text-blue-600 px-3 py-1 rounded-md text-xs font-bold hover:bg-blue-200 hover:shadow transition-all duration-200 block w-full">Edit</button>
-                                        <a href="manage_pelatih.php?hapus=<?= $row['id']; ?>" onclick="return confirm('Yakin ingin menghapus pelatih ini?')" class="bg-red-100 text-red-600 px-3 py-1 rounded-md text-xs font-bold hover:bg-red-200 hover:shadow transition-all duration-200 block w-full text-center">Hapus</a>
+                                    <td class="p-4 text-center">
+                                        <div class="flex items-center justify-center gap-2">
+                                            <button onclick="document.getElementById('modalEdit_<?= $row['id'] ?>').classList.remove('hidden')" class="p-2 bg-yellow-50 text-yellow-600 hover:bg-yellow-500 hover:text-white rounded-lg transition-colors shadow-sm" title="Edit Pelatih">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                            </button>
+                                            <a href="manage_pelatih.php?hapus=<?= $row['id']; ?>" onclick="return confirm('Yakin ingin menghapus?');" class="p-2 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white rounded-lg transition-colors shadow-sm flex items-center justify-center" title="Hapus Pelatih">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
 
@@ -185,11 +191,11 @@ if (isset($_GET['hapus'])) {
     while ($row = mysqli_fetch_assoc($query)) :
     ?>
     <!-- Edit Modal (Pure Tailwind/JS wrapper) -->
-    <div id="modalEdit<?= $row['id'] ?>" class="hidden fixed inset-0 z-50 overflow-y-auto overflow-x-hidden bg-slate-900/50 backdrop-blur-sm flex justify-center items-center px-4">
+    <div id="modalEdit_<?= $row['id'] ?>" class="hidden fixed inset-0 z-50 overflow-y-auto overflow-x-hidden bg-slate-900/50 backdrop-blur-sm flex justify-center items-center px-4">
         <div class="relative w-full max-w-lg bg-white rounded-2xl shadow-xl">
             <div class="flex items-center justify-between p-4 border-b rounded-t">
                 <h3 class="text-lg font-bold text-gray-900">Edit Data Pelatih</h3>
-                <button onclick="document.getElementById('modalEdit<?= $row['id'] ?>').classList.add('hidden')" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 focus:outline-none flex justify-center items-center">
+                <button onclick="document.getElementById('modalEdit_<?= $row['id'] ?>').classList.add('hidden')" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 focus:outline-none flex justify-center items-center">
                     ✖
                 </button>
             </div>
@@ -228,7 +234,7 @@ if (isset($_GET['hapus'])) {
                     </div>
                     
                     <div class="pt-3 flex justify-end gap-3">
-                        <button type="button" onclick="document.getElementById('modalEdit<?= $row['id'] ?>').classList.add('hidden')" class="bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors">Batal</button>
+                        <button type="button" onclick="document.getElementById('modalEdit_<?= $row['id'] ?>').classList.add('hidden')" class="bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors">Batal</button>
                         <button type="submit" name="edit" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 shadow transition-colors">Simpan Perubahan</button>
                     </div>
                 </form>
