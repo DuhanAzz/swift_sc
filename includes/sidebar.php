@@ -93,6 +93,10 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                 Profil Cabang
             </a>
+            <a href="../admin/manage_berita.php" class="sidebar-link <?= ($current_page == 'manage_berita.php') ? 'active' : '' ?>">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
+                Manajemen Berita
+            </a>
             
             <div class="sidebar-section-title">Aktivitas</div>
             <a href="../admin/performa.php" class="sidebar-link <?= ($current_page == 'performa.php') ? 'active' : '' ?>">

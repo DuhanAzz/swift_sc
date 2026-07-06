@@ -104,6 +104,13 @@ include '../includes/koneksi.php';
                     <option value="Privat">Privat</option>
                 </select>
             </div>
+            <div class="w-full md:w-64">
+                <select id="filterStatus" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 shadow-sm">
+                    <option value="">Semua Status</option>
+                    <option value="aktif">Aktif</option>
+                    <option value="mangkir">Suspend</option>
+                </select>
+            </div>
         </div>
 
         <div class="card overflow-hidden">
@@ -116,6 +123,7 @@ include '../includes/koneksi.php';
                         <th class="px-6 py-4">Gender</th>
                         <th class="px-6 py-4">No. HP</th>
                         <th class="px-6 py-4">Cabang Latihan</th>
+                        <th class="px-6 py-4">Status</th>
                         <th class="px-6 py-4 text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -123,7 +131,16 @@ include '../includes/koneksi.php';
                     <?php
                     $no = 1;
                     $atletArray = [];
-                    $q_atlet = mysqli_query($koneksi, "SELECT m.*, c.nama_cabang as nama_kolam, p.nama as nama_pelatih FROM member m LEFT JOIN cabang c ON m.cabang_id = c.id LEFT JOIN pelatih p ON m.pelatih_id = p.id WHERE 1=1 AND m.cabang_id = '$admin_pool_id' ORDER BY m.nama ASC");
+                    $q_atlet = mysqli_query($koneksi, "
+                        SELECT m.*, c.nama_cabang as nama_kolam, p.nama as nama_pelatih,
+                        (SELECT MAX(tanggal) FROM absensi WHERE member_id = m.id AND status = 'Hadir') as last_hadir,
+                        (SELECT COUNT(id) FROM absensi WHERE member_id = m.id AND status_bayar = 'Unpaid' AND tanggal < DATE_SUB(CURDATE(), INTERVAL 60 DAY)) as unpaid_old_count
+                        FROM member m 
+                        LEFT JOIN cabang c ON m.cabang_id = c.id 
+                        LEFT JOIN pelatih p ON m.pelatih_id = p.id 
+                        WHERE 1=1 AND m.cabang_id = '$admin_pool_id' 
+                        ORDER BY m.nama ASC
+                    ");
                     if($q_atlet) {
                         while($row = mysqli_fetch_assoc($q_atlet)) {
                             $atletArray[] = $row;
@@ -133,8 +150,23 @@ include '../includes/koneksi.php';
                     // Cek apakah ada datanya
                     if(count($atletArray) > 0) {
                         foreach($atletArray as $data) {
+                            $is_mangkir = false;
+                            
+                            if ($data['unpaid_old_count'] > 0) {
+                                $is_mangkir = true;
+                            } else {
+                                if ($data['last_hadir']) {
+                                    $days_since_last = (time() - strtotime($data['last_hadir'])) / (60*60*24);
+                                    if ($days_since_last > 60) $is_mangkir = true;
+                                } else {
+                                    $days_since_gabung = (time() - strtotime($data['tanggal_gabung'])) / (60*60*24);
+                                    if ($days_since_gabung > 60) $is_mangkir = true;
+                                }
+                            }
+                            
+                            $status_class = $is_mangkir ? 'mangkir' : 'aktif';
                     ?>
-                    <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors atlet-row">
+                    <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors atlet-row" data-status="<?= $status_class ?>">
                         <td class="px-6 py-4 font-medium text-gray-900"><?= $no++; ?></td>
                         <td class="px-6 py-4 font-bold text-gray-800 atlet-nama"><?= htmlspecialchars($data['nama']); ?></td>
                         <td class="px-6 py-4">
@@ -153,8 +185,24 @@ include '../includes/koneksi.php';
                         <td class="px-6 py-4"><?= htmlspecialchars($data['jenis_kelamin']); ?></td>
                         <td class="px-6 py-4"><?= htmlspecialchars($data['no_hp']); ?></td>
                         <td class="px-6 py-4 font-semibold text-algolia-blue"><?= htmlspecialchars($data['nama_kolam']); ?></td>
+                        <td class="px-6 py-4">
+                            <?php if($is_mangkir): ?>
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-bold bg-red-100 text-red-800">
+                                    Mangkir / Suspend
+                                </span>
+                            <?php else: ?>
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-bold bg-green-100 text-green-800">
+                                    Aktif
+                                </span>
+                            <?php endif; ?>
+                        </td>
                         <td class="px-6 py-4 text-center">
                             <div class="flex items-center justify-center gap-2">
+                                <?php if($is_mangkir): ?>
+                                <a href="proses_atlet.php?action=reaktivasi&id=<?= $data['id']; ?>" onclick="return confirm('Atlet ini telah tidak aktif atau menunggak > 2 bulan. Re-aktivasi akan mengaktifkan kembali statusnya dan mewajibkan pembayaran ulang Biaya Pendaftaran + Iuran Bulanan!');" class="p-2 bg-orange-50 text-orange-600 hover:bg-orange-500 hover:text-white rounded-lg transition-colors shadow-sm" title="Re-Aktivasi Atlet">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                </a>
+                                <?php endif; ?>
                                 <button data-modal-target="modalEdit_<?= $data['id']; ?>" data-modal-toggle="modalEdit_<?= $data['id']; ?>" class="p-2 bg-yellow-50 text-yellow-600 hover:bg-yellow-500 hover:text-white rounded-lg transition-colors shadow-sm" title="Edit Atlet">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                                 </button>
@@ -366,20 +414,24 @@ if(count($atletArray) > 0) {
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('searchInput');
     const filterKelas = document.getElementById('filterKelas');
+    const filterStatus = document.getElementById('filterStatus');
     const tableRows = document.querySelectorAll('tbody tr.atlet-row');
 
     function filterTable() {
         const searchTerm = searchInput.value.toLowerCase();
         const kelasValue = filterKelas.value.toLowerCase();
+        const statusValue = filterStatus ? filterStatus.value.toLowerCase() : '';
 
         tableRows.forEach(row => {
             const nama = row.querySelector('.atlet-nama').textContent.toLowerCase();
             const kelas = row.querySelector('.atlet-kelas').textContent.toLowerCase();
+            const rowStatus = row.getAttribute('data-status');
             
             const matchSearch = nama.includes(searchTerm);
             const matchKelas = kelasValue === '' || kelas.includes(kelasValue);
+            const matchStatus = statusValue === '' || rowStatus === statusValue;
 
-            if (matchSearch && matchKelas) {
+            if (matchSearch && matchKelas && matchStatus) {
                 row.style.display = '';
             } else {
                 row.style.display = 'none';
@@ -389,6 +441,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (searchInput) searchInput.addEventListener('input', filterTable);
     if (filterKelas) filterKelas.addEventListener('change', filterTable);
+    if (filterStatus) filterStatus.addEventListener('change', filterTable);
 });
 </script>
 

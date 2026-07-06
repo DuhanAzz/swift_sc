@@ -61,4 +61,21 @@ if (isset($_POST['edit'])) {
         echo "Gagal update data: " . mysqli_error($koneksi);
     }
 }
+
+// PROSES RE-AKTIVASI
+if (isset($_GET['action']) && $_GET['action'] == 'reaktivasi' && isset($_GET['id'])) {
+    $id = mysqli_real_escape_string($koneksi, $_GET['id']);
+    
+    // 1. Kembalikan status member menjadi Aktif dan Unpaid agar memicu tagihan pendaftaran baru
+    $q1 = mysqli_query($koneksi, "UPDATE member SET status_aktif='Aktif', payment_status='Unpaid' WHERE id='$id'");
+    
+    // 2. Kosongkan semua tunggakan sesi (absensi) lama agar tidak menumpuk dengan tagihan baru
+    $q2 = mysqli_query($koneksi, "UPDATE absensi SET status_bayar='Paid' WHERE member_id='$id' AND status_bayar='Unpaid'");
+    
+    if ($q1 && $q2) {
+        header("location:atlet.php?pesan=sukses_reaktivasi");
+    } else {
+        echo "Gagal reaktivasi: " . mysqli_error($koneksi);
+    }
+}
 ?>

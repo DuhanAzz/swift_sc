@@ -79,6 +79,9 @@ if (isset($_GET['pesan'])) {
             $title = 'Pembayaran Diterima';
             $text = 'Tagihan telah berhasil ditandai Lunas.';
             $toast = true;
+        } elseif ($pesan == 'sukses_reaktivasi') {
+            $title = 'Re-Aktivasi Berhasil';
+            $text = 'Atlet telah diaktifkan kembali. Silakan lakukan pembayaran pendaftaran.';
         } else {
             $title = 'Sukses';
             $text = 'Operasi berhasil dilakukan.';
