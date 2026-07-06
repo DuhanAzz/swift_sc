@@ -3,7 +3,7 @@ session_start();
 if (isset($_SESSION['status']) && $_SESSION['status'] == "sudah_login") {
     $role = $_SESSION['role'] ?? '';
     if ($role == 'ceo') header("location:ceo/ceo_dashboard.php");
-    elseif ($role == 'admin') header("location:admin/admin_dashboard.php");
+    elseif ($role == 'admin') header("location:admin/dashboard.php");
     elseif ($role == 'pelatih' || $role == 'coach') header("location:pelatih/pelatih_dashboard.php");
     else header("location:admin/dashboard.php");
     exit;
