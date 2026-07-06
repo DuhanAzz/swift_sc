@@ -377,6 +377,7 @@ if (isset($_GET['invoice_id'])) {
         </div>
     </div>
 </div>
+<?php endif; ?>
 
 <!-- ===== APPROVE MODAL ===== -->
 <div id="approveModal" class="fixed inset-0 bg-black/50 z-[999] hidden items-center justify-center p-4">
@@ -465,7 +466,5 @@ function copyInvoice() {
     });
 }
 </script>
-<?php endif; ?>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
 <?php include '../includes/footer.php'; ?>
