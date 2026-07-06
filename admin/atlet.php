@@ -252,6 +252,14 @@ if(count($atletArray) > 0) {
                             <?php endforeach; ?>
                         </select>
                     </div>
+                    <div>
+                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Biaya Pendaftaran</label>
+                        <input type="number" name="biaya_pendaftaran" value="<?= htmlspecialchars($data['biaya_pendaftaran'] ?? 100000); ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all">
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Iuran Bulanan</label>
+                        <input type="number" name="biaya_bulanan" value="<?= htmlspecialchars($data['biaya_bulanan'] ?? 350000); ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all">
+                    </div>
                 </div>
                 
                 <div class="flex justify-end border-t border-gray-100 pt-5 mt-2">
@@ -334,6 +342,14 @@ if(count($atletArray) > 0) {
                                 <option value="<?= $pel['id'] ?>"><?= htmlspecialchars($pel['nama']) ?></option>
                             <?php endforeach; ?>
                         </select>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Biaya Pendaftaran</label>
+                        <input type="number" name="biaya_pendaftaran" value="100000" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all">
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Iuran Bulanan</label>
+                        <input type="number" name="biaya_bulanan" value="350000" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all">
                     </div>
                 </div>
                 

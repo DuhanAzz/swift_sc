@@ -26,7 +26,10 @@ if (isset($_POST['tambah'])) {
     }
     $nia = 'SWF-' . $tahun . '-' . str_pad($next_id, 4, '0', STR_PAD_LEFT);
 
-    $q = mysqli_query($koneksi, "INSERT INTO member (nia, nama, jenis_kelamin, no_hp, tanggal_lahir, cabang_id, tanggal_gabung, tingkatan_kelas, pelatih_id, sekolah) VALUES ('$nia', '$nama', '$jenis_kelamin', '$no_hp', '$tanggal_lahir', '$id_kolam', '$tanggal_gabung', '$tingkatan_kelas', $pelatih_id, '$sekolah')");
+    $biaya_pendaftaran = isset($_POST['biaya_pendaftaran']) ? (int)$_POST['biaya_pendaftaran'] : 100000;
+    $biaya_bulanan = isset($_POST['biaya_bulanan']) ? (int)$_POST['biaya_bulanan'] : 350000;
+
+    $q = mysqli_query($koneksi, "INSERT INTO member (nia, nama, jenis_kelamin, no_hp, tanggal_lahir, cabang_id, tanggal_gabung, tingkatan_kelas, pelatih_id, sekolah, biaya_pendaftaran, biaya_bulanan) VALUES ('$nia', '$nama', '$jenis_kelamin', '$no_hp', '$tanggal_lahir', '$id_kolam', '$tanggal_gabung', '$tingkatan_kelas', $pelatih_id, '$sekolah', $biaya_pendaftaran, $biaya_bulanan)");
     if($q) {
         header("location:atlet.php?pesan=sukses_tambah");
     } else {
@@ -48,7 +51,10 @@ if (isset($_POST['edit'])) {
     $pelatih_id = !empty($_POST['pelatih_id']) ? "'" . mysqli_real_escape_string($koneksi, $_POST['pelatih_id']) . "'" : "NULL";
     $sekolah = isset($_POST['sekolah']) ? mysqli_real_escape_string($koneksi, $_POST['sekolah']) : '';
 
-    $q = mysqli_query($koneksi, "UPDATE member SET nama='$nama', jenis_kelamin='$jenis_kelamin', no_hp='$no_hp', cabang_id='$id_kolam', tingkatan_kelas='$tingkatan_kelas', pelatih_id=$pelatih_id, sekolah='$sekolah' WHERE id='$id' ");
+    $biaya_pendaftaran = isset($_POST['biaya_pendaftaran']) ? (int)$_POST['biaya_pendaftaran'] : 100000;
+    $biaya_bulanan = isset($_POST['biaya_bulanan']) ? (int)$_POST['biaya_bulanan'] : 350000;
+
+    $q = mysqli_query($koneksi, "UPDATE member SET nama='$nama', jenis_kelamin='$jenis_kelamin', no_hp='$no_hp', cabang_id='$id_kolam', tingkatan_kelas='$tingkatan_kelas', pelatih_id=$pelatih_id, sekolah='$sekolah', biaya_pendaftaran=$biaya_pendaftaran, biaya_bulanan=$biaya_bulanan WHERE id='$id' ");
     if($q) {
         header("location:atlet.php?pesan=sukses_edit");
     } else {

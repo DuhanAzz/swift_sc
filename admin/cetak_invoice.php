@@ -28,6 +28,11 @@ $data = mysqli_fetch_assoc($result);
 // Generate Metadata
 $invoice_number = "INV-" . str_pad($data['id'], 4, '0', STR_PAD_LEFT) . "-" . date('Y', strtotime($data['tanggal_gabung'] ?? date('Y-m-d')));
 $invoice_date = date('d M Y', strtotime($data['tanggal_gabung'] ?? date('Y-m-d')));
+
+// Calculate Billing
+$biaya_pendaftaran = isset($data['biaya_pendaftaran']) ? (int)$data['biaya_pendaftaran'] : 100000;
+$biaya_bulanan = isset($data['biaya_bulanan']) ? (int)$data['biaya_bulanan'] : 350000;
+$total_dibayar = $biaya_pendaftaran + $biaya_bulanan;
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -58,15 +63,18 @@ $invoice_date = date('d M Y', strtotime($data['tanggal_gabung'] ?? date('Y-m-d')
 <body>
 
     <!-- Floating Print Button (optional for user) -->
-    <div class="fixed bottom-6 right-6 no-print z-50">
-        <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-5 rounded-full shadow-lg flex items-center gap-2 transition-all text-sm">
+    <div class="fixed bottom-6 right-6 no-print z-50 flex gap-2">
+        <button onclick="window.print()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 px-4 rounded-full shadow-lg flex items-center gap-2 transition-all text-sm border border-gray-300">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-            Print E-Receipt
+        </button>
+        <button onclick="downloadReceipt()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-5 rounded-full shadow-lg flex items-center gap-2 transition-all text-sm">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            Download PNG (Bisa di-Share ke WA)
         </button>
     </div>
 
     <!-- E-Receipt Card Container -->
-    <div class="w-[430px] mx-auto bg-white p-6 rounded-2xl shadow-lg border border-gray-100 my-4 text-gray-800 relative overflow-hidden">
+    <div id="receiptCard" class="w-[430px] mx-auto bg-white p-6 rounded-2xl shadow-lg border border-gray-100 my-4 text-gray-800 relative overflow-hidden">
         
         <!-- Decoration Element -->
         <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full -z-0"></div>
@@ -123,13 +131,13 @@ $invoice_date = date('d M Y', strtotime($data['tanggal_gabung'] ?? date('Y-m-d')
                     <div>
                         <p class="font-bold text-gray-800">Biaya Pendaftaran</p>
                     </div>
-                    <p class="font-medium text-gray-700">Rp 100.000</p>
+                    <p class="font-medium text-gray-700">Rp <?= number_format($biaya_pendaftaran, 0, ',', '.') ?></p>
                 </div>
                 <div class="flex justify-between items-center text-sm border-b border-gray-100 pb-3">
                     <div>
                         <p class="font-bold text-gray-800">Iuran Bulan Pertama</p>
                     </div>
-                    <p class="font-medium text-gray-700">Rp 350.000</p>
+                    <p class="font-medium text-gray-700">Rp <?= number_format($biaya_bulanan, 0, ',', '.') ?></p>
                 </div>
             </div>
 
@@ -143,11 +151,36 @@ $invoice_date = date('d M Y', strtotime($data['tanggal_gabung'] ?? date('Y-m-d')
                         <span class="inline-block border-2 border-red-500 text-red-600 bg-red-50 text-[10px] font-black px-3 py-1 rounded-md uppercase tracking-widest shadow-sm">UNPAID</span>
                     <?php endif; ?>
                 </div>
-                <p class="text-2xl font-black text-blue-600 tracking-tight">Rp 450.000</p>
+                <p class="text-2xl font-black text-blue-600 tracking-tight">Rp <?= number_format($total_dibayar, 0, ',', '.') ?></p>
             </div>
         </div>
         
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        function downloadReceipt() {
+            const receipt = document.getElementById('receiptCard');
+            
+            // Temporarily adjust styling for clean export
+            receipt.classList.remove('shadow-lg', 'border', 'border-gray-100', 'my-4');
+            receipt.style.borderRadius = '0px';
+
+            html2canvas(receipt, {
+                scale: 3, // Higher resolution for crisp whatsapp images
+                backgroundColor: '#ffffff',
+                useCORS: true // In case there are external images
+            }).then(canvas => {
+                // Restore original styling
+                receipt.classList.add('shadow-lg', 'border', 'border-gray-100', 'my-4');
+                receipt.style.borderRadius = '1rem';
+                
+                const link = document.createElement('a');
+                link.download = 'E-Receipt_<?= htmlspecialchars(str_replace(' ', '_', $data['nama'])) ?>.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+    </script>
 </body>
 </html>

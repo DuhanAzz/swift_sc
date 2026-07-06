@@ -37,10 +37,12 @@ if (isset($_POST['approve'])) {
             // Tangkap data tambahan (Kelas & Pelatih)
             $tingkatan_kelas = isset($_POST['tingkatan_kelas']) ? mysqli_real_escape_string($koneksi, $_POST['tingkatan_kelas']) : 'Pemula';
             $pelatih_id = !empty($_POST['pelatih_id']) ? "'" . mysqli_real_escape_string($koneksi, $_POST['pelatih_id']) . "'" : "NULL";
+            $biaya_pendaftaran = isset($_POST['biaya_pendaftaran']) ? (int)$_POST['biaya_pendaftaran'] : 100000;
+            $biaya_bulanan = isset($_POST['biaya_bulanan']) ? (int)$_POST['biaya_bulanan'] : 350000;
             
             // 3. Masukkan ke tabel member
-            $query_insert = "INSERT INTO member (calon_member_id, nia, nama, jenis_kelamin, no_hp, sekolah, tanggal_lahir, cabang_id, tanggal_gabung, payment_status, status_aktif, tingkatan_kelas, pelatih_id) 
-                             VALUES ('$calon_member_id', '$nia', '$nama', '$jenis_kelamin', '$no_hp', '$sekolah', '$tanggal_lahir', '$cabang_id', '$tanggal_gabung', 'Unpaid', 'Aktif', '$tingkatan_kelas', $pelatih_id)";
+            $query_insert = "INSERT INTO member (calon_member_id, nia, nama, jenis_kelamin, no_hp, sekolah, tanggal_lahir, cabang_id, tanggal_gabung, payment_status, status_aktif, tingkatan_kelas, pelatih_id, biaya_pendaftaran, biaya_bulanan) 
+                             VALUES ('$calon_member_id', '$nia', '$nama', '$jenis_kelamin', '$no_hp', '$sekolah', '$tanggal_lahir', '$cabang_id', '$tanggal_gabung', 'Unpaid', 'Aktif', '$tingkatan_kelas', $pelatih_id, $biaya_pendaftaran, $biaya_bulanan)";
             
             if (mysqli_query($koneksi, $query_insert)) {
                 // 4. Update status_approval di calon_member

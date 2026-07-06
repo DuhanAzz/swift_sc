@@ -355,6 +355,26 @@ if (isset($_GET['invoice_id'])) {
                         <?php endforeach; ?>
                     </select>
                 </div>
+                <div class="grid grid-cols-2 gap-4 pt-2 border-t border-gray-100">
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Biaya Pendaftaran</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="text-gray-500 sm:text-sm">Rp</span>
+                            </div>
+                            <input type="number" name="biaya_pendaftaran" value="100000" class="w-full border border-gray-300 rounded pl-9 p-2 text-sm focus:ring-blue-500 focus:border-blue-500 bg-white" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Iuran Bulan 1</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="text-gray-500 sm:text-sm">Rp</span>
+                            </div>
+                            <input type="number" name="biaya_bulanan" value="350000" class="w-full border border-gray-300 rounded pl-9 p-2 text-sm focus:ring-blue-500 focus:border-blue-500 bg-white" required>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end gap-2">
                 <button type="button" onclick="closeApproveModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded font-bold text-xs uppercase">Batal</button>
