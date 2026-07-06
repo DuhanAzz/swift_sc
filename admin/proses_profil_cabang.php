@@ -32,15 +32,19 @@ if (isset($_POST['update_profil'])) {
     
     // Cek apakah ada file foto baru yang diupload
     if(isset($_FILES['foto']) && $_FILES['foto']['error'] == 0){
-        $ext = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
-        $foto_baru = 'cabang_' . time() . '.' . $ext;
-        
-        if (move_uploaded_file($_FILES['foto']['tmp_name'], $upload_dir . $foto_baru)) {
-            $foto_update = $foto_baru;
-            // Hapus foto lama jika ada
-            if (!empty($foto_lama) && file_exists($upload_dir . $foto_lama)) {
-                unlink($upload_dir . $foto_lama);
+        if (validasi_gambar($_FILES['foto'])) {
+            $ext = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
+            $foto_baru = 'cabang_' . time() . '.' . $ext;
+            
+            if (move_uploaded_file($_FILES['foto']['tmp_name'], $upload_dir . $foto_baru)) {
+                $foto_update = $foto_baru;
+                // Hapus foto lama jika ada
+                if (!empty($foto_lama) && file_exists($upload_dir . $foto_lama)) {
+                    unlink($upload_dir . $foto_lama);
+                }
             }
+        } else {
+            exit("File tidak valid atau terlalu besar (Maks 2MB).");
         }
     }
     

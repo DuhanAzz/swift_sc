@@ -31,8 +31,9 @@ function bersihkan_input($data) {
 }
 
 // Fungsi untuk mengamankan upload file (Mencegah Eksekusi Kode Jarak Jauh / RCE)
-function validasi_gambar($file_arr) {
+function validasi_gambar($file_arr, $max_size = 2000000) {
     if(!isset($file_arr['tmp_name']) || empty($file_arr['tmp_name']) || $file_arr['error'] != 0) return false;
+    if ($file_arr['size'] > $max_size) return false;
     
     // Cek Ekstensi File
     $allowed_exts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];

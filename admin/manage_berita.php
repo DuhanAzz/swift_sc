@@ -19,13 +19,17 @@ if (isset($_POST['tambah'])) {
     
     $gambar = 'default_news.jpg';
     if (isset($_FILES['gambar']) && $_FILES['gambar']['error'] === 0) {
-        $allowed = ['jpg', 'jpeg', 'png'];
-        $ext = strtolower(pathinfo($_FILES['gambar']['name'], PATHINFO_EXTENSION));
-        if (in_array($ext, $allowed)) {
-            $gambar_name = uniqid('news_') . '.' . $ext;
-            if (move_uploaded_file($_FILES['gambar']['tmp_name'], 'uploads/' . $gambar_name)) {
-                $gambar = 'uploads/' . $gambar_name;
+        if (validasi_gambar($_FILES['gambar'])) {
+            $allowed = ['jpg', 'jpeg', 'png'];
+            $ext = strtolower(pathinfo($_FILES['gambar']['name'], PATHINFO_EXTENSION));
+            if (in_array($ext, $allowed)) {
+                $gambar_name = uniqid('news_') . '.' . $ext;
+                if (move_uploaded_file($_FILES['gambar']['tmp_name'], 'uploads/' . $gambar_name)) {
+                    $gambar = 'uploads/' . $gambar_name;
+                }
             }
+        } else {
+            exit("File tidak valid atau terlalu besar (Maks 2MB).");
         }
     }
     
@@ -46,14 +50,18 @@ if (isset($_POST['edit'])) {
     $query_update = "UPDATE berita SET kategori='$kategori', judul='$judul', isi='$isi', tanggal='$tanggal' WHERE id='$id' AND cabang='$user_cabang'";
     
     if (isset($_FILES['gambar']) && $_FILES['gambar']['error'] === 0) {
-        $allowed = ['jpg', 'jpeg', 'png'];
-        $ext = strtolower(pathinfo($_FILES['gambar']['name'], PATHINFO_EXTENSION));
-        if (in_array($ext, $allowed)) {
-            $gambar_name = uniqid('news_') . '.' . $ext;
-            if (move_uploaded_file($_FILES['gambar']['tmp_name'], 'uploads/' . $gambar_name)) {
-                $gambar = 'uploads/' . $gambar_name;
-                $query_update = "UPDATE berita SET kategori='$kategori', judul='$judul', isi='$isi', tanggal='$tanggal', gambar='$gambar' WHERE id='$id' AND cabang='$user_cabang'";
+        if (validasi_gambar($_FILES['gambar'])) {
+            $allowed = ['jpg', 'jpeg', 'png'];
+            $ext = strtolower(pathinfo($_FILES['gambar']['name'], PATHINFO_EXTENSION));
+            if (in_array($ext, $allowed)) {
+                $gambar_name = uniqid('news_') . '.' . $ext;
+                if (move_uploaded_file($_FILES['gambar']['tmp_name'], 'uploads/' . $gambar_name)) {
+                    $gambar = 'uploads/' . $gambar_name;
+                    $query_update = "UPDATE berita SET kategori='$kategori', judul='$judul', isi='$isi', tanggal='$tanggal', gambar='$gambar' WHERE id='$id' AND cabang='$user_cabang'";
+                }
             }
+        } else {
+            exit("File tidak valid atau terlalu besar (Maks 2MB).");
         }
     }
     

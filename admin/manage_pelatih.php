@@ -19,13 +19,17 @@ if (isset($_POST['tambah'])) {
 
     $foto = 'default_coach.jpg';
     if (isset($_FILES['foto']) && $_FILES['foto']['error'] === 0) {
-        $allowed = ['jpg', 'jpeg', 'png', 'webp'];
-        $ext = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
-        if (in_array($ext, $allowed)) {
-            $foto_name = uniqid('coach_') . '.' . $ext;
-            if (move_uploaded_file($_FILES['foto']['tmp_name'], 'uploads/' . $foto_name)) {
-                $foto = 'uploads/' . $foto_name;
+        if (validasi_gambar($_FILES['foto'])) {
+            $allowed = ['jpg', 'jpeg', 'png', 'webp'];
+            $ext = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
+            if (in_array($ext, $allowed)) {
+                $foto_name = uniqid('coach_') . '.' . $ext;
+                if (move_uploaded_file($_FILES['foto']['tmp_name'], 'uploads/' . $foto_name)) {
+                    $foto = 'uploads/' . $foto_name;
+                }
             }
+        } else {
+            exit("File tidak valid atau terlalu besar (Maks 2MB).");
         }
     }
     
@@ -47,13 +51,17 @@ if (isset($_POST['edit'])) {
     mysqli_query($koneksi, $query_update);
 
     if (isset($_FILES['foto']) && $_FILES['foto']['error'] === 0) {
-        $allowed = ['jpg', 'jpeg', 'png', 'webp'];
-        $ext = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
-        if (in_array($ext, $allowed)) {
-            $foto_name = uniqid('coach_') . '.' . $ext;
-            if (move_uploaded_file($_FILES['foto']['tmp_name'], 'uploads/' . $foto_name)) {
-                mysqli_query($koneksi, "UPDATE pelatih SET foto='uploads/$foto_name' WHERE id='$id'");
+        if (validasi_gambar($_FILES['foto'])) {
+            $allowed = ['jpg', 'jpeg', 'png', 'webp'];
+            $ext = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
+            if (in_array($ext, $allowed)) {
+                $foto_name = uniqid('coach_') . '.' . $ext;
+                if (move_uploaded_file($_FILES['foto']['tmp_name'], 'uploads/' . $foto_name)) {
+                    mysqli_query($koneksi, "UPDATE pelatih SET foto='uploads/$foto_name' WHERE id='$id'");
+                }
             }
+        } else {
+            exit("File tidak valid atau terlalu besar (Maks 2MB).");
         }
     }
     header("Location: manage_pelatih.php");

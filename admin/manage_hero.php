@@ -19,18 +19,22 @@ $pesan = "";
 // Proses Upload
 if (isset($_POST['upload_hero'])) {
     if (isset($_FILES['hero_image']) && $_FILES['hero_image']['error'] === 0) {
-        $allowed = ['jpg', 'jpeg', 'png', 'webp'];
-        $ext = strtolower(pathinfo($_FILES['hero_image']['name'], PATHINFO_EXTENSION));
-        
-        if (in_array($ext, $allowed)) {
-            // Save explicitly as hero_bg.jpg to automatically overwrite
-            if (move_uploaded_file($_FILES['hero_image']['tmp_name'], $uploadDataDir . '/hero_bg.jpg')) {
-                $pesan = "<div class='p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 border border-green-200'>Berhasil! Gambar Banner Utama telah diperbarui (Silakan clear cache browser jika gambar tidak langsung berubah).</div>";
+        if (validasi_gambar($_FILES['hero_image'], 5000000)) { // 5MB limit for hero image
+            $allowed = ['jpg', 'jpeg', 'png', 'webp'];
+            $ext = strtolower(pathinfo($_FILES['hero_image']['name'], PATHINFO_EXTENSION));
+            
+            if (in_array($ext, $allowed)) {
+                // Save explicitly as hero_bg.jpg to automatically overwrite
+                if (move_uploaded_file($_FILES['hero_image']['tmp_name'], $uploadDataDir . '/hero_bg.jpg')) {
+                    $pesan = "<div class='p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 border border-green-200'>Berhasil! Gambar Banner Utama telah diperbarui (Silakan clear cache browser jika gambar tidak langsung berubah).</div>";
+                } else {
+                    $pesan = "<div class='p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200'>Gagal memindahkan file yang diunggah.</div>";
+                }
             } else {
-                $pesan = "<div class='p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200'>Gagal memindahkan file yang diunggah.</div>";
+                $pesan = "<div class='p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200'>Format file tidak valid. Gunakan format JPG, PNG, atau WEBP.</div>";
             }
         } else {
-            $pesan = "<div class='p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200'>Format file tidak valid. Gunakan format JPG, PNG, atau WEBP.</div>";
+            $pesan = "<div class='p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200'>File tidak valid atau melebihi batas (Maks 5MB).</div>";
         }
     } else {
          $pesan = "<div class='p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200'>Harap pilih gambar terlebih dahulu.</div>";
