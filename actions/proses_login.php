@@ -39,7 +39,7 @@ if (isset($_POST['login'])) {
                     header("location: ../pelatih/pelatih_dashboard.php");
                 } else {
                     // Default fallback to Admin
-                    header("location: ../admin/dashboard.php");
+                    header("location: ../admin/admin_dashboard.php");
                 }
                 exit;
             } else {
