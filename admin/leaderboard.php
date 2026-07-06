@@ -1,6 +1,9 @@
 <?php
 session_start();
-if ($_SESSION['status'] != "sudah_login") { header("location:../login.php?pesan=belum_login"); exit; }
+if (!isset($_SESSION['status']) || $_SESSION['status'] != "sudah_login" || $_SESSION['role'] != "admin") { 
+    header("location:../login.php?pesan=belum_login"); 
+    exit; 
+}
 include '../includes/header.php';
 include '../includes/sidebar.php';
 include '../includes/koneksi.php';

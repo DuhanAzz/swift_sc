@@ -1,5 +1,8 @@
 <?php
 session_start();
+if (!isset($_SESSION['status']) || $_SESSION['status'] != "sudah_login" || $_SESSION['role'] != "admin") { 
+    exit("Unauthorized access");
+}
 include '../includes/koneksi.php';
 
 if(isset($_POST['simpan_presensi'])){

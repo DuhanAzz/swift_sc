@@ -1,8 +1,8 @@
 <?php
 session_start();
-if (!isset($_SESSION['role'])) {
-    header("Location: ../login.php");
-    exit;
+if (!isset($_SESSION['role']) || ($_SESSION['role'] != "admin" && $_SESSION['role'] != "ceo")) { 
+    header("location:../login.php?pesan=belum_login"); 
+    exit; 
 }
 $user_role = $_SESSION['role'];
 $user_cabang = $_SESSION['cabang'] ?? 'Pusat';
