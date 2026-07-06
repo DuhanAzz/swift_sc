@@ -240,6 +240,10 @@ if(count($atletArray) > 0) {
                         </select>
                     </div>
                     <div>
+                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Asal Sekolah</label>
+                        <input type="text" name="sekolah" value="<?= htmlspecialchars($data['sekolah'] ?? ''); ?>" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all" placeholder="Contoh: SMA Negeri 1">
+                    </div>
+                    <div>
                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Tugaskan ke Pelatih</label>
                         <select name="pelatih_id" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all">
                             <option value="">-- Tanpa Pelatih --</option>
@@ -317,6 +321,10 @@ if(count($atletArray) > 0) {
                             <option value="Prestasi">Prestasi</option>
                             <option value="Privat">Privat</option>
                         </select>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Asal Sekolah</label>
+                        <input type="text" name="sekolah" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full p-4 shadow-sm transition-all" placeholder="Contoh: SMA Negeri 1">
                     </div>
                     <div>
                         <label class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Tugaskan ke Pelatih</label>

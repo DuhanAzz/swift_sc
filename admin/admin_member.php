@@ -192,7 +192,6 @@ if (isset($_GET['invoice_id'])) {
                                 <th class="px-6 py-4">Jenis Kelamin</th>
                                 <th class="px-6 py-4">Tgl Bergabung</th>
                                 <th class="px-6 py-4">Administrasi</th>
-                                <th class="px-6 py-4 text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -252,18 +251,8 @@ if (isset($_GET['invoice_id'])) {
                                         </span>
                                     <?php endif; ?>
                                 </td>
-                                <td class="px-6 py-4 text-center">
-                                    <div class="flex items-center justify-center gap-2">
-                                        <button onclick="openEditSekolahModal(<?= $d['id'] ?>, '<?= htmlspecialchars($d['sekolah'] ?? '', ENT_QUOTES) ?>')" class="p-2 bg-yellow-50 text-yellow-600 hover:bg-yellow-500 hover:text-white rounded-lg transition-colors shadow-sm" title="Edit Sekolah">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                                        </button>
-                                        <button onclick="openMutasiPelatihModal(<?= $d['id'] ?>, <?= $d['pelatih_id'] ?? 'null' ?>)" class="p-2 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white rounded-lg transition-colors shadow-sm" title="Mutasi Pelatih">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
-                                        </button>
-                                    </div>
-                                </td>
                             </tr>
-                            <?php } } else { echo "<tr><td colspan='7' class='px-6 py-8 text-center text-slate-500 italic'>Belum ada member aktif di cabang ini.</td></tr>"; } ?>
+                            <?php } } else { echo "<tr><td colspan='6' class='px-6 py-8 text-center text-slate-500 italic'>Belum ada member aktif di cabang ini.</td></tr>"; } ?>
                         </tbody>
                     </table>
                 </div>
@@ -273,51 +262,6 @@ if (isset($_GET['invoice_id'])) {
     </div>
 </div>
 
-<!-- ===== EDIT SEKOLAH MODAL ===== -->
-<div id="editSekolahModal" class="fixed inset-0 bg-black/50 z-[999] hidden items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-auto overflow-hidden flex flex-col">
-        <form action="admin_member_proses.php" method="POST">
-            <input type="hidden" name="action" value="edit_sekolah">
-            <input type="hidden" name="member_id" id="edit_sekolah_id">
-            <div class="px-6 py-4 border-b border-gray-200">
-                <h3 class="text-base font-bold">Edit Asal Sekolah</h3>
-            </div>
-            <div class="px-6 py-4">
-                <label class="block text-xs font-semibold text-gray-500 mb-1">Nama Sekolah</label>
-                <input type="text" name="sekolah" id="edit_sekolah_input" class="w-full border border-gray-300 rounded p-2 focus:ring-blue-500 focus:border-blue-500" required>
-            </div>
-            <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end gap-2">
-                <button type="button" onclick="closeEditSekolahModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded font-bold text-xs uppercase">Batal</button>
-                <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-bold text-xs uppercase">Simpan</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- ===== MUTASI PELATIH MODAL ===== -->
-<div id="mutasiPelatihModal" class="fixed inset-0 bg-black/50 z-[999] hidden items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-auto overflow-hidden flex flex-col">
-        <form action="admin_member_proses.php" method="POST">
-            <input type="hidden" name="action" value="mutasi_pelatih">
-            <input type="hidden" name="member_id" id="mutasi_pelatih_id">
-            <div class="px-6 py-4 border-b border-gray-200">
-                <h3 class="text-base font-bold">Mutasi Pelatih</h3>
-            </div>
-            <div class="px-6 py-4">
-                <label class="block text-xs font-semibold text-gray-500 mb-1">Pilih Pelatih Baru</label>
-                <select name="pelatih_id" id="mutasi_pelatih_select" class="w-full border border-gray-300 rounded p-2 focus:ring-blue-500 focus:border-blue-500" required>
-                    <option value="">-- Pilih Pelatih --</option>
-                    <?php foreach($pelatihList as $pel): ?>
-                        <option value="<?= $pel['id'] ?>"><?= htmlspecialchars($pel['nama']) ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end gap-2">
-                <button type="button" onclick="closeMutasiPelatihModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded font-bold text-xs uppercase">Batal</button>
-                <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-bold text-xs uppercase">Simpan</button>
-            </div>
-        </form>
-    </div>
 </div>
 
 <!-- ===== INVOICE MODAL ===== -->
@@ -424,32 +368,6 @@ function openApproveModal(id) {
 function closeApproveModal() {
     document.getElementById('approveModal').classList.add('hidden');
     document.getElementById('approveModal').classList.remove('flex');
-}
-
-function openEditSekolahModal(id, currentSekolah) {
-    document.getElementById('edit_sekolah_id').value = id;
-    document.getElementById('edit_sekolah_input').value = currentSekolah;
-    document.getElementById('editSekolahModal').classList.remove('hidden');
-    document.getElementById('editSekolahModal').classList.add('flex');
-}
-function closeEditSekolahModal() {
-    document.getElementById('editSekolahModal').classList.add('hidden');
-    document.getElementById('editSekolahModal').classList.remove('flex');
-}
-
-function openMutasiPelatihModal(id, currentPelatihId) {
-    document.getElementById('mutasi_pelatih_id').value = id;
-    if (currentPelatihId) {
-        document.getElementById('mutasi_pelatih_select').value = currentPelatihId;
-    } else {
-        document.getElementById('mutasi_pelatih_select').value = '';
-    }
-    document.getElementById('mutasiPelatihModal').classList.remove('hidden');
-    document.getElementById('mutasiPelatihModal').classList.add('flex');
-}
-function closeMutasiPelatihModal() {
-    document.getElementById('mutasiPelatihModal').classList.add('hidden');
-    document.getElementById('mutasiPelatihModal').classList.remove('flex');
 }
 
 function closeInvoiceModal() {
