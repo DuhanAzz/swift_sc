@@ -48,6 +48,64 @@ include '../includes/koneksi.php';
             </button>
         </div>
 
+        <?php
+        $q_tot = mysqli_query($koneksi, "SELECT COUNT(id) as total FROM member WHERE cabang_id = '$admin_pool_id'");
+        $count_tot = mysqli_fetch_assoc($q_tot)['total'] ?? 0;
+
+        $q_putra = mysqli_query($koneksi, "SELECT COUNT(id) as total FROM member WHERE jenis_kelamin = 'L' AND cabang_id = '$admin_pool_id'");
+        $count_putra = mysqli_fetch_assoc($q_putra)['total'] ?? 0;
+
+        $q_putri = mysqli_query($koneksi, "SELECT COUNT(id) as total FROM member WHERE jenis_kelamin = 'P' AND cabang_id = '$admin_pool_id'");
+        $count_putri = mysqli_fetch_assoc($q_putri)['total'] ?? 0;
+        ?>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                </div>
+                <div>
+                    <p class="text-xs font-bold text-gray-500 uppercase">Total Atlet</p>
+                    <h3 class="text-2xl font-black text-gray-800"><?= $count_tot ?></h3>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                </div>
+                <div>
+                    <p class="text-xs font-bold text-gray-500 uppercase">Atlet Putra</p>
+                    <h3 class="text-2xl font-black text-gray-800"><?= $count_putra ?></h3>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center shrink-0">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                </div>
+                <div>
+                    <p class="text-xs font-bold text-gray-500 uppercase">Atlet Putri</p>
+                    <h3 class="text-2xl font-black text-gray-800"><?= $count_putri ?></h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-4 mb-6">
+            <div class="flex-1 relative">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+                <input type="text" id="searchInput" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 shadow-sm" placeholder="Cari nama atlet...">
+            </div>
+            <div class="w-full md:w-64">
+                <select id="filterKelas" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 shadow-sm">
+                    <option value="">Semua Kelas</option>
+                    <option value="Pemula">Pemula</option>
+                    <option value="Lanjutan">Lanjutan</option>
+                    <option value="Prestasi">Prestasi</option>
+                    <option value="Privat">Privat</option>
+                </select>
+            </div>
+        </div>
+
         <div class="card overflow-hidden">
             <table class="table-algolia">
                 <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
@@ -65,7 +123,7 @@ include '../includes/koneksi.php';
                     <?php
                     $no = 1;
                     $atletArray = [];
-                    $q_atlet = mysqli_query($koneksi, "SELECT m.*, c.nama_cabang as nama_kolam, p.nama as nama_pelatih FROM member m LEFT JOIN cabang c ON m.cabang_id = c.id LEFT JOIN pelatih p ON m.pelatih_id = p.id WHERE 1=1 ORDER BY m.id DESC");
+                    $q_atlet = mysqli_query($koneksi, "SELECT m.*, c.nama_cabang as nama_kolam, p.nama as nama_pelatih FROM member m LEFT JOIN cabang c ON m.cabang_id = c.id LEFT JOIN pelatih p ON m.pelatih_id = p.id WHERE 1=1 AND m.cabang_id = '$admin_pool_id' ORDER BY m.nama ASC");
                     if($q_atlet) {
                         while($row = mysqli_fetch_assoc($q_atlet)) {
                             $atletArray[] = $row;
@@ -76,11 +134,11 @@ include '../includes/koneksi.php';
                     if(count($atletArray) > 0) {
                         foreach($atletArray as $data) {
                     ?>
-                    <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                    <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors atlet-row">
                         <td class="px-6 py-4 font-medium text-gray-900"><?= $no++; ?></td>
-                        <td class="px-6 py-4 font-bold text-gray-800"><?= htmlspecialchars($data['nama']); ?></td>
+                        <td class="px-6 py-4 font-bold text-gray-800 atlet-nama"><?= htmlspecialchars($data['nama']); ?></td>
                         <td class="px-6 py-4">
-                            <span class="inline-block px-2.5 py-1 rounded-full text-[10px] font-bold bg-teal-100 text-teal-800 mb-1">
+                            <span class="inline-block px-2.5 py-1 rounded-full text-[10px] font-bold bg-teal-100 text-teal-800 mb-1 atlet-kelas">
                                 <?= htmlspecialchars($data['tingkatan_kelas'] ?? 'Pemula'); ?>
                             </span>
                             <?php if(!empty($data['nama_pelatih'])): ?>
@@ -95,9 +153,15 @@ include '../includes/koneksi.php';
                         <td class="px-6 py-4"><?= htmlspecialchars($data['jenis_kelamin']); ?></td>
                         <td class="px-6 py-4"><?= htmlspecialchars($data['no_hp']); ?></td>
                         <td class="px-6 py-4 font-semibold text-algolia-blue"><?= htmlspecialchars($data['nama_kolam']); ?></td>
-                        <td class="px-6 py-4 text-center space-x-3">
-                            <button data-modal-target="modalEditAtlet<?= $data['id']; ?>" data-modal-toggle="modalEditAtlet<?= $data['id']; ?>" class="font-medium text-blue-600 hover:underline">Edit</button>
-                            <a href="hapus_atlet.php?id=<?= $data['id']; ?>" onclick="return confirm('Hapus atlet <?= $data['nama']; ?>?')" class="font-medium text-red-600 hover:underline">Hapus</a>
+                        <td class="px-6 py-4 text-center">
+                            <div class="flex items-center justify-center gap-2">
+                                <button data-modal-target="modalEditAtlet<?= $data['id']; ?>" data-modal-toggle="modalEditAtlet<?= $data['id']; ?>" class="p-2 bg-yellow-50 text-yellow-600 hover:bg-yellow-500 hover:text-white rounded-lg transition-colors shadow-sm" title="Edit Atlet">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                </button>
+                                <a href="hapus_atlet.php?id=<?= $data['id']; ?>" onclick="return confirm('Hapus atlet <?= $data['nama']; ?> secara permanen?')" class="p-2 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white rounded-lg transition-colors shadow-sm flex items-center justify-center" title="Hapus Atlet">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </a>
+                            </div>
                         </td>
                     </tr>
 
@@ -262,5 +326,36 @@ include '../includes/koneksi.php';
         </div>
     </div>
 </div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const filterKelas = document.getElementById('filterKelas');
+    const tableRows = document.querySelectorAll('tbody tr.atlet-row');
+
+    function filterTable() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const kelasValue = filterKelas.value.toLowerCase();
+
+        tableRows.forEach(row => {
+            const nama = row.querySelector('.atlet-nama').textContent.toLowerCase();
+            const kelas = row.querySelector('.atlet-kelas').textContent.toLowerCase();
+            
+            const matchSearch = nama.includes(searchTerm);
+            const matchKelas = kelasValue === '' || kelas.includes(kelasValue);
+
+            if (matchSearch && matchKelas) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    if (searchInput) searchInput.addEventListener('input', filterTable);
+    if (filterKelas) filterKelas.addEventListener('change', filterTable);
+});
+</script>
 
 <?php include '../includes/footer.php'; ?>
