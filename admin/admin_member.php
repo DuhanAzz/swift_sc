@@ -246,9 +246,14 @@ if (isset($_GET['invoice_id'])) {
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                                         </a>
                                     <?php else: ?>
-                                        <span class="px-3 py-1.5 rounded-full text-[10px] font-bold uppercase bg-green-100 text-green-800 inline-flex items-center gap-1 w-max">
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Paid
-                                        </span>
+                                        <div class="flex items-center gap-2">
+                                            <span class="px-3 py-1.5 rounded-full text-[10px] font-bold uppercase bg-green-100 text-green-800 inline-flex items-center gap-1 w-max">
+                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Paid
+                                            </span>
+                                            <a href="cetak_invoice.php?id=<?= $d['id'] ?>" target="_blank" class="p-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors shadow-sm" title="Cetak Invoice Resmi">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                                            </a>
+                                        </div>
                                     <?php endif; ?>
                                 </td>
                             </tr>
