@@ -348,8 +348,8 @@ if (isset($_GET['invoice_id'])) {
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-500 mb-1">Tetapkan Pelatih</label>
-                    <select name="pelatih_id" class="w-full border border-gray-300 rounded p-2 focus:ring-blue-500 focus:border-blue-500 bg-white" required>
-                        <option value="">-- Pilih Pelatih --</option>
+                    <select name="pelatih_id" class="w-full border border-gray-300 rounded p-2 focus:ring-blue-500 focus:border-blue-500 bg-white">
+                        <option value="">- Tanpa Pelatih (Trial) -</option>
                         <?php foreach($pelatihList as $pel): ?>
                             <option value="<?= $pel['id'] ?>"><?= htmlspecialchars($pel['nama']) ?></option>
                         <?php endforeach; ?>

@@ -4,16 +4,9 @@ if (!isset($_SESSION['status']) || $_SESSION['status'] != "sudah_login" || $_SES
     header("location:../login.php"); 
     exit; 
 }
-include '../includes/header.php';
-include '../includes/sidebar.php';
 include '../includes/koneksi.php';
 
 $admin_pool_id = intval($_SESSION['pool_id'] ?? 0);
-if(empty($admin_pool_id)) {
-    echo '<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen"><div class="p-8"><p class="text-red-500 font-bold">Akses ditolak: Anda belum terhubung ke cabang manapun.</p></div></div>';
-    include '../includes/footer.php';
-    exit;
-}
 
 $tgl_mulai = isset($_GET['tgl_mulai']) ? $_GET['tgl_mulai'] : date('Y-m-01');
 $tgl_akhir = isset($_GET['tgl_akhir']) ? $_GET['tgl_akhir'] : date('Y-m-t');
@@ -63,6 +56,15 @@ if(isset($_GET['hapus'])){
     $id_hapus = intval($_GET['hapus']);
     mysqli_query($koneksi, "DELETE FROM arus_kas WHERE id='$id_hapus' AND cabang_id='$admin_pool_id'");
     header("location:arus_kas.php?tgl_mulai=$tgl_mulai&tgl_akhir=$tgl_akhir&pesan=hapus_sukses");
+    exit;
+}
+
+include '../includes/header.php';
+include '../includes/sidebar.php';
+
+if(empty($admin_pool_id)) {
+    echo '<div class="lg:ml-[220px] pt-16 lg:pt-0 min-h-screen"><div class="p-8"><p class="text-red-500 font-bold">Akses ditolak: Anda belum terhubung ke cabang manapun.</p></div></div>';
+    include '../includes/footer.php';
     exit;
 }
 

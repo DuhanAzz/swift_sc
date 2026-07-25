@@ -74,7 +74,10 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
                 <div class="flex flex-col sm:flex-row items-center gap-2">
                     <div class="flex items-center bg-white border border-[#E8E8EF] rounded-lg px-2 w-full sm:w-auto">
                         <span class="text-xs text-gray-500 font-bold px-1 whitespace-nowrap">Limit Sesi:</span>
-                        <input type="number" name="limit_hadir" value="<?= $limit_hadir ?>" min="1" step="1" class="w-full sm:w-16 border-none text-sm p-2 focus:ring-0">
+                        <select name="limit_hadir" class="w-full sm:w-auto border-none text-sm p-2 focus:ring-0 font-bold text-gray-700 bg-transparent cursor-pointer text-center">
+                            <option value="4" <?= $limit_hadir == 4 ? 'selected' : '' ?>>4</option>
+                            <option value="8" <?= $limit_hadir == 8 ? 'selected' : '' ?>>8</option>
+                        </select>
                     </div>
                     <div class="flex items-center gap-2 w-full sm:w-auto">
                         <input type="date" name="tanggal_mulai" value="<?= $tanggal_mulai ?>" class="flex-1 bg-white border border-[#E8E8EF] text-sm rounded-lg p-2">
@@ -89,6 +92,7 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
         <form action="proses_pembayaran.php" method="POST">
             <input type="hidden" name="tanggal_mulai" value="<?= $tanggal_mulai; ?>">
             <input type="hidden" name="tanggal_akhir" value="<?= $tanggal_akhir; ?>">
+            <input type="hidden" name="limit_hadir" value="<?= $limit_hadir; ?>">
 
             <div class="grid grid-cols-1 gap-4">
                 <?php 
@@ -96,18 +100,29 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
                 foreach($q_atlet as $a):
                     $atlet_id = $a['id'];
                     
-                    // === KEHADIRAN (TAGIHAN AKTIF) ===
+                    // === HITUNG SISA KUOTA (PRE-PAID LOGIC) ===
+                    $q_kuota = mysqli_query($koneksi, "SELECT SUM(jumlah_sesi_terbayar) as total_kuota FROM pembayaran WHERE member_id='$atlet_id' AND status='Lunas'");
+                    $r_kuota = mysqli_fetch_assoc($q_kuota);
+                    $total_kuota = $r_kuota['total_kuota'] ?? 0;
+
+                    $q_hadir_all = mysqli_query($koneksi, "SELECT COUNT(id) as total_hadir FROM absensi WHERE member_id='$atlet_id' AND status='Hadir'");
+                    $r_hadir_all = mysqli_fetch_assoc($q_hadir_all);
+                    $total_hadir = $r_hadir_all['total_hadir'] ?? 0;
+
+                    $sisa_kuota = $total_kuota - $total_hadir;
+
+                    // === KEHADIRAN PERIODE INI (UNTUK TAMPILAN) ===
                     $absensi_dates = [];
-                    $jumlah_hadir = 0;
-                    $q_abs = mysqli_query($koneksi, "SELECT id, tanggal, status, status_bayar FROM absensi WHERE member_id='$atlet_id' AND tanggal >= '$tanggal_mulai' AND tanggal <= '$tanggal_akhir' ORDER BY tanggal ASC");
+                    $jumlah_hadir_periode = 0;
+                    $q_abs = mysqli_query($koneksi, "SELECT id, tanggal, status FROM absensi WHERE member_id='$atlet_id' AND tanggal >= '$tanggal_mulai' AND tanggal <= '$tanggal_akhir' ORDER BY tanggal ASC");
                     if($q_abs) {
                         while($ab = mysqli_fetch_assoc($q_abs)) {
                             $absensi_dates[] = $ab;
-                            if($ab['status'] == 'Hadir' && $ab['status_bayar'] == 'Unpaid') $jumlah_hadir++;
+                            if($ab['status'] == 'Hadir') $jumlah_hadir_periode++;
                         }
                     }
                     
-                    // Default form state (We create a new payment receipt each time they pay)
+                    // Default form state
                     $status = 'Belum Bayar';
                     $jumlah = '';
                     $ket = '';
@@ -120,30 +135,19 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
                         $last_pay = $r_last;
                     }
                     
-                    // === PELACAKAN CAKUPAN PEMBAYARAN ===
-                    $total_paid = 0;
-                    $last_paid_date = null;
-                    $q_cover = mysqli_query($koneksi, "SELECT COUNT(id) as total, MAX(tanggal) as last_date FROM absensi WHERE member_id='$atlet_id' AND status_bayar='Paid' AND status='Hadir'");
-                    if($q_cover && $r_cover = mysqli_fetch_assoc($q_cover)) {
-                        $total_paid = $r_cover['total'] ?? 0;
-                        $last_paid_date = $r_cover['last_date'] ?? null;
-                    }
-                    
                     // Status logic
-                    $perlu_bayar = ($jumlah_hadir >= $limit_hadir);
-                    $sudah_lunas = false;
+                    $perlu_bayar = ($sisa_kuota <= 0);
+                    $sudah_lunas = ($sisa_kuota > 0);
                     
                     // Card border color
                     $card_border = 'border-[#E8E8EF]';
                     if($sudah_lunas) $card_border = 'border-emerald-200';
-                    elseif($perlu_bayar) $card_border = 'border-amber-300';
+                    elseif($perlu_bayar) $card_border = 'border-amber-400 border-2 shadow-amber-100 shadow-lg';
                     
                     // WA Invoice
                     $wa_phone = formatPhoneWA($a['no_hp'] ?? '');
                     
-                    $q_wa = mysqli_query($koneksi, "SELECT MIN(tanggal) as tgl_awal, MAX(tanggal) as tgl_akhir, COUNT(id) as total_sesi FROM absensi WHERE member_id = '$atlet_id' AND status_bayar = 'Unpaid' AND status = 'Hadir'");
-                    $d_wa = mysqli_fetch_assoc($q_wa);
-                    $total_sesi = $d_wa['total_sesi'] ?? 0;
+                    $total_sesi = 8; // Default offer
                     
                     $inv_nama = $a['nama'];
                     $inv_nia = $a['nia'] ?? '-';
@@ -212,46 +216,47 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
                             </div>
                         </div>
 
-                        <!-- CENTER: Attendance Grid -->
+                        <!-- CENTER: Attendance Grid & Quota -->
                         <div class="flex-1 p-4">
+                            <!-- Progress Kuota -->
                             <div class="flex items-center justify-between mb-2">
-                                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Sesi Belum Dibayar</p>
+                                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Sisa Kuota Latihan</p>
                                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold <?php
-                                    if($jumlah_hadir >= $limit_hadir) echo 'bg-amber-100 text-amber-700';
-                                    else echo 'bg-gray-100 text-gray-600';
-                                ?>"><?= $jumlah_hadir ?>x / <?= $limit_hadir ?> pertemuan</span>
+                                    if($sisa_kuota <= 0) echo 'bg-red-100 text-red-700';
+                                    elseif($sisa_kuota <= 2) echo 'bg-amber-100 text-amber-700';
+                                    else echo 'bg-emerald-100 text-emerald-700';
+                                ?>"><?= $sisa_kuota ?> Sesi Tersisa</span>
                             </div>
                             
+                            <!-- Progress bar -->
+                            <?php 
+                            $pct = min(($total_hadir % $limit_hadir) / $limit_hadir * 100, 100); 
+                            if($sisa_kuota <= 0) $pct = 100;
+                            ?>
+                            <div class="w-full bg-gray-100 rounded-full h-1.5 mb-4">
+                                <div class="h-1.5 rounded-full transition-all <?= $sisa_kuota <= 0 ? 'bg-red-500' : ($sisa_kuota <= 2 ? 'bg-amber-400' : 'bg-emerald-500') ?>" style="width: <?= $pct ?>%"></div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Riwayat Kehadiran (Periode Filter)</p>
+                                <span class="text-[10px] text-gray-500"><?= $jumlah_hadir_periode ?>x Hadir</span>
+                            </div>
+
                             <!-- Attendance pills -->
                             <div class="flex flex-wrap gap-1.5 mb-3">
                                 <?php 
                                 if(count($absensi_dates) > 0):
-                                    $check_count = 0;
                                     foreach($absensi_dates as $ab):
                                         $st = $ab['status'];
-                                        $ab_id = $ab['id'];
-                                        $tgl_ab = date('d', strtotime($ab['tanggal']));
+                                        $tgl_ab = date('j/n', strtotime($ab['tanggal']));
                                         $tgl_full = date('d M Y', strtotime($ab['tanggal']));
                                         
-                                        if($ab['status_bayar'] == 'Paid' && $st == 'Hadir') {
+                                        if($st == 'Hadir') {
                                             ?>
-                                            <span class="inline-flex items-center gap-0.5 px-2 py-1 rounded-md text-[10px] font-semibold bg-emerald-100 text-emerald-700" title="Hadir (Lunas) - <?= $tgl_full ?>">
-                                                <span class="text-[8px]">✅</span>
+                                            <span class="inline-flex items-center gap-0.5 px-2 py-1 rounded-md text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200" title="Hadir - <?= $tgl_full ?>">
+                                                <span class="text-[8px]">🏊‍♂️</span>
                                                 <?= $tgl_ab ?>
                                             </span>
-                                            <?php
-                                        } elseif($st == 'Hadir') { 
-                                            $checked = ''; // Default unchecked (kuning)
-                                            $check_count++;
-                                            ?>
-                                            <label class="cursor-pointer group relative">
-                                                <input type="checkbox" name="selected_absensi[<?= $atlet_id ?>][]" value="<?= $ab_id ?>" class="peer sr-only" data-tanggal="<?= $ab['tanggal'] ?>" onchange="updateNominal(<?= $atlet_id ?>)" <?= $checked ?>>
-                                                <div class="peer-checked:bg-blue-100 peer-checked:text-blue-800 bg-amber-100 text-amber-800 rounded-md px-2 py-1 text-[10px] font-semibold transition-colors" title="Hadir - <?= $tgl_full ?>">
-                                                    <span class="text-[8px] peer-checked:inline hidden">●</span>
-                                                    <span class="text-[8px] peer-checked:hidden inline">○</span>
-                                                    <?= $tgl_ab ?>
-                                                </div>
-                                            </label>
                                             <?php
                                         } else {
                                             $pill_class = 'bg-gray-100 text-gray-500';
@@ -269,39 +274,37 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
                                     endforeach;
                                 else: 
                                 ?>
-                                    <span class="text-xs text-gray-400 italic">Belum ada data kehadiran bulan ini</span>
+                                    <span class="text-xs text-gray-400 italic">Belum ada data kehadiran pada periode ini</span>
                                 <?php endif; ?>
-                            </div>
-
-                            <!-- Progress bar -->
-                            <?php $pct = min(($jumlah_hadir / $limit_hadir) * 100, 100); ?>
-                            <div class="w-full bg-gray-100 rounded-full h-1.5 mb-3">
-                                <div class="h-1.5 rounded-full transition-all <?= $pct >= 100 ? 'bg-amber-500' : 'bg-slate-400' ?>" style="width: <?= $pct ?>%"></div>
                             </div>
                             
                             <?php if($perlu_bayar): ?>
-                            <div class="bg-amber-50 border border-amber-200 rounded-lg p-2.5 flex items-start gap-2">
-                                <span class="text-amber-500 text-sm mt-0.5">⚠️</span>
+                            <div class="bg-red-50 border border-red-200 rounded-lg p-2.5 flex items-start gap-2">
+                                <span class="text-red-500 text-sm mt-0.5">⚠️</span>
                                 <div>
-                                    <p class="text-xs font-bold text-amber-800">Sudah <?= $limit_hadir ?>x hadir — Waktunya bayar!</p>
-                                    <p class="text-[10px] text-amber-600">Kirim tagihan via WhatsApp atau konfirmasi pembayaran.</p>
+                                    <p class="text-xs font-bold text-red-800">Kuota Habis — Waktunya beli paket sesi!</p>
+                                    <p class="text-[10px] text-red-600">Atlet ini tidak memiliki kuota latihan. Harap tagih pembayaran baru.</p>
                                 </div>
                             </div>
-                            <?php elseif($sudah_lunas): ?>
+                            <?php elseif($sisa_kuota <= 2): ?>
+                            <div class="bg-amber-50 border border-amber-200 rounded-lg p-2.5 flex items-start justify-between gap-2">
+                                <div class="flex items-start gap-2">
+                                    <span class="text-amber-500 text-sm mt-0.5">⚠️</span>
+                                    <div>
+                                        <p class="text-xs font-bold text-amber-800">Kuota Menipis (Sisa <?= $sisa_kuota ?>)</p>
+                                        <p class="text-[10px] text-amber-600">Ingatkan atlet untuk segera membeli paket sesi baru.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php else: ?>
                             <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-2.5 flex items-start justify-between gap-2">
                                 <div class="flex items-start gap-2">
                                     <span class="text-emerald-500 text-sm mt-0.5">✅</span>
                                     <div>
-                                        <p class="text-xs font-bold text-emerald-800">Lunas — Dibayar <?= $tgl_bayar ? date('d M Y, H:i', strtotime($tgl_bayar)) : '' ?></p>
-                                        <?php if(!empty($ket)): ?>
-                                        <p class="text-[10px] text-emerald-600"><?= htmlspecialchars($ket) ?></p>
-                                        <?php endif; ?>
+                                        <p class="text-xs font-bold text-emerald-800">Kuota Aman</p>
+                                        <p class="text-[10px] text-emerald-600">Tersedia <?= $sisa_kuota ?> sesi aktif.</p>
                                     </div>
                                 </div>
-                                <a href="invoice_cetak.php?member_id=<?= $atlet_id ?>&bulan=<?= $bln ?>&tahun=<?= $thn ?>" target="_blank" class="px-2 py-1 bg-white border border-emerald-300 text-emerald-700 rounded text-[10px] font-bold hover:bg-emerald-100 transition-colors inline-flex items-center gap-1 shadow-sm shrink-0">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                                    Kwitansi
-                                </a>
                             </div>
                             <?php endif; ?>
                         </div>
@@ -309,27 +312,32 @@ if($q) { while($row = mysqli_fetch_assoc($q)) { $q_atlet[] = $row; } }
                         <!-- RIGHT: Payment Actions -->
                         <div class="lg:w-[200px] flex-shrink-0 p-4 border-t lg:border-t-0 lg:border-l border-[#E8E8EF] bg-gray-50/30 flex flex-col gap-2.5">
                             
-                            <?php if($total_sesi > 0): ?>
-                            <div class="bg-amber-50 border border-amber-200 rounded-lg p-2 mb-1">
-                                <p class="text-[10px] font-bold text-amber-800 mb-0.5">Sesi Unpaid Terdeteksi:</p>
-                                <p class="text-xs font-bold text-amber-600"><?= $total_sesi ?> Sesi Hadir</p>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Metode Pembayaran</label>
+                                <select name="metode[<?= $atlet_id ?>]" class="w-full border border-[#E8E8EF] bg-white rounded-lg p-2 text-xs font-bold text-gray-700">
+                                    <option value="Tunai">Tunai</option>
+                                    <option value="Transfer">Transfer</option>
+                                </select>
                             </div>
-                            <?php endif; ?>
 
                             <div>
                                 <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Status Bayar</label>
-                                <select name="status[<?= $atlet_id ?>]" class="w-full border border-[#E8E8EF] bg-white rounded-lg p-2 text-xs font-bold <?= $sudah_lunas ? 'text-emerald-600' : 'text-red-500' ?>">
-                                    <option value="Belum Bayar" <?= $status == 'Belum Bayar' ? 'selected' : '' ?>>❌ Belum Bayar</option>
-                                    <option value="Lunas" <?= $status == 'Lunas' ? 'selected' : '' ?>>✅ Lunas</option>
+                                <select name="status[<?= $atlet_id ?>]" onchange="updateNominal(<?= $atlet_id ?>)" class="w-full border border-[#E8E8EF] bg-white rounded-lg p-2 text-xs font-bold text-gray-700">
+                                    <option value="Belum Bayar">❌ Belum Bayar</option>
+                                    <option value="Lunas">✅ Lunas</option>
                                 </select>
                             </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Nominal (Rp)</label>
-                                <input type="number" name="jumlah[<?= $atlet_id ?>]" value="<?= $jumlah ?>" placeholder="0" class="w-full border border-[#E8E8EF] bg-white rounded-lg p-2 text-xs text-right">
+                            
+                            <!-- Nominal Input is hidden, handled via JS calculation (paket * template_nominal) -->
+                            <input type="hidden" name="jumlah[<?= $atlet_id ?>]" id="input_jumlah_<?= $atlet_id ?>" value="">
+                            <div class="bg-white border border-gray-100 rounded p-1.5 mb-1 flex justify-between items-center text-xs">
+                                <span class="text-gray-500">Total:</span>
+                                <span class="font-bold text-gray-800" id="display_nominal_<?= $atlet_id ?>">Rp 0</span>
                             </div>
+
                             <div>
-                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Catatan</label>
-                                <input type="text" name="keterangan[<?= $atlet_id ?>]" value="<?= htmlspecialchars($ket) ?>" placeholder="Opsional..." class="w-full border border-[#E8E8EF] bg-white rounded-lg p-2 text-xs">
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Bulan Cover (Opsional)</label>
+                                <input type="month" name="keterangan[<?= $atlet_id ?>]" value="<?= date('Y-m') ?>" class="w-full border border-[#E8E8EF] bg-white rounded-lg p-2 text-[11px]">
                             </div>
                             
                             <div class="flex gap-1.5 mt-auto pt-2">
@@ -375,29 +383,30 @@ function updateNominal(id) {
     const templateInput = document.getElementById('template_nominal');
     const templateVal = templateInput ? parseInt(templateInput.value) : 0;
     
-    if (templateVal > 0) {
-        const checkboxes = document.querySelectorAll(`input[name="selected_absensi[${id}][]"]:checked`);
-        const total = templateVal * checkboxes.length;
-        document.querySelector(`input[name="jumlah[${id}]"]`).value = total > 0 ? total : '';
+    const selectPaket = document.querySelector(`select[name="limit_hadir"]`);
+    const paketVal = selectPaket ? parseInt(selectPaket.value) : 0;
+    
+    // Check if status is Lunas
+    const selectStatus = document.querySelector(`select[name="status[${id}]"]`);
+    const isLunas = selectStatus && selectStatus.value === 'Lunas';
+    
+    let total = 0;
+    if (templateVal > 0 && paketVal > 0 && isLunas) {
+        total = templateVal * paketVal;
     }
+    
+    document.getElementById(`input_jumlah_${id}`).value = total > 0 ? total : '';
+    document.getElementById(`display_nominal_${id}`).innerText = total > 0 ? 'Rp ' + Number(total).toLocaleString('id-ID') : 'Rp 0';
 }
 
 function buildInvoiceText(id, nama, nia, cabang) {
-    const checkboxes = document.querySelectorAll(`input[name="selected_absensi[${id}][]"]:checked`);
-    let total_sesi = checkboxes.length;
-    let dates = [];
-    checkboxes.forEach(cb => dates.push(cb.getAttribute('data-tanggal')));
+    const selectPaket = document.querySelector(`select[name="limit_hadir"]`);
+    const paketVal = selectPaket ? parseInt(selectPaket.value) : 8;
     
-    let tgl_awal = '-';
-    let tgl_akhir = '-';
-    if(dates.length > 0) {
-        dates.sort();
-        tgl_awal = formatDateIndo(dates[0]);
-        tgl_akhir = formatDateIndo(dates[dates.length - 1]);
-    }
-
-    const nominalInput = document.querySelector(`input[name="jumlah[${id}]"]`).value;
-    let nominalStr = nominalInput ? Number(nominalInput).toLocaleString('id-ID') : '[Ketik Nominal]';
+    let total_sesi = paketVal > 0 ? paketVal : 8; // default if not selected
+    
+    const nominalInput = document.getElementById(`input_jumlah_${id}`).value;
+    let nominalStr = nominalInput ? Number(nominalInput).toLocaleString('id-ID') : '[Ketik Nominal di Atas]';
     
     let inv_text = "════════════════\n";
     inv_text += "TAGIHAN SWIFT SC\n";
@@ -406,8 +415,8 @@ function buildInvoiceText(id, nama, nia, cabang) {
     inv_text += `NIA    : ${nia}\n`;
     if(cabang && cabang !== '-') inv_text += `Cabang : ${cabang}\n`;
     inv_text += "\n─── Rincian ───\n";
-    inv_text += `Sesi    : ${total_sesi} Pertemuan\n`;
-    inv_text += `Periode : ${tgl_awal} s/d ${tgl_akhir}\n`;
+    inv_text += `Pembelian Paket Latihan\n`;
+    inv_text += `Kuota   : ${total_sesi} Pertemuan\n`;
     inv_text += "───────────────\n";
     inv_text += `TOTAL   : *Rp ${nominalStr}*\n\n`;
     inv_text += "Mohon segera melakukan pembayaran.\n";
