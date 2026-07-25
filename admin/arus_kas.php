@@ -26,8 +26,8 @@ if(isset($_POST['simpan_pengeluaran'])){
     $user_id = intval($_SESSION['user_id'] ?? 0);
     
     if($nominal > 0 && !empty($keterangan) && !empty($tanggal)){
-        $q_insert = mysqli_query($koneksi, "INSERT INTO arus_kas (cabang_id, jenis, nominal, keterangan, tanggal, user_id) 
-                                            VALUES ('$admin_pool_id', 'Pengeluaran', '$nominal', '$keterangan', '$tanggal', '$user_id')");
+        $q_insert = mysqli_query($koneksi, "INSERT INTO arus_kas (cabang_id, jenis, category, nominal, keterangan, tanggal, user_id) 
+                                            VALUES ('$admin_pool_id', 'Pengeluaran', 'Umum', '$nominal', '$keterangan', '$tanggal', '$user_id')");
         if($q_insert) {
             header("location:arus_kas.php?tgl_mulai=$tgl_mulai&tgl_akhir=$tgl_akhir&pesan=sukses");
             exit;
@@ -46,8 +46,8 @@ if(isset($_POST['simpan_pemasukan'])){
     $user_id = intval($_SESSION['user_id'] ?? 0);
     
     if($nominal > 0 && !empty($keterangan) && !empty($tanggal)){
-        $q_insert = mysqli_query($koneksi, "INSERT INTO arus_kas (cabang_id, jenis, nominal, keterangan, tanggal, user_id) 
-                                            VALUES ('$admin_pool_id', 'Pemasukan', '$nominal', '$keterangan', '$tanggal', '$user_id')");
+        $q_insert = mysqli_query($koneksi, "INSERT INTO arus_kas (cabang_id, jenis, category, nominal, keterangan, tanggal, user_id) 
+                                            VALUES ('$admin_pool_id', 'Pemasukan', 'Umum', '$nominal', '$keterangan', '$tanggal', '$user_id')");
         if($q_insert) {
             header("location:arus_kas.php?tgl_mulai=$tgl_mulai&tgl_akhir=$tgl_akhir&pesan=sukses_masuk");
             exit;

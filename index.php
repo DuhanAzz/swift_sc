@@ -114,8 +114,8 @@ try {
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16 md:h-20">
                 <a href="index.php" class="flex items-center">
-                    <div class="bg-white p-2 rounded-full shadow-md w-14 h-14 md:w-19 md:h-19 flex items-center justify-center">
-                        <img src="assets/logo.png" alt="Swift SC Logo" class="h-10 w-10 md:h-14 md:w-14 object-contain" onerror="this.onerror=null; this.outerHTML='<span class=\'font-bold text-xl tracking-tight italic text-black\'>SWIFT</span>';">
+                    <div class="w-16 h-16 md:w-20 md:h-20 flex items-center justify-center">
+                        <img src="assets/logo.png" alt="Swift SC Logo" class="w-full h-full object-contain" onerror="this.onerror=null; this.outerHTML='<span class=\'font-bold text-xl tracking-tight italic text-black\'>SWIFT</span>';">
                     </div>
                 </a>
                 <nav class="hidden lg:flex items-center gap-8">
@@ -501,7 +501,7 @@ try {
         </div>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 border-t border-slate-800 text-gray-300 flex justify-between items-center">
             <p class="text-xs">&copy; <?= date('Y'); ?> Swift Swimming Club. All Rights Reserved.</p>
-            <a href="https://www.instagram.com/mduhanazz/" class="text-xs hover:text-white transition-colors">Made with ♾️ by @mduhanazz</a>
+            <a href="https://www.instagram.com/mduhanazz/" class="text-xs hover:text-white transition-colors">Made with ❤️</a>
         </div>
     </footer>
 

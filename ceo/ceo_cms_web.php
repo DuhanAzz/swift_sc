@@ -6,6 +6,17 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'ceo') {
 }
 include '../includes/koneksi.php';
 
+// PROSES LOGO
+if(isset($_POST['simpan_logo'])) {
+    if(isset($_FILES['logo_web']) && $_FILES['logo_web']['error'] == 0){
+        $ext = strtolower(pathinfo($_FILES['logo_web']['name'], PATHINFO_EXTENSION));
+        if(in_array($ext, ['png', 'jpg', 'jpeg', 'webp'])) {
+            move_uploaded_file($_FILES['logo_web']['tmp_name'], '../assets/logo.png');
+            header("Location: ceo_cms_web.php?pesan=sukses&tab=hero"); exit;
+        }
+    }
+}
+
 // PROSES TENTANG KLUB
 if(isset($_POST['simpan_tentang'])) {
     $deskripsi = mysqli_real_escape_string($koneksi, $_POST['deskripsi']);
@@ -127,6 +138,27 @@ include '../includes/sidebar.php';
 
         <!-- Tab Content: HERO -->
         <?php if($active_tab == 'hero'): ?>
+        
+        <!-- PENGATURAN LOGO -->
+        <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-8 mb-8">
+            <h3 class="text-xl font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Pengaturan Logo Web</h3>
+            <div class="flex flex-col md:flex-row items-start gap-8">
+                <div class="w-40 h-40 border border-gray-200 p-2 flex items-center justify-center flex-shrink-0">
+                    <img src="../assets/logo.png?v=<?= time() ?>" alt="Logo Saat Ini" class="max-w-full max-h-full object-contain">
+                </div>
+                <div class="flex-1 w-full">
+                    <form action="" method="POST" enctype="multipart/form-data">
+                        <div class="mb-4">
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Upload Logo Baru (PNG/JPG/WEBP)</label>
+                            <input type="file" name="logo_web" accept="image/png, image/jpeg, image/jpg, image/webp" class="w-full border border-gray-300 rounded-xl p-2.5 text-sm" required>
+                            <p class="text-xs text-gray-500 mt-2">Logo akan langsung menggantikan logo di seluruh website (sidebar, login, invoice, dll). Disarankan format PNG dengan background transparan.</p>
+                        </div>
+                        <button type="submit" name="simpan_logo" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-6 rounded-xl shadow-lg transition-colors text-sm">Upload & Ganti Logo</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
         <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-8">
             <h3 class="text-xl font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Pengaturan Teks Hero</h3>
             <form action="" method="POST" class="max-w-3xl">

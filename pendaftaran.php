@@ -46,8 +46,8 @@ try {
         <!-- Logo -->
         <div class="text-center mb-6 flex flex-col items-center">
             <a href="index.php" class="inline-flex items-center gap-3 mb-4">
-                <div class="bg-white p-3 rounded-full shadow-md w-24 h-24 flex items-center justify-center">
-                    <img src="assets/logo.png" alt="Swift SC" class="h-16 w-16 object-contain" onerror="this.onerror=null; this.outerHTML='<div class=\'w-16 h-16 rounded-full bg-cyan-600 flex items-center justify-center\'><svg class=\'w-8 h-8 text-white\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2.5\' d=\'M13 10V3L4 14h7v7l9-11h-7z\'></path></svg></div>';">
+                <div class="w-32 h-32 flex items-center justify-center">
+                    <img src="assets/logo.png" alt="Swift SC" class="w-full h-full object-contain" onerror="this.onerror=null; this.outerHTML='<div class=\'w-16 h-16 rounded-full bg-cyan-600 flex items-center justify-center\'><svg class=\'w-8 h-8 text-white\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2.5\' d=\'M13 10V3L4 14h7v7l9-11h-7z\'></path></svg></div>';">
                 </div>
             </a>
             <h1 class="text-2xl font-bold text-slate-900">Formulir Pendaftaran</h1>

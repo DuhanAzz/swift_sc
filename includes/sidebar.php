@@ -13,8 +13,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
         </svg>
     </button>
     <div class="flex items-center gap-2.5">
-        <div class="bg-white p-1.5 rounded-full shadow-sm w-9 h-9 flex items-center justify-center">
-            <img src="../assets/logo.png" alt="Swift SC" class="h-6 w-6 object-contain" onerror="this.onerror=null; this.outerHTML='<div class=\'w-6 h-6 rounded-full bg-algolia-blue flex items-center justify-center\'><svg class=\'w-4 h-4 text-white\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2.5\' d=\'M13 10V3L4 14h7v7l9-11h-7z\'></path></svg></div>';">
+        <div class="w-10 h-10 flex items-center justify-center">
+            <img src="../assets/logo.png" alt="Swift SC" class="w-full h-full object-contain" onerror="this.onerror=null; this.outerHTML='<div class=\'w-8 h-8 rounded-full bg-algolia-blue flex items-center justify-center\'><svg class=\'w-5 h-5 text-white\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2.5\' d=\'M13 10V3L4 14h7v7l9-11h-7z\'></path></svg></div>';">
         </div>
         <span class="font-black italic tracking-tighter text-lg text-algolia-navy">Swift<span class="text-algolia-blue">SC</span></span>
     </div>
@@ -31,8 +31,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
     
     <!-- Logo -->
     <div class="px-5 pt-6 pb-4 flex items-center gap-3 border-b border-slate-800 mb-2">
-        <div class="bg-white p-2 rounded-full shadow-lg w-12 h-12 flex items-center justify-center flex-shrink-0">
-            <img src="../assets/logo.png" alt="Swift SC" class="h-8 w-8 object-contain" onerror="this.onerror=null; this.outerHTML='<div class=\'w-8 h-8 rounded-full bg-algolia-blue flex items-center justify-center flex-shrink-0\'><svg class=\'w-5 h-5 text-white\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2.5\' d=\'M13 10V3L4 14h7v7l9-11h-7z\'></path></svg></div>';">
+        <div class="w-16 h-16 flex items-center justify-center flex-shrink-0">
+            <img src="../assets/logo.png" alt="Swift SC" class="w-full h-full object-contain" onerror="this.onerror=null; this.outerHTML='<div class=\'w-10 h-10 rounded-full bg-algolia-blue flex items-center justify-center flex-shrink-0\'><svg class=\'w-6 h-6 text-white\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2.5\' d=\'M13 10V3L4 14h7v7l9-11h-7z\'></path></svg></div>';">
         </div>
         <div>
             <span class="font-black italic tracking-tighter text-xl text-white">Swift<span class="text-algolia-blue">SC</span></span>
