@@ -9,7 +9,7 @@ include '../includes/header.php';
 include '../includes/sidebar.php';
 
 $pelatih_id = $_SESSION['user_id'];
-$cabang_id = $_SESSION['cabang_id'];
+$cabang_id = $_SESSION['cabang'] ?? 0;
 
 // Ambil data event dari kalender_event
 $event_list = [];

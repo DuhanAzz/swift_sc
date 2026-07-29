@@ -42,7 +42,7 @@ include '../includes/koneksi.php';
     $member_id = isset($_GET['atlet']) ? (int)$_GET['atlet'] : 0;
     
     // Ambil daftar atlet untuk dropdown jika belum memilih
-    $cabang_id = $_SESSION['cabang_id'];
+    $cabang_id = $_SESSION['cabang'] ?? 0;
     $atlet_list = [];
     $q_atlet = mysqli_query($koneksi, "SELECT id, nama, tanggal_lahir FROM member WHERE cabang_id='$cabang_id' ORDER BY nama ASC");
     if ($q_atlet) {

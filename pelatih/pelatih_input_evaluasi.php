@@ -8,7 +8,7 @@ include '../includes/koneksi.php';
 include '../includes/header.php';
 include '../includes/sidebar.php';
 
-$cabang_id = $_SESSION['cabang_id'];
+$cabang_id = $_SESSION['cabang'] ?? 0;
 $pelatih_id = $_SESSION['user_id'];
 
 // Ambil data atlet berdasarkan cabang pelatih

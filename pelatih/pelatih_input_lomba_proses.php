@@ -9,7 +9,7 @@ include '../includes/koneksi.php';
 if (isset($_POST['simpan_performa'])) {
     
     $pelatih_id = $_SESSION['user_id'];
-    $cabang_id = $_SESSION['cabang_id'];
+    $cabang_id = $_SESSION['cabang'] ?? 0;
     
     $event_id = (int) $_POST['event_id'];
     $atlet_id = (int) $_POST['atlet_id'];
