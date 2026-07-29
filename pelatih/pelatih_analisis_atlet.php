@@ -12,9 +12,10 @@ $cabang_id = $_SESSION['cabang_id'];
 
 // Ambil data atlet
 $atlet_list = [];
-$q_atlet = mysqli_query($koneksi, "SELECT id, nama, kelompok_umur FROM member WHERE role='atlet' AND cabang_id='$cabang_id' ORDER BY nama ASC");
+$q_atlet = mysqli_query($koneksi, "SELECT id, nama, tanggal_lahir FROM member WHERE role='atlet' AND cabang_id='$cabang_id' ORDER BY nama ASC");
 if ($q_atlet) {
     while ($row = mysqli_fetch_assoc($q_atlet)) {
+        $row['umur'] = date('Y') - date('Y', strtotime($row['tanggal_lahir']));
         $atlet_list[] = $row;
     }
 }
@@ -38,7 +39,7 @@ $gaya_renang = ['Bebas', 'Dada', 'Punggung', 'Kupu-kupu', 'Ganti'];
                     <select id="filterAtlet" class="w-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all cursor-pointer">
                         <option value="">-- Pilih Atlet --</option>
                         <?php foreach($atlet_list as $at): ?>
-                            <option value="<?= $at['id'] ?>"><?= htmlspecialchars($at['nama']) ?> (KU <?= htmlspecialchars($at['kelompok_umur']) ?>)</option>
+                            <option value="<?= $at['id'] ?>"><?= htmlspecialchars($at['nama']) ?> (Umur: <?= htmlspecialchars($at['umur']) ?> thn)</option>
                         <?php endforeach; ?>
                     </select>
                 </div>

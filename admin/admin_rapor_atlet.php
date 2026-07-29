@@ -7,7 +7,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
 include '../includes/koneksi.php';
 
 $member_id = isset($_GET['atlet']) ? (int)$_GET['atlet'] : 0;
-$cabang_id = $_SESSION['cabang_id'];
+$cabang_id = $_SESSION['cabang'] ?? ($_SESSION['cabang_id'] ?? 1); // Fallback ke 1 jika admin tidak punya cabang spesifik
 
 // JIKA MODE CETAK RAPOR (ada GET atlet)
 if ($member_id):
@@ -101,8 +101,7 @@ if ($member_id):
             <div>
                 <table class="text-sm">
                     <tr><td class="py-1 text-gray-500 w-32">Nama Lengkap</td><td class="font-bold text-gray-900 text-lg uppercase">: <?= htmlspecialchars($profil['nama']) ?></td></tr>
-                    <tr><td class="py-1 text-gray-500">Kelompok Umur</td><td class="font-medium text-gray-900">: KU <?= htmlspecialchars($profil['kelompok_umur']) ?></td></tr>
-                    <tr><td class="py-1 text-gray-500">Tanggal Lahir</td><td class="font-medium text-gray-900">: <?= date('d M Y', strtotime($profil['tanggal_lahir'])) ?></td></tr>
+                    <tr><td class="py-1 text-gray-500">Tanggal Lahir</td><td class="font-medium text-gray-900">: <?= date('d M Y', strtotime($profil['tanggal_lahir'])) ?> (Umur: <?= date('Y') - date('Y', strtotime($profil['tanggal_lahir'])) ?> thn)</td></tr>
                 </table>
             </div>
             <div>
@@ -185,7 +184,7 @@ include '../includes/sidebar.php';
 
 $search = isset($_GET['cari']) ? bersihkan_input($_GET['cari']) : '';
 
-$query = "SELECT m.id, m.nama, m.kelompok_umur, m.jenis_kelamin 
+$query = "SELECT m.id, m.nama, m.tanggal_lahir, m.jenis_kelamin 
           FROM member m 
           WHERE m.role='atlet' AND m.cabang_id='$cabang_id'";
 
@@ -217,21 +216,23 @@ $q_atlet = mysqli_query($koneksi, $query);
 
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-white border-b border-gray-200">
+                    <thead class="bg-white border-b border-gray-200">
+                        <tr>
                             <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Nama Atlet</th>
                             <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Gender</th>
-                            <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Kelompok Umur</th>
+                            <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Umur</th>
                             <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         <?php if (mysqli_num_rows($q_atlet) > 0): ?>
-                            <?php while($row = mysqli_fetch_assoc($q_atlet)): ?>
+                            <?php while($row = mysqli_fetch_assoc($q_atlet)): 
+                                $umur = date('Y') - date('Y', strtotime($row['tanggal_lahir']));
+                            ?>
                                 <tr class="hover:bg-slate-50 transition-colors">
                                     <td class="p-4 font-bold text-gray-900"><?= htmlspecialchars($row['nama']) ?></td>
                                     <td class="p-4 text-sm text-gray-600"><?= $row['jenis_kelamin'] == 'L' ? 'Laki-laki' : 'Perempuan' ?></td>
-                                    <td class="p-4 text-sm text-gray-600"><span class="bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-lg font-bold text-xs">KU <?= htmlspecialchars($row['kelompok_umur']) ?></span></td>
+                                    <td class="p-4 text-sm text-gray-600"><span class="bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-lg font-bold text-xs"><?= $umur ?> Tahun</span></td>
                                     <td class="p-4 text-right">
                                         <a href="admin_rapor_atlet.php?atlet=<?= $row['id'] ?>" target="_blank" class="inline-flex items-center justify-center gap-2 bg-white border border-indigo-200 text-indigo-700 hover:bg-indigo-50 hover:border-indigo-300 font-bold py-2 px-4 rounded-xl text-sm transition-all shadow-sm">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
