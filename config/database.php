@@ -2,7 +2,7 @@
 // config/database.php
 $host = "localhost";        // Biarkan 'localhost' (99% hosting menggunakan ini)
 $user = "u715209937_Swift_SC";     // Ganti dengan USERNAME database hosting Anda
-$pass = "nQ!jNgy3P7rvD$X"; // Ganti dengan PASSWORD database hosting Anda
+$pass = 'nQ!jNgy3P7rvD$X';
 $db   = "u715209937_Swift_SC";     // Ganti dengan NAMA DATABASE hosting Anda
 
 try {
