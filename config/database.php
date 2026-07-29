@@ -1,9 +1,18 @@
 <?php
 // config/database.php
-$host = "localhost";        // Biarkan 'localhost' (99% hosting menggunakan ini)
-$user = "u715209937_Swift_SC";     // Ganti dengan USERNAME database hosting Anda
-$pass = 'nQ!jNgy3P7rvD$X';
-$db   = "u715209937_Swift_SC";     // Ganti dengan NAMA DATABASE hosting Anda
+if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == '127.0.0.1') {
+    // Konfigurasi XAMPP Lokal (Mac)
+    $host = "localhost";
+    $user = "root";
+    $pass = "";
+    $db   = "Swift_SC";
+} else {
+    // Konfigurasi Hostinger (Live)
+    $host = "localhost";
+    $user = "u715209937_Swift_SC";
+    $pass = 'nQ!jNgy3P7rvD$X';
+    $db   = "u715209937_Swift_SC";
+}
 
 try {
     // Mematikan warning bawaan agar kita bisa menangkapnya sebagai exception
