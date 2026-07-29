@@ -13,7 +13,7 @@ $pelatih_id = $_SESSION['user_id'];
 
 // Ambil data atlet berdasarkan cabang pelatih
 $atlet_list = [];
-$q_atlet = mysqli_query($koneksi, "SELECT id, nama, tanggal_lahir FROM member WHERE role='atlet' AND cabang_id='$cabang_id' ORDER BY nama ASC");
+$q_atlet = mysqli_query($koneksi, "SELECT id, nama, tanggal_lahir FROM member WHERE cabang_id='$cabang_id' ORDER BY nama ASC");
 if ($q_atlet) {
     while ($row = mysqli_fetch_assoc($q_atlet)) {
         $row['umur'] = date('Y') - date('Y', strtotime($row['tanggal_lahir']));

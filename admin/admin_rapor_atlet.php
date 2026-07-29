@@ -32,7 +32,7 @@ if ($member_id):
 <body class="bg-gray-100 min-h-screen py-8 print:py-0 print:bg-white">
     <?php
         // Ambil Data Profil Atlet
-        $q_profil = mysqli_query($koneksi, "SELECT m.*, c.nama_cabang FROM member m LEFT JOIN cabang c ON m.cabang_id = c.id WHERE m.id = $member_id AND m.role = 'atlet'");
+        $q_profil = mysqli_query($koneksi, "SELECT m.*, c.nama_cabang FROM member m LEFT JOIN cabang c ON m.cabang_id = c.id WHERE m.id = $member_id");
         $profil = mysqli_fetch_assoc($q_profil);
         
         if(!$profil) {
@@ -46,7 +46,7 @@ if ($member_id):
         
         // Hitung Kehadiran (3 Bulan Terakhir)
         $tiga_bulan_lalu = date('Y-m-d', strtotime('-3 months'));
-        $q_abs = mysqli_query($koneksi, "SELECT COUNT(*) as total_pertemuan, SUM(CASE WHEN status = 'Hadir' THEN 1 ELSE 0 END) as total_hadir FROM absensi WHERE member_id = $member_id AND tanggal_jadwal >= '$tiga_bulan_lalu'");
+        $q_abs = mysqli_query($koneksi, "SELECT COUNT(*) as total_pertemuan, SUM(CASE WHEN status = 'Hadir' THEN 1 ELSE 0 END) as total_hadir FROM absensi WHERE member_id = $member_id AND tanggal >= '$tiga_bulan_lalu'");
         $abs = mysqli_fetch_assoc($q_abs);
         $total_pertemuan = $abs['total_pertemuan'] ?? 0;
         $total_hadir = $abs['total_hadir'] ?? 0;
@@ -186,7 +186,7 @@ $search = isset($_GET['cari']) ? bersihkan_input($_GET['cari']) : '';
 
 $query = "SELECT m.id, m.nama, m.tanggal_lahir, m.jenis_kelamin 
           FROM member m 
-          WHERE m.role='atlet' AND m.cabang_id='$cabang_id'";
+          WHERE m.cabang_id='$cabang_id'";
 
 if ($search) {
     $query .= " AND m.nama LIKE '%$search%'";

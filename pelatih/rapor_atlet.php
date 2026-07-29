@@ -44,9 +44,10 @@ include '../includes/koneksi.php';
     // Ambil daftar atlet untuk dropdown jika belum memilih
     $cabang_id = $_SESSION['cabang_id'];
     $atlet_list = [];
-    $q_atlet = mysqli_query($koneksi, "SELECT id, nama, kelompok_umur FROM member WHERE role='atlet' AND cabang_id='$cabang_id' ORDER BY nama ASC");
+    $q_atlet = mysqli_query($koneksi, "SELECT id, nama, tanggal_lahir FROM member WHERE cabang_id='$cabang_id' ORDER BY nama ASC");
     if ($q_atlet) {
         while ($row = mysqli_fetch_assoc($q_atlet)) {
+            $row['umur'] = date('Y') - date('Y', strtotime($row['tanggal_lahir']));
             $atlet_list[] = $row;
         }
     }
@@ -61,7 +62,7 @@ include '../includes/koneksi.php';
                 <select name="atlet" required class="w-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
                     <option value="">-- Pilih Atlet --</option>
                     <?php foreach($atlet_list as $at): ?>
-                        <option value="<?= $at['id'] ?>"><?= htmlspecialchars($at['nama']) ?> (KU <?= htmlspecialchars($at['kelompok_umur']) ?>)</option>
+                        <option value="<?= $at['id'] ?>"><?= htmlspecialchars($at['nama']) ?> (Umur: <?= htmlspecialchars($at['umur']) ?> thn)</option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -79,7 +80,7 @@ include '../includes/koneksi.php';
             SELECT m.*, c.nama_cabang 
             FROM member m 
             LEFT JOIN cabang c ON m.cabang_id = c.id 
-            WHERE m.id = $member_id AND m.role = 'atlet'
+            WHERE m.id = $member_id
         ");
         $profil = mysqli_fetch_assoc($q_profil);
         
@@ -105,7 +106,7 @@ include '../includes/koneksi.php';
                 COUNT(*) as total_pertemuan,
                 SUM(CASE WHEN status = 'Hadir' THEN 1 ELSE 0 END) as total_hadir
             FROM absensi 
-            WHERE member_id = $member_id AND tanggal_jadwal >= '$tiga_bulan_lalu'
+            WHERE member_id = $member_id AND tanggal >= '$tiga_bulan_lalu'
         ");
         $abs = mysqli_fetch_assoc($q_abs);
         $total_pertemuan = $abs['total_pertemuan'] ?? 0;
@@ -163,8 +164,7 @@ include '../includes/koneksi.php';
             <div>
                 <table class="text-sm">
                     <tr><td class="py-1 text-gray-500 w-32">Nama Lengkap</td><td class="font-bold text-gray-900 text-lg uppercase">: <?= htmlspecialchars($profil['nama']) ?></td></tr>
-                    <tr><td class="py-1 text-gray-500">Kelompok Umur</td><td class="font-medium text-gray-900">: KU <?= htmlspecialchars($profil['kelompok_umur']) ?></td></tr>
-                    <tr><td class="py-1 text-gray-500">Tanggal Lahir</td><td class="font-medium text-gray-900">: <?= date('d M Y', strtotime($profil['tanggal_lahir'])) ?></td></tr>
+                    <tr><td class="py-1 text-gray-500">Tanggal Lahir</td><td class="font-medium text-gray-900">: <?= date('d M Y', strtotime($profil['tanggal_lahir'])) ?> (Umur: <?= date('Y') - date('Y', strtotime($profil['tanggal_lahir'])) ?> thn)</td></tr>
                 </table>
             </div>
             <div>
