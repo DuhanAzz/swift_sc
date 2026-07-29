@@ -115,7 +115,7 @@ try {
             <div class="flex items-center justify-between h-16 md:h-20">
                 <a href="index.php" class="flex items-center">
                     <div class="w-16 h-16 md:w-20 md:h-20 flex items-center justify-center">
-                        <img src="assets/logo.png" alt="Swift SC Logo" class="w-full h-full object-contain" onerror="this.onerror=null; this.outerHTML='<span class=\'font-bold text-xl tracking-tight italic text-black\'>SWIFT</span>';">
+                        <img src="assets/logo.png?v=<?= time() ?>" alt="Swift SC Logo" class="w-full h-full object-contain" onerror="this.onerror=null; this.outerHTML='<span class=\'font-bold text-xl tracking-tight italic text-black\'>SWIFT</span>';">
                     </div>
                 </a>
                 <nav class="hidden lg:flex items-center gap-8">
@@ -128,7 +128,7 @@ try {
                 </nav>
                 <div class="flex items-center gap-2">
                     <a href="pendaftaran.php" class="hidden sm:flex h-10 px-6 bg-white hover:bg-gray-100 text-[#0B1120] text-sm font-bold rounded-xl transition-colors items-center shadow-sm">Daftar Sekarang</a>
-                    <a href="login.php" class="hidden sm:flex h-10 px-6 bg-[#1F2937] hover:bg-[#374151] text-white text-sm font-bold rounded-xl transition-colors items-center shadow-sm">Login Admin</a>
+                    <a href="login.php" class="hidden sm:flex h-10 px-6 bg-[#1F2937] hover:bg-[#374151] text-white text-sm font-bold rounded-xl transition-colors items-center shadow-sm">Login</a>
                     <button onclick="document.getElementById('mobileMenu').classList.toggle('active');" class="lg:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5 rounded-xl hover:bg-[#1F2937] transition-colors">
                         <span class="w-5 h-0.5 bg-white rounded-full"></span>
                         <span class="w-5 h-0.5 bg-white rounded-full"></span>
@@ -470,7 +470,7 @@ try {
     <footer id="kontak" class="border-t border-slate-800/80 mt-12 bg-[#081223] relative z-10 pt-16 pb-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-12">
             <div>
-                <img src="assets/logo.png" alt="Swift SC Logo" class="h-16 mb-6" onerror="this.onerror=null; this.outerHTML='<span class=\'text-3xl font-black italic tracking-tighter text-white block mb-6\'>SWIFT<span class=\'text-cyan-500\'>_SC</span></span>';">
+                <img src="assets/logo.png?v=<?= time() ?>" alt="Swift SC Logo" class="h-16 mb-6" onerror="this.onerror=null; this.outerHTML='<span class=\'text-3xl font-black italic tracking-tighter text-white block mb-6\'>SWIFT<span class=\'text-cyan-500\'>_SC</span></span>';">
                 <p class="text-sm text-slate-400">Mencetak atlet renang berprestasi dengan fasilitas dan metode kepelatihan terbaik di kelasnya. Jump in. let's swim!</p>
             </div>
             

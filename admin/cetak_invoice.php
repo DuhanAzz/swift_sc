@@ -84,7 +84,7 @@ $total_dibayar = $biaya_pendaftaran + $biaya_bulanan;
             <!-- Logo area -->
             <div class="flex items-center gap-3">
                 <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center shadow-sm border border-gray-100 overflow-hidden">
-                    <img src="../assets/logo.png" alt="Logo Swift SC" class="w-10 h-10 object-contain" onerror="this.onerror=null; this.outerHTML='<div class=\'w-full h-full bg-blue-600 flex items-center justify-center text-white font-bold text-xl\'>SC</div>';">
+                    <img src="../assets/logo.png?v=<?= time() ?>" alt="Logo Swift SC" class="w-10 h-10 object-contain" onerror="this.onerror=null; this.outerHTML='<div class=\'w-full h-full bg-blue-600 flex items-center justify-center text-white font-bold text-xl\'>SC</div>';">
                 </div>
                 <div>
                     <h1 class="text-xl font-extrabold text-gray-900 tracking-tight leading-none">SWIFT SC</h1>

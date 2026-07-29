@@ -1,9 +1,9 @@
 <?php
 // config/database.php
-$host = "localhost";
-$user = "root"; 
-$pass = "";     
-$db   = "Swift_SC"; // Sesuai dengan nama database lokal Anda
+$host = "localhost";        // Biarkan 'localhost' (99% hosting menggunakan ini)
+$user = "u715209937_Swift_SC";     // Ganti dengan USERNAME database hosting Anda
+$pass = "nQ!jNgy3P7rvD$X"; // Ganti dengan PASSWORD database hosting Anda
+$db   = "u715209937_Swift_SC";     // Ganti dengan NAMA DATABASE hosting Anda
 
 try {
     // Mematikan warning bawaan agar kita bisa menangkapnya sebagai exception

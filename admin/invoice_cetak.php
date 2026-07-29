@@ -70,7 +70,7 @@ $nama_bulan = $bulan_array[$bulan];
         <!-- Header -->
         <div class="flex items-center justify-between border-b pb-6 mb-6">
             <div class="flex items-center gap-4">
-                <img src="../assets/logo.png" alt="Logo" class="h-16 w-16 object-contain p-1">
+                <img src="../assets/logo.png?v=<?= time() ?>" alt="Logo" class="h-16 w-16 object-contain p-1">
                 <div>
                     <h1 class="text-2xl font-black text-gray-900 tracking-tight">SWIFT SC</h1>
                     <p class="text-xs text-gray-500 font-medium">Professional Swimming Club</p>
