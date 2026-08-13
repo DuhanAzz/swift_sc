@@ -1,6 +1,10 @@
 <?php
 session_start();
-if (!isset($_SESSION['status']) || !isset($_SESSION['role']) || !in_array($_SESSION['role'], ['admin', 'ceo'])) exit("Unauthorized");
+if (!isset($_SESSION['status']) || !isset($_SESSION['role']) || !in_array(strtolower($_SESSION['role']), ['admin', 'ceo'])) {
+    $role_debug = isset($_SESSION['role']) ? $_SESSION['role'] : 'NULL';
+    $status_debug = isset($_SESSION['status']) ? $_SESSION['status'] : 'NULL';
+    exit("Unauthorized. Status: $status_debug | Role: $role_debug");
+}
 include '../includes/koneksi.php';
 
 if(isset($_POST['insert_data'])) {
