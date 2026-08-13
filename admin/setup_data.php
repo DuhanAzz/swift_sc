@@ -1,6 +1,6 @@
 <?php
 session_start();
-if (!isset($_SESSION['status']) || $_SESSION['role'] != "admin") exit("Unauthorized");
+if (!isset($_SESSION['status']) || !in_array($_SESSION['role'], ['admin', 'ceo'])) exit("Unauthorized");
 include '../includes/koneksi.php';
 
 if(isset($_POST['insert_data'])) {
