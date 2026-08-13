@@ -1,12 +1,12 @@
 <?php
 session_start();
-if (!isset($_SESSION['status']) || !in_array($_SESSION['role'], ['admin', 'ceo'])) exit("Unauthorized");
+if (!isset($_SESSION['status']) || !isset($_SESSION['role']) || !in_array($_SESSION['role'], ['admin', 'ceo'])) exit("Unauthorized");
 include '../includes/koneksi.php';
 
 if(isset($_POST['insert_data'])) {
-    // 1. Kosongkan tabel (opsional, tapi disarankan agar tidak duplikat jika di-refresh)
-    mysqli_query($koneksi, "TRUNCATE TABLE jadwal");
-    mysqli_query($koneksi, "TRUNCATE TABLE pelatih");
+    // 1. Kosongkan tabel
+    mysqli_query($koneksi, "DELETE FROM jadwal");
+    mysqli_query($koneksi, "DELETE FROM pelatih");
 
     // 2. Insert Jadwal
     $jadwal = [
