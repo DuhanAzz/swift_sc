@@ -4,6 +4,18 @@ if (!isset($_SESSION['status']) || !isset($_SESSION['role']) || !in_array($_SESS
 include '../includes/koneksi.php';
 
 if(isset($_POST['insert_data'])) {
+    // 0. Insert Cabang
+    $cabang = [
+        ['nama' => 'Kolam Renang Ledhok Pereng', 'lokasi' => 'Ledhok Pereng'],
+        ['nama' => 'Kolam Renang Sumbertirto Berbah', 'lokasi' => 'Sumbertirto Berbah'],
+        ['nama' => 'Kolam Renang Tirto Jowo Bantul', 'lokasi' => 'Bantul'],
+        ['nama' => 'Kolam Renang Umbang Tirta', 'lokasi' => 'Umbang Tirta']
+    ];
+    foreach($cabang as $c) {
+        $n = $c['nama']; $l = $c['lokasi'];
+        mysqli_query($koneksi, "INSERT IGNORE INTO cabang (nama_cabang, lokasi) VALUES ('$n', '$l')");
+    }
+
     // 1. Kosongkan tabel
     mysqli_query($koneksi, "DELETE FROM jadwal");
     mysqli_query($koneksi, "DELETE FROM pelatih");
