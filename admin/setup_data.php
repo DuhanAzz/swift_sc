@@ -62,7 +62,7 @@ if(isset($_POST['insert_data'])) {
         $kelas = $p['kelas'];
         $lokasi = $p['lokasi'];
         
-        $q2 = "INSERT INTO pelatih (nama, jabatan, kelas_mengajar, cabang) VALUES ('$nama', 'Pelatih', '$kelas', '$lokasi')";
+        $q2 = "INSERT INTO pelatih (user_id, nama, jabatan, kelas_mengajar, cabang) VALUES (NULL, '$nama', 'Pelatih', '$kelas', '$lokasi')";
         mysqli_query($koneksi, $q2);
     }
 

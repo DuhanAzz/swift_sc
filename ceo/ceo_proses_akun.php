@@ -142,7 +142,7 @@ if(isset($_POST['edit_pelatih'])){
     $q1 = mysqli_query($koneksi, "UPDATE pelatih SET nama='$nama_pelatih', sertifikasi='$lisensi', jabatan='$no_hp', id_kolam=$id_kolam_val, cabang='$nama_c' WHERE id='$id'");
     
     // 2. Update Users
-    if($user_id) {
+    if(!empty($user_id) && $user_id != '0') {
         if(!empty($password_baru)) {
             $hash = password_hash($password_baru, PASSWORD_DEFAULT);
             $q2 = mysqli_query($koneksi, "UPDATE users SET username='$nama_pelatih', email='$email', password='$hash' WHERE id='$user_id'");
