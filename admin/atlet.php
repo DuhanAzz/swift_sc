@@ -191,7 +191,7 @@ include '../includes/koneksi.php';
                         <td class="px-6 py-4">
                             <?php if($is_mangkir): ?>
                                 <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-bold bg-red-100 text-red-800">
-                                    Mangkir / Suspend
+                                    Suspend
                                 </span>
                             <?php else: ?>
                                 <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-bold bg-green-100 text-green-800">
